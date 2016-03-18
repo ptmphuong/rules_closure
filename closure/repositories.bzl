@@ -82,10 +82,16 @@ def closure_repositories():
       sha1 = "f0e8625a2cfe0f501b28f5e6438b836358da8a97",
   )
 
-  native.maven_jar(
-      name = "icu4j",
-      artifact = "com.ibm.icu:icu4j:56.1",
-      sha1 = "8dd6671f52165a0419e6de5e1016400875a90fa9",
+  native.http_file(
+      name = "fonts_noto_hinted_deb",
+      url = "http://http.us.debian.org/debian/pool/main/f/fonts-noto/fonts-noto-hinted_20160116-1_all.deb",
+      sha256 = "25b362c9437a7859ce034f22d94b698e8ed25007b443e5a26228ed5b3d2d32d4",
+  )
+
+  native.http_file(
+      name = "fonts_noto_mono_deb",
+      url = "http://http.us.debian.org/debian/pool/main/f/fonts-noto/fonts-noto-mono_20160116-1_all.deb",
+      sha256 = "74b457715f275ed893998a70d6bc955f67da6d36b36b422dbeeb045160edacb6",
   )
 
   native.maven_jar(
@@ -106,8 +112,36 @@ def closure_repositories():
       sha1 = "5e670615a927571234df68a8b1fe1a16272be555",
   )
 
-  # XXX: new_http_archive() doesn't maintain the executable bit.
-  #      https://github.com/bazelbuild/bazel/issues/984
+  native.maven_jar(
+      name = "icu4j",
+      artifact = "com.ibm.icu:icu4j:56.1",
+      sha1 = "8dd6671f52165a0419e6de5e1016400875a90fa9",
+  )
+
+  native.http_file(
+      name = "libexpat_amd64_deb",
+      url = "http://http.us.debian.org/debian/pool/main/e/expat/libexpat1_2.1.0-6+deb8u1_amd64.deb",
+      sha256 = "1b006e659f383e09909595d8b84b79828debd7323d00e8a28b72ccd902273861",
+  )
+
+  native.http_file(
+      name = "libfontconfig_amd64_deb",
+      url = "http://http.us.debian.org/debian/pool/main/f/fontconfig/libfontconfig1_2.11.0-6.3_amd64.deb",
+      sha256 = "2b21f91c8b46caba41221f1e45c5a37cac08ce1298dd7a28442f1b7332fa211b",
+  )
+
+  native.http_file(
+      name = "libfreetype_amd64_deb",
+      url = "http://http.us.debian.org/debian/pool/main/f/freetype/libfreetype6_2.5.2-3+deb8u1_amd64.deb",
+      sha256 = "80184d932f9b0acc130af081c60a2da114c7b1e7531c18c63174498fae47d862",
+  )
+
+  native.http_file(
+      name = "libpng_amd64_deb",
+      url = "http://http.us.debian.org/debian/pool/main/libp/libpng/libpng12-0_1.2.50-2+deb8u2_amd64.deb",
+      sha256 = "a57b6d53169c67a7754719f4b742c96554a18f931ca5b9e0408fb6502bb77e80",
+  )
+
   native.http_file(
       name = "phantomjs",
       sha256 = "86dd9a4bf4aee45f1a84c9f61cf1947c1d6dce9b9e8d2a907105da7852460d2f",

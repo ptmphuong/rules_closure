@@ -79,18 +79,19 @@ def _impl(ctx):
       output=ctx.outputs.executable,
       content="\n".join([
           "#!/bin/sh",
-          "exec %s \\\n  %s \\\n  %s\n" % (
-              ctx.file._phantomjs.short_path,
-              ctx.file._phantomjs_runner.short_path,
-              ctx.outputs.js.short_path),
+          "exec third_party/phantomjs/phantomjs.sh \\",
+          "  %s \\" % ctx.file._phantomjs_runner.short_path,
+          "  %s" % ctx.outputs.js.short_path,
+          "",
       ]))
   return struct(
       files=set([ctx.outputs.executable,
                  ctx.outputs.js]),
-      runfiles=ctx.runfiles(files=[ctx.file._phantomjs,
-                                   ctx.file._phantomjs_runner,
-                                   ctx.outputs.js],
-                            collect_data=True))
+      runfiles=ctx.runfiles(
+          files=[ctx.file._phantomjs_runner,
+                 ctx.outputs.js],
+          transitive_files=ctx.attr._phantomjs.data_runfiles.files,
+          collect_data=True))
 
 _closure_js_test = rule(
     test=True,
@@ -106,8 +107,7 @@ _closure_js_test = rule(
             executable=True),
         "_phantomjs": attr.label(
             default=Label("//third_party/phantomjs"),
-            allow_files=True,
-            single_file=True),
+            allow_files=True),
         "_phantomjs_runner": attr.label(
             default=Label("//closure/testing:phantomjs_runner.js"),
             allow_files=True,

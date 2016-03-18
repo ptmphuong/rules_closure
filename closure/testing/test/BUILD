@@ -14,6 +14,7 @@
 
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/testing:closure_js_test.bzl", "closure_js_test")
+load("//closure/private:files_equal_test.bzl", "files_equal_test")
 
 closure_js_test(
     name = "simple_test",
@@ -81,4 +82,21 @@ closure_js_test(
     srcs = ["arithmetic_es6module_test.js"],
     language = "ECMASCRIPT6_STRICT",
     deps = [":arithmetic_es6module_lib"],
+)
+
+genrule(
+    name = "fontdemo",
+    srcs = [
+        "screenshot.js",
+        "fontdemo.html",
+    ],
+    outs = ["fontdemo-generated.png"],
+    cmd = "$(location //third_party/phantomjs) $(SRCS) $@",
+    tools = ["//third_party/phantomjs"],
+)
+
+files_equal_test(
+    name = "noto_fonts_render_as_expected",
+    actual = "fontdemo-generated.png",
+    golden = "fontdemo.png",
 )
