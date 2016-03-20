@@ -31,17 +31,29 @@ sh_binary(
 
 genrule(
     name = "phantomjs_bin",
-    srcs = ["@phantomjs//file"],
+    srcs = select({
+        ":darwin": ["@phantomjs_macosx//file"],
+        "//conditions:default": ["@phantomjs_linux_x86_64//file"],
+    }),
     outs = ["bin/phantomjs"],
     cmd = " && ".join([
         "IN=$$(pwd)/$(SRCS)",
         "OUT=$$(pwd)/$@",
         "TMP=$$(mktemp -d $${TMPDIR:-/tmp}/genrule.XXXXXXXXXX)",
         "cd $$TMP",
-        "tar --strip-components=1 -xjf $$IN",
-        "mv bin/phantomjs $$OUT",
+    ]) + select({
+        ":darwin": " && unzip -q $$IN && ",
+        "//conditions:default": " && tar -xjf $$IN && ",
+    }) + " && ".join([
+        "mv */bin/phantomjs $$OUT",
         "rm -rf $$TMP",
     ]),
     executable = True,
+    visibility = ["//visibility:private"],
+)
+
+config_setting(
+    name = "darwin",
+    values = {"cpu": "darwin"},
     visibility = ["//visibility:private"],
 )
