@@ -287,6 +287,11 @@ This rule must be used in conjunction with `closure_js_library`.
   flags are available, run:
   `bazel run @io_bazel_rules_closure//closure/compiler -- --help`
 
+### Support for AngularJS
+
+When compiling AngularJS applications these flags should be used for
+compatibility:
+- `defs=["--angular_pass", "--export_local_property_definitions"]`
 
 ## closure\_js\_test
 
