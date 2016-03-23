@@ -27,7 +27,7 @@ load("//closure/private:defs.bzl",
 
 def _impl(ctx):
   srcs = set(order="compile")
-  for src in ctx.attr.srcs:
+  for src in ctx.attr.deps:
     srcs += src.transitive_js_srcs
   ctx.action(
       inputs=list(srcs),
@@ -43,7 +43,7 @@ def _impl(ctx):
 closure_js_deps = rule(
     implementation=_impl,
     attrs={
-        "srcs": attr.label_list(
+        "deps": attr.label_list(
             allow_files=False,
             providers=["transitive_js_srcs"]),
         "_depswriter": attr.label(
