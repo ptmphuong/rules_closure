@@ -195,6 +195,21 @@ targets. See the documentation of the `deps` attribute for further information.
   sparingly. If this attribute is specified, then the `srcs`, `externs`, and
   `deps` attributes may not be used.
 
+### Referencing the Closure Library
+
+In order to use `goog.provide` and `goog.require` in your javascript code, make
+sure to add the Closure Library as a dependency in `closure_js_library` rules:
+
+```python
+closure_js_library(
+    name = "my_js_library",
+    srcs = glob(["*.js"]),
+    deps = [
+        "@io_bazel_rules_closure//closure/library",
+    ],
+)
+```
+
 
 ## closure\_js\_binary
 
