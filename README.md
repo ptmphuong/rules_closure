@@ -77,6 +77,16 @@ You are not required to install the Closure Tools or PhantomJS. They will be
 fetched automatically.
 
 
+## Examples
+
+Please see the test directories within this project for concrete examples of usage:
+
+- [//closure/testing/test](https://github.com/bazelbuild/rules_closure/tree/master/closure/testing/test)
+- [//closure/compiler/test](https://github.com/bazelbuild/rules_closure/tree/master/closure/compiler/test)
+- [//closure/library/test](https://github.com/bazelbuild/rules_closure/tree/master/closure/library/test)
+- [//closure/stylesheets/test](https://github.com/bazelbuild/rules_closure/tree/master/closure/stylesheets/test)
+
+
 # Reference
 
 
