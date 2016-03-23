@@ -26,15 +26,8 @@ any of its excellence.
 This project is currently in an alpha state. It is not yet ready for general
 consumption. Many of the features have not been implemented. The definitions of
 these rules will change radically as we continue to collect feedback from
-experienced engineers. But most importantly, there is currently a blocking
-[issue](https://github.com/bazelbuild/bazel/issues/1033) that prevents these
-rules from being referenced by external repositories.
-
-We've chosen to develop this project in the open to engender the participation
-of the JavaScript community. While these rules may not be ready for your
-project, they are however ready for your feedback. If you want to have an impact
-on the future of JavaScript development with Bazel, now's the time to do it.
-Please file an issue telling us about your use cases.
+experienced engineers. There are also [launch blocking issues][blockers] that
+cause this project to not work as advertised.
 
 ### What's Included
 
@@ -734,6 +727,7 @@ The documentation on using Closure Stylesheets can be found
 [asserts]: https://github.com/google/closure-library/blob/master/closure/goog/testing/asserts.js#L1308
 [bazel-install]: http://bazel.io/docs/install.html
 [bazel]: http://bazel.io/
+[blockers]: https://github.com/bazelbuild/rules_closure/labels/launch%20blocker
 [closure-compiler]: https://developers.google.com/closure/compiler/
 [closure-library]: https://developers.google.com/closure/library/
 [closure-linter]: https://developers.google.com/closure/utilities/
