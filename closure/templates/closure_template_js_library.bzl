@@ -63,5 +63,8 @@ def closure_template_js_library(
   closure_js_library(
       name = name,
       srcs = js_srcs,
-      deps = deps + ["//closure/templates:soyutils_usegoog"],
+      deps = deps + [
+          "//closure/library",
+          "//closure/templates:soyutils_usegoog",
+      ],
   )

@@ -77,6 +77,7 @@ Please see the test directories within this project for concrete examples of usa
 - [//closure/testing/test](https://github.com/bazelbuild/rules_closure/tree/master/closure/testing/test)
 - [//closure/compiler/test](https://github.com/bazelbuild/rules_closure/tree/master/closure/compiler/test)
 - [//closure/library/test](https://github.com/bazelbuild/rules_closure/tree/master/closure/library/test)
+- [//closure/templates/test](https://github.com/bazelbuild/rules_closure/tree/master/closure/templates/test)
 - [//closure/stylesheets/test](https://github.com/bazelbuild/rules_closure/tree/master/closure/stylesheets/test)
 
 
