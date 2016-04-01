@@ -49,6 +49,7 @@ filegroup(
         "closure/goog/crypt/blockcipher.js",
         "closure/goog/crypt/cbc.js",
         "closure/goog/crypt/crypt.js",
+        "closure/goog/crypt/ctr.js",
         "closure/goog/crypt/hash.js",
         "closure/goog/crypt/hash32.js",
         "closure/goog/crypt/hmac.js",
@@ -306,6 +307,7 @@ filegroup(
         "closure/goog/html/flash.js",
         "closure/goog/html/legacyconversions.js",
         "closure/goog/html/safehtml.js",
+        "closure/goog/html/safehtmlformatter.js",
         "closure/goog/html/safescript.js",
         "closure/goog/html/safestyle.js",
         "closure/goog/html/safestylesheet.js",
@@ -819,7 +821,6 @@ filegroup(
         "third_party/closure/goog/caja/string/html/htmlsanitizer.js",
         "third_party/closure/goog/deps.js",
         "third_party/closure/goog/dojo/dom/query.js",
-        "third_party/closure/goog/jpeg_encoder/jpeg_encoder_basic.js",
         "third_party/closure/goog/loremipsum/text/loremipsum.js",
         "third_party/closure/goog/mochikit/async/deferred.js",
         "third_party/closure/goog/mochikit/async/deferredlist.js",
@@ -965,6 +966,17 @@ py_binary(
 # only allowed to specify a single BUILD file for an external dependency. This
 # is unfortunate, because that means there's no way to automatically test that
 # the above list is correct.
+#
+# Instructions:
+# 1. Uncomment the lines from "FILESET_MARKER_COMMAND" below.
+# 2. From the rules_closure project root directory, run
+#    "bazel build @closure_library//:js_files_maker" and
+#    "bazel build @closure_library//:js_testing_files_maker"
+# 3. Copy the list of files in
+#    bazel-genfiles/external/closure_library/js_files_maker.txt and
+#    bazel-genfiles/external/closure_library/js_testing_files_maker.txt
+#    to the corresponding filegroup above.
+# 4. Run "bazel test //closure/... --test_output=errors" to verify.
 
 # FILESET_MAKER_COMMAND = "#/bin/bash\n{ for s in $(SRCS); do echo \\\"$${s#external/closure_library/}\\\",; done; } | sort >$@"
 

@@ -56,15 +56,17 @@ def closure_repositories():
 
   native.maven_jar(
       name = "closure_compiler",
-      artifact = "com.google.javascript:closure-compiler:v20160208",
-      sha1 = "5a2f4be6cf41e27ed7119d26cb8f106300d87d91",
+      artifact = "com.google.javascript:closure-compiler:v20160315",
+      sha1 = "f5b1a03f83a014e545db60a795fcf94db14a5ba2",
   )
 
+  # To update Closure Library, one needs to uncomment and run the js_files_maker
+  # and js_testing_files_maker genrules in closure_library.BUILD.
   native.new_http_archive(
       name = "closure_library",
-      url = "https://bazel-mirror.storage.googleapis.com/github.com/google/closure-library/archive/20160208.zip",
-      sha256 = "8f610300e4930190137505a574a54d12346426f2a7b4f179026e41674e452a86",
-      strip_prefix = "closure-library-20160208",
+      url = "https://bazel-mirror.storage.googleapis.com/github.com/google/closure-library/archive/v20160315.zip",
+      sha256 = "4327a27e040ccd36cb12dee2dc5aa6cff7bc614b09c0e45aab0a1ab9e750f542",
+      strip_prefix = "closure-library-20160315",
       build_file = "closure/library/closure_library.BUILD",
   )
 
