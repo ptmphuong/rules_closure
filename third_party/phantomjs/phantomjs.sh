@@ -19,10 +19,13 @@
 #         export FC_DEBUG="1024"
 
 if [[ "${RUNFILES}" == "" ]]; then
-  if [[ "$(basename "$(pwd)")" =~ \.runfiles$ ]]; then
-    RUNFILES="$(pwd)"
+  if [[ "$(pwd)" =~ ^(.*\.runfiles)(/.*)?$ ]]; then
+    RUNFILES="${BASH_REMATCH[1]}"
   else
     RUNFILES="${0}.runfiles"
+  fi
+  if [ -d "${RUNFILES}/io_bazel_rules_closure" ]; then
+    RUNFILES="${RUNFILES}/io_bazel_rules_closure"
   fi
 fi
 
