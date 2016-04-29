@@ -32,12 +32,14 @@ def closure_template_js_library(
     should_provide_require_soy_namespaces = 1,
     should_generate_soy_msg_defs = 0,
     soy_msgs_are_external = 0,
-    soycompilerbin = "//closure/templates:SoyToJsSrcCompiler"):
+    soycompilerbin = str(Label("//closure/templates:SoyToJsSrcCompiler"))):
   js_srcs = [src + ".js" for src in srcs]
   cmd = ["$(location %s)" % soycompilerbin,
          "--outputPathFormat='$(@D)/{INPUT_FILE_NAME}.js'"]
   if soy_msgs_are_external:
     cmd += ["--googMsgsAreExternal"]
+  if should_generate_js_doc:
+    cmd += ["--shouldGenerateJsdoc"]
   if should_provide_require_soy_namespaces:
     cmd += ["--shouldProvideRequireSoyNamespaces"]
   if should_generate_soy_msg_defs:
@@ -64,7 +66,7 @@ def closure_template_js_library(
       name = name,
       srcs = js_srcs,
       deps = deps + [
-          "//closure/library",
-          "//closure/templates:soyutils_usegoog",
+          str(Label("//closure/library")),
+          str(Label("//closure/templates:soyutils_usegoog")),
       ],
   )

@@ -15,10 +15,10 @@ jdk:
   - oraclejdk8
 
 before_install:
-  - wget 'https://github.com/bazelbuild/bazel/releases/download/0.2.0/bazel-0.2.0-installer-linux-x86_64.sh'
-  - '[[ "$(sha256sum <bazel-0.2.0-installer-linux-x86_64.sh)" == "61449f49b9505c66dc3c8d26c49a40e6aa06a4d9abd8a20c8e1fece3d9705900  -" ]]'
-  - chmod +x bazel-0.2.0-installer-linux-x86_64.sh
-  - ./bazel-0.2.0-installer-linux-x86_64.sh --user
+  - wget 'https://github.com/bazelbuild/bazel/releases/download/0.2.2b/bazel-0.2.2b-installer-linux-x86_64.sh'
+  - '[[ "$(sha256sum <bazel-0.2.2b-installer-linux-x86_64.sh)" == "4b45fbafe3376e3a6016641f8d2169a581272d93d81b736f33daeb21a4105df0  -" ]]'
+  - chmod +x bazel-0.2.2b-installer-linux-x86_64.sh
+  - ./bazel-0.2.2b-installer-linux-x86_64.sh --user
 
 script:
   - bazel --batch --host_jvm_args=-Xmx1000m --host_jvm_args=-Xms1000m test closure/... --verbose_failures --test_output=errors --test_strategy=standalone --spawn_strategy=standalone --genrule_strategy=standalone --local_resources=1000,1,1.0
