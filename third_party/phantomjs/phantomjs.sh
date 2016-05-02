@@ -24,9 +24,14 @@ if [[ "${RUNFILES}" == "" ]]; then
   else
     RUNFILES="${0}.runfiles"
   fi
-  if [ -d "${RUNFILES}/io_bazel_rules_closure" ]; then
+  if [[ -d "${RUNFILES}/io_bazel_rules_closure" ]]; then
     RUNFILES="${RUNFILES}/io_bazel_rules_closure"
   fi
+fi
+
+CLOSURE_RUNFILES="${RUNFILES}"
+if [[ -d "${RUNFILES}/external/io_bazel_rules_closure" ]]; then
+  CLOSURE_RUNFILES="${RUNFILES}/external/io_bazel_rules_closure"
 fi
 
 export LD_LIBRARY_PATH="${RUNFILES}/third_party/fontconfig/k8:${LD_LIBRARY_PATH}"
@@ -38,7 +43,7 @@ export FONTCONFIG_PATH="${RUNFILES}/third_party/fontconfig"
 export XDG_DATA_HOME="${RUNFILES}"
 export XDG_CACHE_HOME="$(mktemp -d "${TMPDIR:-/tmp}/fontcache.XXXXXXXXXX")"
 
-"${RUNFILES}/third_party/phantomjs/bin/phantomjs" "$@"
+"${CLOSURE_RUNFILES}/third_party/phantomjs/bin/phantomjs" "$@"
 rc="$?"
 rm -rf "${XDG_CACHE_HOME}"
 exit "${rc}"
