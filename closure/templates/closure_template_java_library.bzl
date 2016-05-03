@@ -51,7 +51,7 @@ def closure_template_java_library(
     extra_srcs = [],
     extra_outs = [],
     allow_external_calls = 1,
-    soycompilerbin = '//closure/templates:SoyParseInfoGenerator',
+    soycompilerbin = str(Label('//closure/templates:SoyParseInfoGenerator')),
     **kwargs):
 
   # Strip off the .soy suffix from the file name and camel-case it, preserving
@@ -78,10 +78,10 @@ def closure_template_java_library(
   native.java_library(
       name = name,
       srcs = java_srcs or None,
-      exports = ['//closure/templates'],
+      exports = [str(Label('//closure/templates'))],
       deps = [
-          '//java/com/google/common/collect',
-          '//closure/templates',
+          '@guava//jar',
+          str(Label('//closure/templates')),
       ] if java_srcs else None,  # b/13630760
       resources = srcs + extra_srcs,
       **kwargs)
@@ -105,7 +105,7 @@ def closure_template_java_library(
 # - soycompilerbin Optional Soy to ParseInfo compiler target.
 def _gen_soy_java_wrappers(name, java_package, srcs, deps, outs,
     allow_external_calls = 1,
-    soycompilerbin = '//closure/templates:SoyParseInfoGenerator',
+    soycompilerbin = str(Label('//closure/templates:SoyParseInfoGenerator')),
     **kwargs):
   additional_flags = ''
   targets = " ".join(["$(locations " + src + ")" for src in srcs])
