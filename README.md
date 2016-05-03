@@ -26,8 +26,7 @@ any of its excellence.
 This project is currently in an alpha state. It is not yet ready for general
 consumption. Many of the features have not been implemented. The definitions of
 these rules will change radically as we continue to collect feedback from
-experienced engineers. There are also [launch blocking issues][blockers] that
-cause this project to not work as advertised.
+experienced engineers.
 
 ### What's Included
 
