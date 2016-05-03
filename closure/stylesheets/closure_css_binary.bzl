@@ -63,6 +63,7 @@ def _impl(ctx):
   return struct(files=set([ctx.outputs.out]),
                 js_language="ANY",
                 js_exports=set(order="compile"),
+                js_provided=set(order="compile"),
                 transitive_js_srcs=js_srcs,
                 transitive_js_externs=js_externs)
 

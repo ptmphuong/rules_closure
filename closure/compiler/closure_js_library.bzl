@@ -26,6 +26,7 @@ load("//closure/private:defs.bzl",
 
 def _impl(ctx):
   srcs, externs = collect_js_srcs(ctx)
+  direct_srcs, direct_externs = collect_js_srcs(ctx, transitive=False)
   if ctx.files.exports:
     for forbid in ['srcs', 'externs', 'deps']:
       if getattr(ctx.files, forbid):
@@ -40,10 +41,10 @@ def _impl(ctx):
           "--label=%s" % ctx.label]
   if ctx.attr.testonly:
     args += ["--testonly"]
-  for direct_src in JS_FILE_TYPE.filter(ctx.files.srcs):
+  for direct_src in direct_srcs:
     args += ["--src=%s" % direct_src.path]
     inputs.append(direct_src)
-  for direct_extern in JS_FILE_TYPE.filter(ctx.files.externs):
+  for direct_extern in direct_externs:
     args += ["--extern=%s" % direct_extern.path]
     inputs.append(direct_extern)
   for direct_dep in ctx.attr.deps:
@@ -59,7 +60,7 @@ def _impl(ctx):
           len(srcs) + len(externs), ctx.label))
   return struct(files=set(ctx.files.srcs),
                 js_language=determine_js_language(ctx),
-                js_exports=ctx.files.exports,
+                js_exports=ctx.attr.exports,
                 js_provided=ctx.outputs.provided,
                 transitive_js_srcs=srcs,
                 transitive_js_externs=externs,
