@@ -68,6 +68,28 @@ closure_repositories()
 You are not required to install the Closure Tools or PhantomJS. They will be
 fetched automatically.
 
+### Overriding Dependency Versions
+
+When you call `closure_repositories()` in your `WORKSPACE` file, it causes a
+few dozen external dependencies to be added to your project, e.g. Guava, Guice,
+JSR305, etc. You might need to customize this behavior.
+
+To override the version of any dependency, modify your `WORKSPACE` file to pass
+`omit_<dependency_name>=True` to `closure_repositories()`. Next define your
+custom dependency version. A full list of dependencies is available from
+[repositories.bzl](https://github.com/bazelbuild/rules_closure/tree/master/closure/repositories.bzl).
+For example, to override the version of Guava:
+
+```python
+load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
+closure_repositories(omit_guava=True)
+
+maven_jar(
+  name = "guava",
+  artifact = "...",
+  sha1 = "...",
+)
+```
 
 ## Examples
 

@@ -227,33 +227,91 @@ def soyutils_usegoog():
       url = "https://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/template/soy/2016-01-12/soy-2016-01-12-soyutils_usegoog.js",
   )
 
-def closure_repositories():
-  aopalliance()
-  asm()
-  asm_analysis()
-  asm_commons()
-  asm_util()
-  args4j()
-  closure_compiler()
-  closure_library()
-  closure_linter()
-  closure_stylesheets()
-  fonts_noto_hinted_deb()
-  fonts_noto_mono_deb()
-  guava()
-  gson()
-  guice()
-  guice_assistedinject()
-  guice_multibindings()
-  icu4j()
-  jsr305()
-  jsr330_inject()
-  libexpat_amd64_deb()
-  libfontconfig_amd64_deb()
-  libfreetype_amd64_deb()
-  libpng_amd64_deb()
-  phantomjs_linux_x86_64()
-  phantomjs_macosx()
-  python_gflags()
-  soy()
-  soyutils_usegoog()
+def closure_repositories(
+    omit_aopalliance=False,
+    omit_asm=False,
+    omit_asm_analysis=False,
+    omit_asm_commons=False,
+    omit_asm_util=False,
+    omit_args4j=False,
+    omit_closure_compiler=False,
+    omit_closure_library=False,
+    omit_closure_linter=False,
+    omit_closure_stylesheets=False,
+    omit_fonts_noto_hinted_deb=False,
+    omit_fonts_noto_mono_deb=False,
+    omit_guava=False,
+    omit_gson=False,
+    omit_guice=False,
+    omit_guice_assistedinject=False,
+    omit_guice_multibindings=False,
+    omit_icu4j=False,
+    omit_jsr305=False,
+    omit_jsr330_inject=False,
+    omit_libexpat_amd64_deb=False,
+    omit_libfontconfig_amd64_deb=False,
+    omit_libfreetype_amd64_deb=False,
+    omit_libpng_amd64_deb=False,
+    omit_phantomjs_linux_x86_64=False,
+    omit_phantomjs_macosx=False,
+    omit_python_gflags=False,
+    omit_soy=False,
+    omit_soyutils_usegoog=False):
+  if not omit_aopalliance:
+    aopalliance()
+  if not omit_asm:
+    asm()
+  if not omit_asm_analysis:
+    asm_analysis()
+  if not omit_asm_commons:
+    asm_commons()
+  if not omit_asm_util:
+    asm_util()
+  if not omit_args4j:
+    args4j()
+  if not omit_closure_compiler:
+    closure_compiler()
+  if not omit_closure_library:
+    closure_library()
+  if not omit_closure_linter:
+    closure_linter()
+  if not omit_closure_stylesheets:
+    closure_stylesheets()
+  if not omit_fonts_noto_hinted_deb:
+    fonts_noto_hinted_deb()
+  if not omit_fonts_noto_mono_deb:
+    fonts_noto_mono_deb()
+  if not omit_guava:
+    guava()
+  if not omit_gson:
+    gson()
+  if not omit_guice:
+    guice()
+  if not omit_guice_assistedinject:
+    guice_assistedinject()
+  if not omit_guice_multibindings:
+    guice_multibindings()
+  if not omit_icu4j:
+    icu4j()
+  if not omit_jsr305:
+    jsr305()
+  if not omit_jsr330_inject:
+    jsr330_inject()
+  if not omit_libexpat_amd64_deb:
+    libexpat_amd64_deb()
+  if not omit_libfontconfig_amd64_deb:
+    libfontconfig_amd64_deb()
+  if not omit_libfreetype_amd64_deb:
+    libfreetype_amd64_deb()
+  if not omit_libpng_amd64_deb:
+    libpng_amd64_deb()
+  if not omit_phantomjs_linux_x86_64:
+    phantomjs_linux_x86_64()
+  if not omit_phantomjs_macosx:
+    phantomjs_macosx()
+  if not omit_python_gflags:
+    python_gflags()
+  if not omit_soy:
+    soy()
+  if not omit_soyutils_usegoog:
+    soyutils_usegoog()
