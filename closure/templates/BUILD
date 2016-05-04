@@ -38,6 +38,10 @@ java_library(
 closure_js_library(
     name = "soyutils_usegoog",
     srcs = ["@soyutils_usegoog//file"],
+    suppress = [
+        "mustBePrivate",
+        "optionalParams",
+    ],
     deps = ["//closure/library"],
 )
 

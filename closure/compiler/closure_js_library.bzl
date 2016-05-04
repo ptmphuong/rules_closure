@@ -24,9 +24,13 @@ load("//closure/private:defs.bzl",
      "collect_js_srcs",
      "determine_js_language")
 
+def _determine_check_language(language):
+  if language == "ANY":
+    return "ECMASCRIPT3"
+  return language
+
 def _impl(ctx):
   srcs, externs = collect_js_srcs(ctx)
-  direct_srcs, direct_externs = collect_js_srcs(ctx, transitive=False)
   if ctx.files.exports:
     for forbid in ['srcs', 'externs', 'deps']:
       if getattr(ctx.files, forbid):
@@ -37,27 +41,32 @@ def _impl(ctx):
     if ctx.files.srcs and ctx.files.externs:
       fail("'srcs' may not be specified when 'externs' is set")
   inputs = []
-  args = ["--output_file=%s" % ctx.outputs.provided.path,
-          "--label=%s" % ctx.label]
+  args = ["--output=%s" % ctx.outputs.provided.path,
+          "--label=%s" % ctx.label,
+          "--language=%s" % _determine_check_language(ctx.attr.language)]
   if ctx.attr.testonly:
     args += ["--testonly"]
-  for direct_src in direct_srcs:
+  for direct_src in ctx.files.srcs:
     args += ["--src=%s" % direct_src.path]
     inputs.append(direct_src)
-  for direct_extern in direct_externs:
+  for direct_extern in ctx.files.externs:
     args += ["--extern=%s" % direct_extern.path]
     inputs.append(direct_extern)
   for direct_dep in ctx.attr.deps:
     args += ["--dep=%s" % direct_dep.js_provided.path]
     inputs.append(direct_dep.js_provided)
+    for edep in direct_dep.js_exports:
+      args += ["--dep=%s" % edep.js_provided.path]
+      inputs.append(edep.js_provided)
+  args += ["--jscomp_off=%s" % s for s in ctx.attr.suppress]
   ctx.action(
       inputs=inputs,
       outputs=[ctx.outputs.provided],
       executable=ctx.executable._jschecker,
       arguments=args,
       mnemonic="JSChecker",
-      progress_message="Sanity checking %d JS files in %s" % (
-          len(srcs) + len(externs), ctx.label))
+      progress_message="Checking %d JS files in %s" % (
+          len(ctx.files.srcs) + len(ctx.files.externs), ctx.label))
   return struct(files=set(ctx.files.srcs),
                 js_language=determine_js_language(ctx),
                 js_exports=ctx.attr.exports,
@@ -74,8 +83,9 @@ closure_js_library = rule(
         "deps": JS_DEPS_ATTR,
         "exports": JS_DEPS_ATTR,
         "language": attr.string(default=JS_LANGUAGE_DEFAULT),
+        "suppress": attr.string_list(),
         "_jschecker": attr.label(
-            default=Label("//closure/compiler/jschecker"),
+            default=Label("//java/com/google/javascript/jscomp:jschecker"),
             executable=True),
     },
     outputs={"provided": "%{name}-provided.txt"})

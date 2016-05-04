@@ -53,13 +53,12 @@ JS_DEPS_ATTR = attr.label_list(
                "transitive_js_srcs",
                "transitive_js_externs"])
 
-def collect_js_srcs(ctx, transitive=True):
+def collect_js_srcs(ctx):
   srcs = set(order="compile")
   externs = set(order="compile")
   for dep in ctx.attr.deps:
-    if transitive:
-      srcs += dep.transitive_js_srcs
-      externs += dep.transitive_js_externs
+    srcs += dep.transitive_js_srcs
+    externs += dep.transitive_js_externs
     for edep in dep.js_exports:
       srcs += edep.transitive_js_srcs
       externs += edep.transitive_js_externs

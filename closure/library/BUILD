@@ -21,6 +21,14 @@ closure_js_library(
     name = "library",
     srcs = ["@closure_library//:js_files"],
     language = "ECMASCRIPT5_STRICT",
+    suppress = [
+        "duplicateEnumValue",
+        "illegalPrototypeMember",
+        "invalidSuppress",
+        "missingJsDoc",
+        "missingReturnJsDoc",
+        "mustBePrivate",
+    ],
     deps = [":base"],
 )
 
@@ -29,6 +37,11 @@ closure_js_library(
     testonly = True,
     srcs = ["@closure_library//:js_testing_files"],
     language = "ECMASCRIPT5_STRICT",
+    suppress = [
+        "invalidSuppress",
+        "missingJsDoc",
+        "mustBePrivate",
+    ],
     deps = [":library"],
 )
 
@@ -47,4 +60,5 @@ closure_js_library(
     name = "base",
     srcs = ["@closure_library//:closure/goog/base.js"],
     language = "ECMASCRIPT5_STRICT",
+    suppress = ["invalidSuppress"],
 )
