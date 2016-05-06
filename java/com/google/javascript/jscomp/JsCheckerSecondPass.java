@@ -24,7 +24,7 @@ final class JsCheckerSecondPass extends AbstractShallowCallback implements HotSw
 
   public static final DiagnosticType NOT_PROVIDED =
       DiagnosticType.error(
-          "CR_NOT_PROVIDED", "Namespace not provided by any srcs or deps of {0}");
+          "CR_NOT_PROVIDED", "Namespace not provided by any srcs or direct deps of {0}");
 
   private final JsCheckerState state;
   private final AbstractCompiler compiler;
@@ -59,7 +59,6 @@ final class JsCheckerSecondPass extends AbstractShallowCallback implements HotSw
               && state.notProvidedNamespaces.add(namespace.getString())) {
             t.report(namespace, NOT_PROVIDED, state.label);
           }
-          state.provides.add(namespace.getString());
         }
         break;
       default:

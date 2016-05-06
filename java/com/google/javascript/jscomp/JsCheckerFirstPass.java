@@ -25,7 +25,7 @@ final class JsCheckerFirstPass extends AbstractShallowCallback implements HotSwa
   public static final DiagnosticType INVALID_SETTESTONLY =
       DiagnosticType.error(
           "CR_INVALID_SETTESTONLY",
-          "Not allowed here because {0} does not have testonly=1.");
+          "Not allowed here because closure_js_library {0} does not have testonly=1.");
 
   public static final DiagnosticType DUPLICATE_PROVIDES =
       DiagnosticType.error(

@@ -16,31 +16,50 @@
 
 package com.google.javascript.jscomp;
 
+import com.google.common.collect.Ordering;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 final class JsCheckerState {
 
   final String label;
   final boolean testonly;
 
-  // Assume we're processing //closure/library which has 4788 provides. HashMap has a default load
-  // factor of 0.75. Therefore redimensioning would never occur for a map with the capacity of 6385
-  // (4788/0.75+1). However we're going to pick 7000 to allow for growth in the Closure Library. No
-  // other project should ever exist with such a large set of provides in one closure_js_library().
-  //
-  // There are actually cooler data structures we could be using here to save space. Like maybe a
-  // graph of namespace labels represented as an IdentityHashMap of interned strings. But it'd take
-  // too much braining for too little benefit.
-  final Set<String> provides = new HashSet<>(7000);
+  // Error output for compiler which gets tee'd to two file descriptors.
+  final List<String> stderr = new ArrayList<>();
 
-  // In almost all circumstances, the user will be directly depending on the Closure Library, in
-  // addition to a bunch of other things. So we're going to aim a bit higher.
+  // XXX: There are actually cooler data structures we could be using here to save space. Like maybe
+  //      a trie represented as an IdentityHashMap. But it'd take too much braining for too little
+  //      benefit.
+
+  // Set of namespaces provided by this closure_js_library.
+  //
+  // This is a binary tree because we're going to need to output its contents in sorted order when
+  // this program is done running.
+  final SortedSet<String> provides = new TreeSet<>(Ordering.natural());
+
+  // Set of namespaces provided by direct dependencies of this closure_js_library.
+  //
+  // Nearly all closure_js_library rules will directly depend on //closure/library which has 4788
+  // provides. This sets a very large lower bound for the size of this hash table. Since HashMap has
+  // a default load factor of 0.75, it would need to have a capacity of 6385 (4788/0.75+1) to store
+  // those namespaces without redimensioning. We're expanded this to 9000 to allow plenty of room
+  // for other dependencies.
   final Set<String> provided = new HashSet<>(9000);
 
   // These are used to avoid flooding the user with certain types of error messages.
   final Set<String> notProvidedNamespaces = new HashSet<>();
   final Set<String> redeclaredProvides = new HashSet<>();
+
+  // Allows JsCheckerErrorFormatter to turn diagnostic types into their group names.
+  final Map<DiagnosticType, String> diagnosticGroups = new HashMap<>();
 
   JsCheckerState(String label, boolean testonly) {
     this.label = label;

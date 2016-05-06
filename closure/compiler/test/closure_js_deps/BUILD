@@ -14,7 +14,7 @@
 
 load("//closure/compiler:closure_js_deps.bzl", "closure_js_deps")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
-load("//closure/private:test_rules.bzl", "file_test")
+load("//closure/private:file_test.bzl", "file_test")
 
 closure_js_library(
     name = "hyperion",

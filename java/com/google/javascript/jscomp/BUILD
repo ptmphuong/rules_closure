@@ -2,6 +2,9 @@ java_binary(
     name = "jschecker",
     srcs = [
         "JsChecker.java",
+        "JsCheckerClosureCodingConvention.java",
+        "JsCheckerErrorFormatter.java",
+        "JsCheckerErrorManager.java",
         "JsCheckerFirstPass.java",
         "JsCheckerPassConfig.java",
         "JsCheckerSecondPass.java",

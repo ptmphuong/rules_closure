@@ -14,7 +14,8 @@
 
 load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
-load("//closure/private:test_rules.bzl", "file_test")
+load("//closure/private:file_test.bzl", "file_test")
+load("//closure/private:rule_test.bzl", "rule_test")
 
 closure_js_library(
     name = "hello_lib",
@@ -70,6 +71,12 @@ closure_js_library(
     srcs = ["hello.js"],
     language = "ECMASCRIPT6_STRICT",
     deps = [":unstrict_lib"],
+)
+
+rule_test(
+    name = "hello_decay_lib_test",
+    provides = {"js_language": "^\"ECMASCRIPT6\"$"},
+    rule = ":hello_decay_lib",
 )
 
 closure_js_binary(
@@ -138,4 +145,17 @@ file_test(
     name = "es6typed_works",
     content = "var hello=\"hello world\";console.log(hello);\n",
     file = "es6typed_bin.js",
+)
+
+closure_js_library(
+    name = "noClosingParen",
+    srcs = ["noClosingParen.js"],
+    nofail = True,
+    tags = ["manual"],
+)
+
+file_test(
+    name = "noClosingParen_failsToCompile",
+    file = "noClosingParen-stderr.txt",
+    regexp = "noClosingParen\\.js:16: ERROR - Parse error\\.",
 )

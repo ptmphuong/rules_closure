@@ -39,8 +39,8 @@ closure_js_library(
     name = "soyutils_usegoog",
     srcs = ["@soyutils_usegoog//file"],
     suppress = [
-        "mustBePrivate",
-        "optionalParams",
+        "JSC_MUST_HAVE_TRAILING_UNDERSCORE",
+        "JSC_OPTIONAL_PARAM_NOT_MARKED_OPTIONAL",
     ],
     deps = ["//closure/library"],
 )

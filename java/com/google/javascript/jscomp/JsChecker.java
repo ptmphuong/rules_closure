@@ -18,13 +18,13 @@ package com.google.javascript.jscomp;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Ordering;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
-import com.google.javascript.jscomp.lint.CheckEnums;
 import com.google.javascript.jscomp.lint.CheckJSDocStyle;
-import com.google.javascript.jscomp.lint.CheckPrototypeProperties;
 
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
@@ -34,7 +34,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Program for incrementally checking JavaScript code.
@@ -53,27 +57,36 @@ import java.util.List;
 public final class JsChecker {
 
   static {
-    DiagnosticGroups.registerGroup("duplicateEnumValue", CheckEnums.DUPLICATE_ENUM_VALUE);
-    DiagnosticGroups.registerGroup("illegalPrototypeMember",
-        CheckPrototypeProperties.ILLEGAL_PROTOTYPE_MEMBER);
-    DiagnosticGroups.registerGroup("invalidSuppress", CheckJSDocStyle.INVALID_SUPPRESS);
-    DiagnosticGroups.registerGroup("missingJsDoc", CheckJSDocStyle.MISSING_JSDOC);
-    DiagnosticGroups.registerGroup("missingReturnJsDoc", CheckJSDocStyle.MISSING_RETURN_JSDOC);
-    DiagnosticGroups.registerGroup("mustBePrivate",
-        CheckJSDocStyle.MUST_BE_PRIVATE,
-        CheckJSDocStyle.MUST_HAVE_TRAILING_UNDERSCORE);
-    DiagnosticGroups.registerGroup("optionalParams",
-        CheckJSDocStyle.OPTIONAL_PARAM_NOT_MARKED_OPTIONAL,
-        CheckJSDocStyle.OPTIONAL_TYPE_NOT_USING_OPTIONAL_NAME);
     DiagnosticGroups.registerGroup("strictDependencies",
         JsCheckerFirstPass.DUPLICATE_PROVIDES,
+        JsCheckerFirstPass.INVALID_SETTESTONLY,
         JsCheckerFirstPass.REDECLARED_PROVIDES,
         JsCheckerSecondPass.NOT_PROVIDED);
-    DiagnosticGroups.registerGroup("strictSetTestOnly", JsCheckerFirstPass.INVALID_SETTESTONLY);
   }
 
+  private static final ImmutableSet<String> WARNINGS =
+      ImmutableSet.of(
+          "checkTypes",
+          "deprecated",
+          "extraRequire",
+          "lintChecks");
+
+  private static final ImmutableSet<String> ERRORS =
+      ImmutableSet.of(
+          "checkRegExp",
+          "extraRequire",
+          "missingRequire",
+          "strictDependencies");
+
+  private static final ImmutableSet<DiagnosticType> DISABLE_FOR_ES6 =
+      ImmutableSet.of(
+          CheckJSDocStyle.MISSING_PARAMETER_JSDOC,
+          CheckJSDocStyle.MISSING_RETURN_JSDOC,
+          CheckJSDocStyle.OPTIONAL_PARAM_NOT_MARKED_OPTIONAL,
+          CheckJSDocStyle.OPTIONAL_TYPE_NOT_USING_OPTIONAL_NAME);
+
   private enum Convention {
-    CLOSURE(new ClosureCodingConvention()),
+    CLOSURE(new JsCheckerClosureCodingConvention()),
     GOOGLE(new GoogleCodingConvention()),
     JQUERY(new JqueryCodingConvention());
 
@@ -110,7 +123,7 @@ public final class JsChecker {
   @Option(
       name = "--convention",
       usage = "Coding convention for linting.")
-  private Convention convention = Convention.GOOGLE;
+  private Convention convention = Convention.CLOSURE;
 
   @Option(
       name = "--language",
@@ -118,28 +131,9 @@ public final class JsChecker {
   private LanguageMode language = LanguageMode.ECMASCRIPT5_STRICT;
 
   @Option(
-      name = "--jscomp_off",
-      usage = "Means same thing as JSCompiler equivalent.")
-  private List<String> offs = Lists.newArrayList();
-
-  @Option(
-      name = "--jscomp_warning",
-      usage = "Means same thing as JSCompiler equivalent.")
-  private List<String> warnings =
-      Lists.newArrayList(
-          "checkTypes",
-          "extraRequire",
-          "lintChecks");
-
-  @Option(
-      name = "--jscomp_error",
-      usage = "Means same thing as JSCompiler equivalent.")
-  private List<String> errors =
-      Lists.newArrayList(
-          "checkRegExp",
-          "missingRequire",
-          "extraRequire",
-          "strictDependencies");
+      name = "--suppress",
+      usage = "Diagnostic types to not show as errors or warnings.")
+  private List<String> suppress = new ArrayList<>();
 
   @Option(
       name = "--testonly",
@@ -152,66 +146,147 @@ public final class JsChecker {
   private String output = "";
 
   @Option(
+      name = "--output_errors",
+      usage = "Name of output file for tee'd compiler errors.")
+  private String outputErrors = "";
+
+  @Option(
+      name = "--nofail",
+      usage = "Always return exit code 0.")
+  private boolean nofail;
+
+  @Option(
       name = "--help",
       usage = "Displays this message on stdout and exit")
   private boolean help;
 
   private boolean run() throws IOException {
-    JsCheckerState state = new JsCheckerState(label, testonly);
+    final JsCheckerState state = new JsCheckerState(label, testonly);
+    final Set<String> actuallySuppressed = new HashSet<>();
+
+    // map diagnostic codes back to groups
+    Map<String, DiagnosticType> diagnosticTypes = new HashMap<>(256);
+    DiagnosticGroups groups = new DiagnosticGroups();
+    for (String groupName : Iterables.concat(WARNINGS, ERRORS)) {
+      DiagnosticGroup group = groups.forName(groupName);
+      for (DiagnosticType type : group.getTypes()) {
+        state.diagnosticGroups.put(type, groupName);
+        diagnosticTypes.put(type.key, type);
+      }
+    }
 
     // read provided files created by this program on deps
     for (String dep : deps) {
       state.provided.addAll(Files.readAllLines(Paths.get(dep), UTF_8));
     }
 
-    // check syntax and collect state data
-    Compiler compiler = new Compiler(System.out);
+    // configure compiler
+    Compiler compiler = new Compiler();
     CompilerOptions options = new CompilerOptions();
     options.setLanguage(language);
     options.setCodingConvention(convention.convention);
     options.setSkipTranspilationAndCrash(true);
     options.setIdeMode(true);
-    options.setWarningsGuard(
-        new ComposeWarningsGuard(ImmutableList.of(suppressPath("bazel-out/"))));
-    DiagnosticGroups groups = new DiagnosticGroups();
-    for (String error : errors) {
+    JsCheckerErrorManager manager =
+        new JsCheckerErrorManager(state, new JsCheckerErrorFormatter(state, compiler));
+    compiler.setErrorManager(manager);
+
+    // configure which error messages appear
+    for (String error : ERRORS) {
       options.setWarningLevel(groups.forName(error), CheckLevel.ERROR);
     }
-    for (String warning : warnings) {
+    for (String warning : WARNINGS) {
       options.setWarningLevel(groups.forName(warning), CheckLevel.WARNING);
     }
-    for (String off : offs) {
-      options.setWarningLevel(groups.forName(off), CheckLevel.OFF);
+    List<DiagnosticType> types = new ArrayList<>();
+    for (String name : suppress) {
+      DiagnosticGroup group = groups.forName(name);
+      if (group != null) {
+        options.setWarningLevel(group, CheckLevel.OFF);
+        continue;
+      }
+      DiagnosticType type = diagnosticTypes.get(name);
+      if (type == null) {
+        System.err.println("Bad --suppress value: " + name);
+        return false;
+      }
+      types.add(type);
     }
-
-    if (language == LanguageMode.ECMASCRIPT6_STRICT
-        || language == LanguageMode.ECMASCRIPT6_TYPED) {
+    if (language == LanguageMode.ECMASCRIPT6_STRICT || language == LanguageMode.ECMASCRIPT6_TYPED) {
+      types.addAll(DISABLE_FOR_ES6);
+    }
+    if (!types.isEmpty()) {
       options.setWarningLevel(
           DiagnosticGroups.registerGroup("doodle",
-              CheckJSDocStyle.MISSING_PARAMETER_JSDOC,
-              CheckJSDocStyle.MISSING_RETURN_JSDOC,
-              CheckJSDocStyle.OPTIONAL_PARAM_NOT_MARKED_OPTIONAL,
-              CheckJSDocStyle.OPTIONAL_TYPE_NOT_USING_OPTIONAL_NAME),
+              Iterables.toArray(types, DiagnosticType.class)),
           CheckLevel.OFF);
     }
 
+    // don't show lint errors on generated files
+    options.addWarningsGuard(
+        new WarningsGuard() {
+          @Override
+          public CheckLevel level(JSError error) {
+            if ("lintChecks".equals(state.diagnosticGroups.get(error.getType()))
+                && (error.sourceName.contains("bazel-out/")
+                    || error.sourceName.contains("bazel-genfiles/"))) {
+              return CheckLevel.OFF;
+            }
+            return null;
+          }
+        });
+
+    // keep track of DiagnosticType and DiagnosticGroup names where warnings were actually emitted,
+    // so we can throw an error if the user needs to remove unneeded items from suppress attributes.
+    options.addWarningsGuard(
+        new WarningsGuard() {
+          @Override
+          public CheckLevel level(JSError error) {
+            String typeName = error.getType().key;
+            String groupName = state.diagnosticGroups.get(error.getType());
+            if (groupName != null) {
+              actuallySuppressed.add(typeName);
+              actuallySuppressed.add(groupName);
+            }
+            return null;
+          }
+        });
+
+    // run the compiler
     compiler.setPassConfig(new JsCheckerPassConfig(state, options));
     compiler.disableThreads();
     Result result = compiler.compile(getSourceFiles(externs), getSourceFiles(sources), options);
-    if (!result.success) {
-      return false;
+    boolean success = result.success;
+
+    // check suppress attribute is tidy
+    Set<String> useless = Sets.difference(ImmutableSet.copyOf(suppress), actuallySuppressed);
+    if (!useless.isEmpty()) {
+      state.stderr.add(
+          String.format(
+              "ERROR: The following suppress codes are superfluous and must be removed from the"
+                  + " closure_js_library() build rule: %s\n\n - %s\n",
+              label, Joiner.on("\n - ").join(useless)));
+      success = false;
+    }
+
+    // write errors
+    for (String line : state.stderr) {
+      System.err.println(line);
+    }
+    if (!outputErrors.isEmpty()) {
+      Files.write(Paths.get(outputErrors), state.stderr, UTF_8);
     }
 
     // write provided file
     if (!output.isEmpty()) {
-      Files.write(Paths.get(output), Ordering.natural().immutableSortedCopy(state.provides), UTF_8);
+      Files.write(Paths.get(output), state.provides, UTF_8);
+    }
+
+    if (!success) {
+      return false;
     }
 
     return true;
-  }
-
-  private static WarningsGuard suppressPath(String path) {
-    return new ShowByPathWarningsGuard(path, ShowByPathWarningsGuard.ShowType.EXCLUDE);
   }
 
   private static ImmutableList<SourceFile> getSourceFiles(Iterable<String> filenames) {
@@ -241,7 +316,7 @@ public final class JsChecker {
       System.out.println();
     } else {
       if (!checker.run()) {
-        System.exit(1);
+        System.exit(checker.nofail ? 0 : 1);
       }
     }
   }

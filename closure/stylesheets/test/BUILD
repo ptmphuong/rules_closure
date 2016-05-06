@@ -14,7 +14,7 @@
 
 load("//closure/stylesheets:closure_css_binary.bzl", "closure_css_binary")
 load("//closure/stylesheets:closure_css_library.bzl", "closure_css_library")
-load("//closure/private:test_rules.bzl", "file_test")
+load("//closure/private:file_test.bzl", "file_test")
 
 closure_css_library(
     name = "hello_lib",
