@@ -17,7 +17,6 @@
 load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
 load("//closure/compiler:closure_js_deps.bzl", "closure_js_deps")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
-load("//closure/linter:closure_js_lint_test.bzl", "closure_js_lint_test")
 load("//closure:repositories.bzl", "closure_repositories")
 load("//closure/stylesheets:closure_css_binary.bzl", "closure_css_binary")
 load("//closure/stylesheets:closure_css_library.bzl", "closure_css_library")

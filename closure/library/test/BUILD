@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//closure/linter:closure_js_lint_test.bzl", "closure_js_lint_test")
 load("//closure/testing:closure_js_test.bzl", "closure_js_test")
 
 closure_js_test(
@@ -23,10 +22,4 @@ closure_js_test(
         "//closure/library",
         "//closure/library:testing",
     ],
-)
-
-closure_js_lint_test(
-    name = "lint",
-    srcs = ["dom_test.js"],
-    visibility = ["//visibility:private"],
 )

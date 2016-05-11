@@ -6,7 +6,6 @@ JavaScript | Templating | Stylesheets
 [closure_js_binary](#closure_js_binary) | [closure_template_java_library](#closure_template_java_library) | [closure_css_binary](#closure_css_binary)
 [closure_js_deps](#closure_js_deps) | [closure_template_py_library](#closure_template_py_library) |
 [closure_js_test](#closure_js_test) | |
-[closure_js_lint_test](#closure_js_lint_test) | |
 [closure_js_check_test](#closure_js_check_test) | |
 
 ## Overview
@@ -43,7 +42,6 @@ The Closure Rules bundle the following tools and makes them "just work."
 - [Closure Stylesheets][closure-stylesheets]: CSS compiler supporting class name
   minification, variables, functions, conditionals, mixins, and bidirectional
   layout.
-- [Closure Linter][closure-linter]: Automated style checker and fixer.
 - [PhantomJS][phantomjs]: Headless web browser used for automating JavaScript
   unit tests in a command line environment.
 - [Bazel][bazel]: The build system Google uses to manage a repository with
@@ -402,47 +400,6 @@ path.
   documentation for more information.
 
 
-## closure\_js\_lint\_test
-
-```python
-load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_lint_test")
-closure_js_check_test(name, srcs, errors, defs)
-```
-
-Tests JavaScript sources for conformance to [Google JavaScript Style][jsstyle]
-and Google Closure Style.
-
-If the sources do not conform, then the error message will show you a command
-you can run to fix your source code.
-
-### Arguments
-
-- **name:** ([Name][name]; required) A unique name for this rule.
-
-- **srcs:** (List of [labels][labels]; required) JavaScript files to check.
-  These can be normal sources or externs files.
-
-- **errors:** (List of strings; optional; default is `["all"]`) Which errors to
-  enable.
-
-  - `all`: Enables all following errors.
-  - `blank_lines_at_top_level`: Validates number of blank lines between blocks
-    at top level.
-  - `indentation`: Checks correct indentation of code.
-  - `well_formed_author`: Validates the `@author` JsDoc tags.
-  - `no_braces_around_inherit_doc`: Forbids braces around `@inheritdoc` JsDoc
-    tags.
-  - `braces_around_type`: Enforces braces around types in JsDoc tags.
-  - `optional_type_marker`: Checks correct use of optional marker = in param
-    types.
-  - `unused_private_members`: Checks for unused private variables.
-  - `unused_local_variables`: Checks for unused local variables.
-
-- **defs:** (List of strings; optional) Additional flags to pass to the gjslint
-  command. Some useful ones are: `--closurized_namespaces=ns1,ns2` and
-  `--ignored_extra_namespaces=goog.testing.asserts`.
-
-
 ## closure\_js\_check\_test
 
 ```python
@@ -767,7 +724,6 @@ The documentation on using Closure Stylesheets can be found
 [blockers]: https://github.com/bazelbuild/rules_closure/labels/launch%20blocker
 [closure-compiler]: https://developers.google.com/closure/compiler/
 [closure-library]: https://developers.google.com/closure/library/
-[closure-linter]: https://developers.google.com/closure/utilities/
 [closure-stylesheets]: https://github.com/google/closure-stylesheets
 [closure-templates]: https://developers.google.com/closure/templates/
 [closure-tools]: https://developers.google.com/closure/

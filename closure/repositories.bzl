@@ -76,15 +76,6 @@ def closure_library():
       build_file = str(Label("//closure/library:closure_library.BUILD")),
   )
 
-def closure_linter():
-  native.new_http_archive(
-      name = "closure_linter",
-      url = "https://bazel-mirror.storage.googleapis.com/github.com/google/closure-linter/archive/v2.3.19.zip",
-      sha256 = "ccb93b7327cd1e1520d0090c51f2f11d5174a34df24e1fa4d0114ffff28a7141",
-      strip_prefix = "closure-linter-2.3.19",
-      build_file = str(Label("//closure/linter:closure_linter.BUILD")),
-  )
-
 def closure_stylesheets():
   native.maven_jar(
       name = "closure_stylesheets",
@@ -204,15 +195,6 @@ def phantomjs_macosx():
       url = "https://bazel-mirror.storage.googleapis.com/bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-macosx.zip",
   )
 
-def python_gflags():
-  native.new_http_archive(
-      name = "python_gflags",
-      url = "https://bazel-mirror.storage.googleapis.com/github.com/google/python-gflags/archive/3.0.2.zip",
-      sha256 = "8700f5b8d61f843425b090287874b4ff45510d858caa109847162dd98c7856f8",
-      strip_prefix = "python-gflags-3.0.2",
-      build_file = str(Label("//closure/linter:python_gflags.BUILD")),
-  )
-
 def soy():
   native.maven_jar(
       name = "soy",
@@ -236,7 +218,6 @@ def closure_repositories(
     omit_args4j=False,
     omit_closure_compiler=False,
     omit_closure_library=False,
-    omit_closure_linter=False,
     omit_closure_stylesheets=False,
     omit_fonts_noto_hinted_deb=False,
     omit_fonts_noto_mono_deb=False,
@@ -254,7 +235,6 @@ def closure_repositories(
     omit_libpng_amd64_deb=False,
     omit_phantomjs_linux_x86_64=False,
     omit_phantomjs_macosx=False,
-    omit_python_gflags=False,
     omit_soy=False,
     omit_soyutils_usegoog=False):
   if not omit_aopalliance:
@@ -273,8 +253,6 @@ def closure_repositories(
     closure_compiler()
   if not omit_closure_library:
     closure_library()
-  if not omit_closure_linter:
-    closure_linter()
   if not omit_closure_stylesheets:
     closure_stylesheets()
   if not omit_fonts_noto_hinted_deb:
@@ -309,8 +287,6 @@ def closure_repositories(
     phantomjs_linux_x86_64()
   if not omit_phantomjs_macosx:
     phantomjs_macosx()
-  if not omit_python_gflags:
-    python_gflags()
   if not omit_soy:
     soy()
   if not omit_soyutils_usegoog:
