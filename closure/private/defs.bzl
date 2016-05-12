@@ -20,8 +20,6 @@
 JS_LANGUAGE_DEFAULT = "ECMASCRIPT5_STRICT"
 JS_FILE_TYPE = FileType([".js"])
 JS_TEST_FILE_TYPE = FileType(["_test.js"])
-_CLOSURE_ROOT = "external/closure_library/closure/goog"
-_CLOSURE_REL = "../../../.."
 
 JS_LANGUAGES = set([
     "ANY",
@@ -81,18 +79,6 @@ def determine_js_language(ctx, normalize=False):
     language = JS_LANGUAGE_DEFAULT
   return language
 
-def make_js_deps_runfiles(ctx, srcs):
-  ctx.action(
-      inputs=list(srcs),
-      outputs=[ctx.outputs.runfiles],
-      arguments=(["--output_file=%s" % ctx.outputs.runfiles.path] +
-                 ["--root_with_prefix=%s %s" % (r, _make_prefix(p))
-                  for r, p in _find_roots(
-                      [(src.dirname, src.short_path) for src in srcs])]),
-      executable=ctx.executable._depswriter,
-      progress_message="Calculating %d JavaScript runfile deps to %s" % (
-          len(srcs), ctx.outputs.runfiles.short_path))
-
 def is_using_closure_library(srcs):
   return _contains_file(srcs, "external/closure_library/closure/goog/base.js")
 
@@ -142,30 +128,6 @@ def _mix_js_languages(ctx, current, dependent):
                  ctx.label.name, dependent, current, compatible))
     return compatible
   fail("Can not link an %s library against an %s one." % (dependent, current))
-
-def _find_roots(dirs):
-  roots = {}
-  for _, d, p in sorted([(len(d.split("/")), d, p) for d, p in dirs]):
-    parts = d.split("/")
-    want = True
-    for i in range(len(parts)):
-      if "/".join(parts[:i + 1]) in roots:
-        want = False
-        break
-    if want:
-      roots[d] = p
-  return roots.items()
-
-def _make_prefix(prefix):
-  prefix = "/".join(prefix.split("/")[:-1])
-  if not prefix:
-    return _CLOSURE_REL
-  elif prefix == _CLOSURE_ROOT:
-    return "."
-  elif prefix.startswith(_CLOSURE_ROOT + "/"):
-    return prefix[len(_CLOSURE_ROOT) + 1:]
-  else:
-    return _CLOSURE_REL + "/" + prefix
 
 def _contains_file(srcs, path):
   for src in srcs:

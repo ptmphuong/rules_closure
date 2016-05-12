@@ -417,7 +417,7 @@ admin-only path named `/filez/`, then raw source mode could be used as follows:
 
 ```html
 <script src="/filez/external/closure_library/closure/goog/base.js"></script>
-<script src="/filez/myapp/deps-runfiles.js"></script>
+<script src="/filez/myapp/deps.js"></script>
 <script>goog.require('myapp.main');</script>
 <script>myapp.main();</script>
 ```
@@ -427,12 +427,7 @@ admin-only path named `/filez/`, then raw source mode could be used as follows:
 - *name*.js: A JavaScript source file containing `goog.addDependency()`
   statements which map Closure Library namespaces to JavaScript source paths.
   Each path is expressed relative to the location of the Closure Library
-  `base.js` file. The paths in this file will contain direct references to the
-  files in Bazel's output directories.
-
-- *name*-runfiles.js: This file is the same as *name*.js except its paths will
-  not contain any of the weird Bazel output directories. This is the file that
-  you want to use when loading sources from a web server.
+  `base.js` file.
 
 ### Arguments
 

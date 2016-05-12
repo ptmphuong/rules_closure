@@ -13,7 +13,6 @@
 # limitations under the License.
 
 load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
-load("//closure/compiler:closure_js_deps.bzl", "closure_js_deps")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:test_rules.bzl", "file_test")
 
