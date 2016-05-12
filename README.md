@@ -6,7 +6,6 @@ JavaScript | Templating | Stylesheets
 [closure_js_binary](#closure_js_binary) | [closure_template_java_library](#closure_template_java_library) | [closure_css_binary](#closure_css_binary)
 [closure_js_deps](#closure_js_deps) | [closure_template_py_library](#closure_template_py_library) |
 [closure_js_test](#closure_js_test) | |
-[closure_js_check_test](#closure_js_check_test) | |
 
 ## Overview
 
@@ -398,36 +397,6 @@ path.
 - **language:** (String; optional; default is `"ECMASCRIPT5_STRICT"`) Variant of
   JavaScript in which `srcs` are written. See the `closure_js_library`
   documentation for more information.
-
-
-## closure\_js\_check\_test
-
-```python
-load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_check_test")
-closure_js_check_test(name, deps, pedantic, defs)
-```
-
-Performs type checking on JavaScript libraries without producing a binary.
-
-This rule is useful in certain circumstances, such as Node.js applications,
-where the developer does not need minimization but still desires the language
-safety benefits offered by the Closure Compiler in ADVANCED compilation mode.
-
-### Arguments
-
-- **name:** ([Name][name]; required) A unique name for this rule.
-
-- **deps:** (List of [labels][labels]; optional) Direct dependency list. This
-  has the same meaning as it does in `closure_js_binary`. If this attribute is
-  empty, `srcs` must be specified.
-
-- **pedantic** (Boolean; optional; default is `0`) See the documentation for
-  `pedantic` under `closure_js_binary`.
-
-- **defs:** (List of strings; optional) Specifies additional flags to be passed
-  to the Closure Compiler, e.g. `"--hide_warnings_for=some/path/"`. To see what
-  flags are available, run:
-  `bazel run @io_bazel_rules_closure//closure/compiler -- --help`
 
 
 ## closure\_js\_deps

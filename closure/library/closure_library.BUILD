@@ -894,6 +894,7 @@ filegroup(
         "closure/goog/testing/net/xhrio.js",
         "closure/goog/testing/net/xhriopool.js",
         "closure/goog/testing/objectpropertystring.js",
+        "closure/goog/testing/parallel_closure_test_suite.js",
         "closure/goog/testing/performancetable.js",
         "closure/goog/testing/performancetimer.js",
         "closure/goog/testing/propertyreplacer.js",
@@ -1020,7 +1021,6 @@ py_binary(
 #         ],
 #         exclude = [
 #             "closure/goog/testing/**/*_test.js",
-#             "closure/goog/testing/**/*_test_suite.js",
 #             "closure/goog/labs/testing/**/*_test.js",
 #         ],
 #     ) + [

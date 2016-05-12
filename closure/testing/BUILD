@@ -1,7 +1,6 @@
 package(default_visibility = ["//visibility:public"])
 
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
-load("//closure/testing:closure_js_check_test.bzl", "closure_js_check_test")
 
 exports_files(["phantomjs_runner.js"])
 
@@ -23,18 +22,4 @@ closure_js_library(
     language = "ECMASCRIPT5_STRICT",
     visibility = ["//visibility:private"],
     deps = ["//closure/testing/externs:phantom_lib"],
-)
-
-closure_js_check_test(
-    name = "phantomjs_jsunit_runner_check",
-    pedantic = True,
-    visibility = ["//visibility:private"],
-    deps = [":phantomjs_jsunit_runner_lib"],
-)
-
-closure_js_check_test(
-    name = "phantomjs_runner_check",
-    pedantic = True,
-    visibility = ["//visibility:private"],
-    deps = [":phantomjs_runner_lib"],
 )
