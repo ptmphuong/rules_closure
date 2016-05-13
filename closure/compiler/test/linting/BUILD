@@ -36,7 +36,7 @@ file_test(
 closure_js_library(
     name = "superfluousSuppress",
     srcs = ["love.js"],
-    nofail = True,
+    internal_nofail = True,
     suppress = ["JSC_WRONG_NUMBER_OF_PARAMS"],
     tags = ["manual"],
 )

@@ -48,7 +48,7 @@ def _impl(ctx):
           "--language=%s" % _determine_check_language(ctx.attr.language)]
   if ctx.attr.testonly:
     args += ["--testonly"]
-  if ctx.attr.nofail:
+  if ctx.attr.internal_nofail:
     args += ["--nofail"]
   for direct_src in ctx.files.srcs:
     args += ["--src=%s" % direct_src.path]
@@ -92,7 +92,7 @@ closure_js_library = rule(
         "suppress": attr.string_list(),
 
         # internal only
-        "nofail": attr.bool(default=False),
+        "internal_nofail": attr.bool(default=False),
         "_jschecker": attr.label(
             default=Label("//java/com/google/javascript/jscomp:jschecker"),
             executable=True),
