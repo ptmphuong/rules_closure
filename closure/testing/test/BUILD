@@ -73,8 +73,6 @@ closure_js_library(
     name = "arithmetic_es6module_lib",
     srcs = ["arithmetic_es6module.js"],
     language = "ECMASCRIPT6_STRICT",
-    # ES6 modules cause synthetic code to be generated using goog.provide.
-    deps = ["//closure/library:base"],
 )
 
 closure_js_test(

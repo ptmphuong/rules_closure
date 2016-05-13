@@ -94,6 +94,7 @@ closure_js_library(
     name = "es6const_lib",
     srcs = ["es6const.js"],
     language = "ECMASCRIPT6_STRICT",
+    no_closure_library = True,
 )
 
 closure_js_binary(
@@ -113,6 +114,7 @@ closure_js_library(
     name = "es6arrow_lib",
     srcs = ["es6arrow.js"],
     language = "ECMASCRIPT6_STRICT",
+    no_closure_library = True,
 )
 
 closure_js_binary(
@@ -132,6 +134,7 @@ closure_js_library(
     name = "es6typed_lib",
     srcs = ["es6typed.js"],
     language = "ECMASCRIPT6_TYPED",
+    no_closure_library = True,
 )
 
 closure_js_binary(

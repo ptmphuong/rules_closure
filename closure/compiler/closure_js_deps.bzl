@@ -16,9 +16,11 @@
 
 """Build definitions for JavaScript dependency files."""
 
+load("//closure/private:defs.bzl", "CLOSURE_LIBRARY_BASE_ATTR")
+
 def _impl(ctx):
   # XXX: Other files in same directory will get schlepped in w/o sandboxing.
-  basejs = list(ctx.attr._library_base.transitive_js_srcs)[0]
+  basejs = ctx.file._closure_library_base
   closure_root = _dirname(basejs.short_path)
   closure_rel = '/'.join(['..' for _ in range(len(closure_root.split('/')))])
   srcs = set(order="compile")
@@ -70,10 +72,9 @@ closure_js_deps = rule(
         "deps": attr.label_list(
             allow_files=False,
             providers=["transitive_js_srcs"]),
+        "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_depswriter": attr.label(
             default=Label("@closure_library//:depswriter"),
             executable=True),
-        "_library_base": attr.label(
-            default=Label("//closure/library:base")),
     },
     outputs={"out": "%{name}.js"})

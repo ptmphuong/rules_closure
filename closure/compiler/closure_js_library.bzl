@@ -14,10 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Build definitions for Closure JavaScript libraries.
-"""
+"""Build definitions for Closure JavaScript libraries."""
 
 load("//closure/private:defs.bzl",
+     "CLOSURE_LIBRARY_BASE_ATTR",
      "JS_LANGUAGE_DEFAULT",
      "JS_DEPS_ATTR",
      "JS_FILE_TYPE",
@@ -90,12 +90,14 @@ closure_js_library = rule(
         "language": attr.string(default=JS_LANGUAGE_DEFAULT),
         "convention": attr.string(default="CLOSURE"),
         "suppress": attr.string_list(),
+        "no_closure_library": attr.bool(default=False),
 
         # internal only
         "internal_nofail": attr.bool(default=False),
         "_jschecker": attr.label(
             default=Label("//java/com/google/javascript/jscomp:jschecker"),
             executable=True),
+        "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
     },
     outputs={
         "provided": "%{name}-provided.txt",

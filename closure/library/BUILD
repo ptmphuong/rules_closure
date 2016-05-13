@@ -29,7 +29,6 @@ closure_js_library(
         "JSC_MISSING_RETURN_JSDOC",
         "JSC_MUST_BE_PRIVATE",
     ],
-    deps = [":base"],
 )
 
 closure_js_library(
@@ -48,17 +47,4 @@ closure_js_library(
 closure_css_library(
     name = "css",
     srcs = ["@closure_library//:css_files"],
-)
-
-# This file doesn't goog.provide() any namespaces, so it won't break strict
-# dependency checking if you only link against :library, which is recommended
-# for Closure Library users. This target exists so it can be added as a
-# lightweight dependency when source code uses things like ES6 modules. This is
-# because the Closure Compiler generates synthetic code with goog.provide()
-# statements.
-closure_js_library(
-    name = "base",
-    srcs = ["@closure_library//:closure/goog/base.js"],
-    language = "ECMASCRIPT5_STRICT",
-    suppress = ["JSC_INVALID_SUPPRESS"],
 )
