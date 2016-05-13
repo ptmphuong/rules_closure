@@ -36,12 +36,12 @@ load("//closure/private:defs.bzl",
 # QtWebKit) supports ECMASCRIPT5_STRICT, we want to transpile to that language,
 # or whatever is nearest: http://kangax.github.io/compat-table/es5/#webkit
 _OUTPUT_LANGUAGE = {
-  "ECMASCRIPT3": "ECMASCRIPT3",
-  "ECMASCRIPT5": "ECMASCRIPT5",
-  "ECMASCRIPT6": "ECMASCRIPT5",
-  "ECMASCRIPT5_STRICT": "ECMASCRIPT5_STRICT",
-  "ECMASCRIPT6_STRICT": "ECMASCRIPT5_STRICT",
-  "ECMASCRIPT6_TYPED": "ECMASCRIPT5_STRICT",
+    "ECMASCRIPT3": "ECMASCRIPT3",
+    "ECMASCRIPT5": "ECMASCRIPT5",
+    "ECMASCRIPT6": "ECMASCRIPT5",
+    "ECMASCRIPT5_STRICT": "ECMASCRIPT5_STRICT",
+    "ECMASCRIPT6_STRICT": "ECMASCRIPT5_STRICT",
+    "ECMASCRIPT6_TYPED": "ECMASCRIPT5_STRICT",
 }
 
 def _impl(ctx):
@@ -126,7 +126,9 @@ _closure_js_test = rule(
 #      WHITESPACE_ONLY mode because other modes would be unreasonably slow.
 
 def closure_js_test(name, srcs, **kwargs):
-  if len(srcs) == 1:
+  if not srcs:
+    fail("closure_js_test rules can not have an empty 'srcs' list")
+  elif len(srcs) == 1:
     _closure_js_test(name = name, srcs = srcs, **kwargs)
   else:
     tests = []

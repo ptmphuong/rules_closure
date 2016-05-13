@@ -12,13 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.provide('arithmetic');
-
-
 
 /**
  * Adds two numbers.
  */
-arithmetic.add = function(a: number, b: number): number {
+export function add(a: number, b: number): number {
   return a + b;
 };

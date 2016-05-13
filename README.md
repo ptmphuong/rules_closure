@@ -106,7 +106,7 @@ Please see the test directories within this project for concrete examples of usa
 
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
-closure_js_library(name, srcs, externs, deps, language, depmode, exports)
+closure_js_library(name, srcs, externs, deps, language, exports)
 ```
 
 Defines a set of JavaScript sources or externs.
@@ -120,9 +120,9 @@ targets. See the documentation of the `deps` attribute for further information.
 ### Arguments
 
 - **name:** ([Name][name]; required) A unique name for this rule. The standard
-  convention is that this be the same name as the Bazel package, unless
-  `depmode = "NONE"`, in which case this attribute should be the name of the
-  `.js` source with a `_lib` suffix.
+  convention is that this be the same name as the Bazel package with
+  `srcs = glob(['*.js'])`. If it contains a subset of the `.js` srcs in the
+  package, then convention states that the `_lib` suffix should be used.
 
 - **srcs:** (List of [labels][labels]; optional) The list of `.js` source files
   that represent this library. This attribute is required unless the `exports`
@@ -177,33 +177,6 @@ targets. See the documentation of the `deps` attribute for further information.
   your code exclusively in that language. (XXX: Unfortunately a
   [bug][phantomjs-bug] in PhantomJS is blocking this at the moment.)
 
-- **depmode:** (String; optional; default is `"CLOSURE"`) Indicates how
-  dependencies work within a particular library. This flag is used to calculate
-  which value is passed to the `--dependency_mode` flag of the Closure
-  Compiler. The following are valid options:
-
-  - `CLOSURE`: Indicates you are are using Closure Library `goog.provide` and
-    `goog.require` or `goog.module` statements to manage your JavaScript
-    dependencies. When using this option, each source file in a library must
-    provide a symbol.
-
-  - `ES6MODULES`: Indicates you're using the standard ECMASCRIPT6 module syntax.
-    Strict dependency checking is not supported for this flag at this time.
-
-  - `COMMONJS`: Indicates you're using the `require()` and `exports.foo` syntax
-    frequently used by Node.js projects. Strict dependency checking is currently
-    not supported for this attribute.
-
-  - `NONE`: Indicates the sources in this library use no dependency directives
-    at all. When this attribute is used, only a single file may be specified in
-    `srcs`. This is because `closure_js_binary` will have to rely on the partial
-    ordering of `closure_js_library` rules in order to determine declaration
-    order. This attribute also affects the `--dependency_mode` flag passed to
-    the Closure Compiler. If a binary references a single rule with
-    `depmode=NONE` then `--dependency_mode` will decay from STRICT to LOOSE. If
-    *all* JS libraries use `depmode="NONE"`, then `--dependency_mode` will be
-    set to NONE.
-
 - **exports:** (List of [labels][labels]; optional) Listing dependencies here
   will cause them to become *direct* dependencies in parent rules. This
   functions similarly to [java_library.exports][java-exports]. This can be used
@@ -231,8 +204,8 @@ closure_js_library(
 
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
-closure_js_binary(name, deps, main, css, pedantic, debug, language,
-                  compilation_level, formatting, defs)
+closure_js_binary(name, deps, css, pedantic, debug, language, entry_points,
+                  dependency_mode, compilation_level, formatting, defs)
 ```
 
 Turns JavaScript libraries into a minified optimized blob of code.
@@ -287,6 +260,19 @@ This rule must be used in conjunction with `closure_js_library`.
   variant to which library sources are transpiled. The default is ES3 because it
   works in all browsers. The input language is calculated automatically based on
   the `language` attribute of `closure_js_library` dependencies.
+
+- **entry_points:** (List of String; optional; default is `[]`) List of
+  unreferenced namespaces that should *not* be pruned by the compiler. This
+  should only be necessary when you want to invoke them from a `<script>` tag on
+  your HTML page. See [Exports and Entry Points][entry-export] to learn how this
+  works with the `@export` feature. For further context, see the Closure
+  Compiler documentation on [managing dependencies][managing-dependencies].
+
+- **dependency_mode:** (String; optional; default is `"LOOSE"`) In rare
+  circumstances you may want to set this flag to `"STRICT"`. See the
+  [Exports and Entry Points][entry-export] unit tests and the Closure Compiler's
+  [managing dependencies][managing-dependencies] documentation for more
+  information.
 
 - **compilation_level:** (String; optional; default is `"ADVANCED"`) Specifies
   how minified you want your JavaScript binary to be. Valid options are:
@@ -693,10 +679,12 @@ The documentation on using Closure Stylesheets can be found
 [css-sourcemap]: https://developer.chrome.com/devtools/docs/css-preprocessors
 [dependency]: http://bazel.io/docs/build-ref.html#dependencies
 [es6]: http://es6-features.org/
+[entry-export]: https://github.com/bazelbuild/rules_closure/blob/master/closure/compiler/test/exports_and_entry_points/BUILD
 [java-exports]: http://bazel.io/docs/be/java.html#java_library.exports
 [jsstyle]: https://google.github.io/styleguide/javascriptguide.xml
 [jquery]: http://jquery.com/
 [labels]: http://bazel.io/docs/build-ref.html#labels
 [name]: http://bazel.io/docs/build-ref.html#name
+[managing-dependencies]: https://github.com/google/closure-compiler/wiki/Managing-Dependencies
 [phantomjs-bug]: https://github.com/ariya/phantomjs/issues/14028
 [phantomjs]: http://phantomjs.org/

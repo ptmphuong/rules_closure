@@ -12,11 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.setTestOnly();
+// Example of a self-contained program.
+//
+// closure_js_binary() can turn this file into a compiled JavaScript blob that
+// can be run. However the HTML page will not be able to call the functions that
+// are defined in this file, because they're not exported.
 
-import * as arithmetic from 'closure/testing/test/arithmetic_es6typed';
+
+/**
+ * Since this is not an @export function, the compiler will inline it into the
+ * invocation below.
+ */
+function iCantBeCalledExternally() {
+  console.log('hi');
+}
 
 
-function testAdd() {
-  assertEquals(4, arithmetic.add(2, 2));
+iCantBeCalledExternally();
+
+
+/**
+ * Since nothing calls this function, it's considered dead code and removed
+ * entirely.
+ */
+function iAmDeadCode() {
+  console.log('no one loves me');
 }

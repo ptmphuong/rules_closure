@@ -78,8 +78,10 @@ def collect_js_srcs(ctx):
 
 def determine_js_language(ctx, normalize=False):
   language = "ANY"
-  if hasattr(ctx.attr, "language") and not hasattr(ctx.attr, "main"):
-    language = _check_js_language(ctx.attr.language)
+  if hasattr(ctx.attr, "language"):
+    # Don't do the language mixing check for closure_js_binary()
+    if not hasattr(ctx.attr, "entry_points"):
+      language = _check_js_language(ctx.attr.language)
   for dep in ctx.attr.deps:
     language = _mix_js_languages(ctx, language, dep.js_language)
   if hasattr(ctx.attr, "exports"):

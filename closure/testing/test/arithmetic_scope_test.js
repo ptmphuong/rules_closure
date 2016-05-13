@@ -14,13 +14,12 @@
 
 goog.setTestOnly();
 
-goog.require('arithmetic');
-goog.require('goog.testing.testSuite');
+import * as arithmetic from 'closure/testing/test/arithmetic_es6typed';
+import 'goog:goog.testing.testSuite';
 
 goog.scope(function() {
-var testSuite = goog.testing.testSuite;
 
-testSuite({
+goog.testing.testSuite({
   testAdd: function() {
     assertEquals(4, arithmetic.add(2, 2));
   }

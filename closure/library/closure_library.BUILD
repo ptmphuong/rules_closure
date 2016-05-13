@@ -824,7 +824,6 @@ filegroup(
         "third_party/closure/goog/loremipsum/text/loremipsum.js",
         "third_party/closure/goog/mochikit/async/deferred.js",
         "third_party/closure/goog/mochikit/async/deferredlist.js",
-        "third_party/closure/goog/osapi/osapi.js",
         "third_party/closure/goog/svgpan/svgpan.js",
     ],
 )
@@ -1005,6 +1004,7 @@ py_binary(
 #             "closure/goog/tweak/testhelpers.js",
 #             "closure/goog/useragent/useragenttestutil.js",
 #             "third_party/closure/goog/**/*_test.js",
+#             "third_party/closure/goog/osapi/osapi.js", # causes compiler errors
 #         ],
 #     ),
 #     outs = ["js_files_maker.txt"],

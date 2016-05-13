@@ -20,6 +20,8 @@ load("//closure/private:defs.bzl", "CLOSURE_LIBRARY_BASE_ATTR")
 
 def _impl(ctx):
   # XXX: Other files in same directory will get schlepped in w/o sandboxing.
+  if not ctx.attr.deps:
+    fail("closure_js_deps rules can not have an empty 'deps' list")
   basejs = ctx.file._closure_library_base
   closure_root = _dirname(basejs.short_path)
   closure_rel = '/'.join(['..' for _ in range(len(closure_root.split('/')))])

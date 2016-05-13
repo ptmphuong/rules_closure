@@ -83,14 +83,14 @@ def _impl(ctx):
 closure_js_library = rule(
     implementation=_impl,
     attrs={
-        "srcs": attr.label_list(allow_files=JS_FILE_TYPE),
-        "externs": attr.label_list(allow_files=JS_FILE_TYPE),
+        "convention": attr.string(default="CLOSURE"),
         "deps": JS_DEPS_ATTR,
         "exports": JS_DEPS_ATTR,
+        "externs": attr.label_list(allow_files=JS_FILE_TYPE),
         "language": attr.string(default=JS_LANGUAGE_DEFAULT),
-        "convention": attr.string(default="CLOSURE"),
-        "suppress": attr.string_list(),
         "no_closure_library": attr.bool(default=False),
+        "srcs": attr.label_list(allow_files=JS_FILE_TYPE),
+        "suppress": attr.string_list(),
 
         # internal only
         "internal_nofail": attr.bool(default=False),

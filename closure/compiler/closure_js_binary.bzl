@@ -27,6 +27,8 @@ load("//closure/private:defs.bzl",
      "is_using_closure_library")
 
 def _impl(ctx):
+  if not ctx.attr.deps:
+    fail("closure_js_binary rules can not have an empty 'deps' list")
   srcs, externs = collect_js_srcs(ctx)
   language_in = determine_js_language(ctx, normalize=True)
   language_out = ctx.attr.language
@@ -35,7 +37,8 @@ def _impl(ctx):
       "--create_source_map=%s" % ctx.outputs.map.path,
       "--language_in=%s" % language_in,
       "--language_out=%s" % language_out,
-      "--compilation_level=" + ctx.attr.compilation_level,
+      "--compilation_level=%s" % ctx.attr.compilation_level,
+      "--dependency_mode=%s" % ctx.attr.dependency_mode,
       "--warning_level=VERBOSE",
       "--new_type_inf",
       "--generate_exports",
@@ -53,16 +56,11 @@ def _impl(ctx):
     args += ["--formatting=" + ctx.attr.formatting]
   if ctx.attr.debug:
     args += ["--debug"]
-  else:
-    if is_using_closure_library(srcs):
-      args += ["--define=goog.DEBUG=false"]
-  if ctx.attr.main:
-    args += [
-        "--dependency_mode=STRICT",
-        "--entry_point=goog:%s" % ctx.attr.main,
-    ]
-  else:
-    args += ["--dependency_mode=LOOSE"]
+  elif is_using_closure_library(srcs):
+    args += ["--define=goog.DEBUG=false"]
+  for entry_point in ctx.attr.entry_points:
+    _validate_entry_point(entry_point, srcs)
+    args += ["--entry_point=" + entry_point]
   if ctx.attr.pedantic:
     args += JS_PEDANTIC_ARGS
     args += ["--use_types_for_optimization"]
@@ -80,17 +78,49 @@ def _impl(ctx):
           ctx.outputs.out.short_path))
   return struct(files=set([ctx.outputs.out]))
 
+def _validate_entry_point(entry_point, srcs):
+  if entry_point.startswith('goog:'):
+    if '/' in entry_point:
+      fail("Closure namespace entry_point should not contain '/': " +
+           entry_point)
+  else:
+    if entry_point.endswith('.js'):
+      fail("Do not use '.js' at the end of entry_point: " + entry_point)
+    found = False
+    maybe = []
+    for src in srcs:
+      if src.short_path == entry_point + '.js':
+        found = True
+        break
+      if entry_point in src.short_path and src.short_path.endswith('.js'):
+        maybe += [src.short_path[:-3]]
+    if not found:
+      prefix = "Invalid entry_point: %s\n\n" % entry_point
+      if maybe:
+        fail(prefix + "Perhaps you meant one of following:\n\n  - " +
+             "\n  - ".join(maybe))
+      else:
+        extra = ""
+        if '/' not in entry_point:
+          extra = (".\n\nIf you intended to specify a goog.provide'd " +
+                   "namespace then you need to use a 'goog:' prefix")
+        fail(prefix +
+             "There is no JS source in the transitive closure of " +
+             "dependencies for this rule whose path is equivalent " +
+             "to this name" + extra)
+
 closure_js_binary = rule(
     implementation=_impl,
     attrs={
-        "deps": JS_DEPS_ATTR,
-        "main": attr.string(),
         "compilation_level": attr.string(default="ADVANCED"),
-        "pedantic": attr.bool(default=False),
         "debug": attr.bool(default=False),
+        "defs": attr.string_list(),
+        "dependency_mode": attr.string(default="LOOSE"),
+        "deps": JS_DEPS_ATTR,
+        "entry_points": attr.string_list(default=[]),
         "formatting": attr.string(),
         "language": attr.string(default="ECMASCRIPT3"),
-        "defs": attr.string_list(),
+        "pedantic": attr.bool(default=False),
         "_compiler": attr.label(
             default=Label("//closure/compiler"),
             executable=True),

@@ -63,6 +63,13 @@ file_test(
 )
 
 closure_js_library(
+    name = "empty_lib",
+    srcs = ["empty.js"],
+    language = "ECMASCRIPT6_STRICT",
+    visibility = ["//closure/compiler/test/exports_and_entry_points:__pkg__"],
+)
+
+closure_js_library(
     name = "unstrict_lib",
     srcs = ["empty.js"],
     language = "ECMASCRIPT3",
