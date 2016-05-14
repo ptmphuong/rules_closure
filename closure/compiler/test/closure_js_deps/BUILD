@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+package(default_testonly = True)
+
 load("//closure/compiler:closure_js_deps.bzl", "closure_js_deps")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:file_test.bzl", "file_test")

@@ -1,4 +1,7 @@
-package(default_visibility = ["//visibility:public"])
+package(
+    default_testonly = True,
+    default_visibility = ["//visibility:public"],
+)
 
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 
@@ -6,7 +9,6 @@ exports_files(["phantomjs_runner.js"])
 
 closure_js_library(
     name = "phantomjs_jsunit_runner_lib",
-    testonly = True,
     srcs = ["phantomjs_jsunit_runner.js"],
     language = "ECMASCRIPT5_STRICT",
     deps = [
@@ -17,7 +19,6 @@ closure_js_library(
 
 closure_js_library(
     name = "phantomjs_runner_lib",
-    testonly = True,
     srcs = ["phantomjs_runner.js"],
     language = "ECMASCRIPT5_STRICT",
     visibility = ["//visibility:private"],

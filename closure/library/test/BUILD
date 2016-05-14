@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+package(default_testonly = True)
+
 load("//closure/testing:closure_js_test.bzl", "closure_js_test")
 
 closure_js_test(

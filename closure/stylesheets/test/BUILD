@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+package(default_testonly = True)
+
 load("//closure/stylesheets:closure_css_binary.bzl", "closure_css_binary")
 load("//closure/stylesheets:closure_css_library.bzl", "closure_css_library")
 load("//closure/private:file_test.bzl", "file_test")
