@@ -147,7 +147,7 @@ public final class JsChecker {
 
   @Option(
       name = "--output_errors",
-      usage = "Name of output file for tee'd compiler errors.")
+      usage = "Name of output file for compiler errors in --nofail mode.")
   private String outputErrors = "";
 
   @Option(
@@ -270,8 +270,10 @@ public final class JsChecker {
     }
 
     // write errors
-    for (String line : state.stderr) {
-      System.err.println(line);
+    if (!nofail) {
+      for (String line : state.stderr) {
+        System.err.println(line);
+      }
     }
     if (!outputErrors.isEmpty()) {
       Files.write(Paths.get(outputErrors), state.stderr, UTF_8);

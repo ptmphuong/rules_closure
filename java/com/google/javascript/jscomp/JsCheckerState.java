@@ -32,7 +32,7 @@ final class JsCheckerState {
   final String label;
   final boolean testonly;
 
-  // Error output for compiler which gets tee'd to two file descriptors.
+  // Error output for compiler which gets written to stderr.
   final List<String> stderr = new ArrayList<>();
 
   // XXX: There are actually cooler data structures we could be using here to save space. Like maybe
