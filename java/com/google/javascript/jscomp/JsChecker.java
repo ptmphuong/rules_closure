@@ -86,13 +86,14 @@ public final class JsChecker {
           CheckJSDocStyle.OPTIONAL_TYPE_NOT_USING_OPTIONAL_NAME);
 
   private enum Convention {
+    NONE(CodingConventions.getDefault()),
     CLOSURE(new JsCheckerClosureCodingConvention()),
     GOOGLE(new GoogleCodingConvention()),
     JQUERY(new JqueryCodingConvention());
 
-    final CodingConventions.Proxy convention;
+    final CodingConvention convention;
 
-    private Convention(CodingConventions.Proxy convention) {
+    private Convention(CodingConvention convention) {
       this.convention = convention;
     }
   }
