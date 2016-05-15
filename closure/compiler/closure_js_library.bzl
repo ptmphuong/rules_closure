@@ -22,17 +22,16 @@ load("//closure/private:defs.bzl",
      "JS_DEPS_ATTR",
      "JS_FILE_TYPE",
      "collect_js_srcs",
-     "determine_js_language")
-
-def _determine_check_language(language):
-  if language == "ANY":
-    return "ECMASCRIPT3"
-  return language
+     "determine_js_language",
+     "is_using_closure_library")
 
 def _impl(ctx):
   srcs, externs = collect_js_srcs(ctx)
   if not ctx.files.srcs and not ctx.files.externs and not ctx.attr.exports:
     fail("Either 'srcs', 'externs', or 'exports' must be specified")
+  if ctx.attr.no_closure_library and is_using_closure_library(srcs):
+    fail("no_closure_library is pointless when the Closure Library is " +
+         "already part of the transitive closure")
   inputs = []
   args = ["--output=%s" % ctx.outputs.provided.path,
           "--output_errors=%s" % ctx.outputs.stderr.path,
@@ -78,6 +77,11 @@ def _impl(ctx):
                 transitive_js_externs=externs,
                 runfiles=ctx.runfiles(files=[ctx.outputs.provided,
                                              ctx.outputs.stderr]))
+
+def _determine_check_language(language):
+  if language == "ANY":
+    return "ECMASCRIPT3"
+  return language
 
 closure_js_library = rule(
     implementation=_impl,
