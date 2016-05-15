@@ -31,15 +31,8 @@ def _determine_check_language(language):
 
 def _impl(ctx):
   srcs, externs = collect_js_srcs(ctx)
-  if ctx.files.exports:
-    for forbid in ['srcs', 'externs', 'deps']:
-      if getattr(ctx.files, forbid):
-        fail("'exports' may not be specified when '%s' is set" % forbid)
-  else:
-    if not ctx.files.srcs and not ctx.files.externs:
-      fail("Either 'srcs' or 'externs' must be specified")
-    if ctx.files.srcs and ctx.files.externs:
-      fail("'srcs' may not be specified when 'externs' is set")
+  if not ctx.files.srcs and not ctx.files.externs and not ctx.attr.exports:
+    fail("Either 'srcs', 'externs', or 'exports' must be specified")
   inputs = []
   args = ["--output=%s" % ctx.outputs.provided.path,
           "--output_errors=%s" % ctx.outputs.stderr.path,

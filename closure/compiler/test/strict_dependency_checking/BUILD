@@ -135,6 +135,25 @@ file_test(
 )
 
 closure_js_library(
+    name = "b2",
+    srcs = ["b.js"],
+    exports = [":a"],
+    deps = [":a"],
+)
+
+closure_js_library(
+    name = "exportMadeTransitiveDepDirect",
+    srcs = ["c.js"],
+    deps = [":b2"],  # but if :b exports :a, then we're ok
+)
+
+file_test(
+    name = "exportedDependency_wormsAroundStrictsDependencyChecking",
+    content = "",
+    file = "exportMadeTransitiveDepDirect-stderr.txt",
+)
+
+closure_js_library(
     name = "duplicateProvidesWithinALibrary",
     srcs = [
         "a.js",

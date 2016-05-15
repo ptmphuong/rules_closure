@@ -186,9 +186,10 @@ target. See the documentation of the `deps` attribute for further information.
 - **exports:** (List of [labels][labels]; optional) Listing dependencies here
   will cause them to become *direct* dependencies in parent rules. This
   functions similarly to [java_library.exports][java-exports]. This can be used
-  to create aliases or bundle libraries together. However this should be done
-  sparingly. If this attribute is specified, then the `srcs`, `externs`, and
-  `deps` attributes may not be used.
+  to create aliases for rules in another package. It can also be also be used to
+  export private targets within the package. However this feature should ideally
+  never be used. If you find yourself needing `exports`, then you may wish to
+  consider refactoring things so it's no longer necessary.
 
 - **suppress** (List of String; optional; default is `[]`) List of codes the
   linter should ignore. Warning and error messages that are allowed to be
