@@ -53,12 +53,11 @@ final class JsCheckerSecondPass extends AbstractShallowCallback implements HotSw
         if (!namespace.isString()) {
           return;
         }
-        if (callee.matchesQualifiedName("goog.require")) {
-          if (!state.provided.contains(namespace.getString())
-              && !state.provides.contains(namespace.getString())
-              && state.notProvidedNamespaces.add(namespace.getString())) {
-            t.report(namespace, NOT_PROVIDED, state.label);
-          }
+        if (callee.matchesQualifiedName("goog.require")
+            && !state.provided.contains(namespace.getString())
+            && !state.provides.contains(namespace.getString())
+            && state.notProvidedNamespaces.add(namespace.getString())) {
+          t.report(namespace, NOT_PROVIDED, state.label);
         }
         break;
       default:

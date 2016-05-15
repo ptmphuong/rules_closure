@@ -284,11 +284,7 @@ public final class JsChecker {
       Files.write(Paths.get(output), state.provides, UTF_8);
     }
 
-    if (!success) {
-      return false;
-    }
-
-    return true;
+    return success;
   }
 
   private static ImmutableList<SourceFile> getSourceFiles(Iterable<String> filenames) {

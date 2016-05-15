@@ -1,4 +1,4 @@
-# Closure Rules for Bazel (αlpha) [![Build Status](https://travis-ci.org/bazelbuild/rules_closure.svg?branch=master)](https://travis-ci.org/bazelbuild/rules_closure)
+# Closure Rules for Bazel (αlpha) [![Build Status](https://travis-ci.org/bazelbuild/rules_closure.svg?branch=master)](https://travis-ci.org/bazelbuild/rules_closure) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/161e24acf62f48c388a9bdbb20107c5d)](https://www.codacy.com/app/jart/rules_closure?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bazelbuild/rules_closure&amp;utm_campaign=Badge_Grade)
 
 JavaScript | Templating | Stylesheets
 --- | --- | ---
