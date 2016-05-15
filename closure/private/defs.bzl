@@ -17,8 +17,9 @@
 """Common build definitions for Closure Compiler build definitions.
 """
 
-JS_LANGUAGE_DEFAULT = "ECMASCRIPT5_STRICT"
+CSS_FILE_TYPE = FileType([".css", ".gss"])
 JS_FILE_TYPE = FileType([".js"])
+JS_LANGUAGE_DEFAULT = "ECMASCRIPT5_STRICT"
 JS_TEST_FILE_TYPE = FileType(["_test.js"])
 
 JS_LANGUAGES = set([
@@ -50,6 +51,11 @@ JS_DEPS_ATTR = attr.label_list(
                "js_provided",
                "transitive_js_srcs",
                "transitive_js_externs"])
+
+CSS_DEPS_ATTR = attr.label_list(
+    allow_files=False,
+    providers=["css_orientation",
+               "transitive_css_srcs"])
 
 CLOSURE_LIBRARY_BASE_ATTR = attr.label(
     default=Label("@closure_library//:closure/goog/base.js"),

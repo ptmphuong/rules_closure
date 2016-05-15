@@ -14,21 +14,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Build definitions for Closure Stylesheet libraries.
-"""
+"""Build definitions for Closure Stylesheet libraries."""
 
-_CSS_FILE_TYPE = FileType([".css", ".gss"])
+load("//closure/private:defs.bzl",
+     "CSS_DEPS_ATTR",
+     "CSS_FILE_TYPE")
 
 def _impl(ctx):
   srcs = set(order="compile")
   for dep in ctx.attr.deps:
     srcs += dep.transitive_css_srcs
-  srcs += _CSS_FILE_TYPE.filter(ctx.files.srcs)
-  return struct(files=set(), transitive_css_srcs=srcs)
+    if dep.css_orientation != ctx.attr.orientation:
+      fail("%s does not have the same orientation" % dep.label)
+  srcs += CSS_FILE_TYPE.filter(ctx.files.srcs)
+  return struct(files=set(),
+                css_orientation=ctx.attr.orientation,
+                transitive_css_srcs=srcs)
 
 closure_css_library = rule(
     implementation=_impl,
     attrs={
-        "srcs": attr.label_list(allow_files=_CSS_FILE_TYPE),
-        "deps": attr.label_list(providers=["transitive_css_srcs"])
+        "srcs": attr.label_list(allow_files=CSS_FILE_TYPE),
+        "deps": CSS_DEPS_ATTR,
+        "orientation": attr.string(default="LTR"),
     })

@@ -181,3 +181,22 @@ file_test(
     content = ".misery{color:green}",
     file = "require_bin.css",
 )
+
+closure_css_library(
+    name = "flip_lib",
+    srcs = ["flip.css"],
+    orientation = "LTR",
+)
+
+closure_css_binary(
+    name = "flip_bin",
+    orientation = "RTL",
+    deps = [":flip_lib"],
+)
+
+# TODO: Why doesn't URL flipping work?
+file_test(
+    name = "orientationInBinaryIsDifferent_flipsTheOrientation",
+    content = ".a{margin-right:1px}",
+    file = "flip_bin.css",
+)

@@ -17,24 +17,26 @@
 """Build definitions for CSS compiled by the Closure Stylesheets.
 """
 
+load("//closure/private:defs.bzl",
+     "CLOSURE_LIBRARY_BASE_ATTR",
+     "CSS_DEPS_ATTR",
+     "JS_FILE_TYPE")
+
 # XXX: Sourcemap functionality currently not supported because it's broken.
 #      https://github.com/google/closure-stylesheets/issues/78
 #      https://github.com/google/closure-stylesheets/issues/77
 
-_CSS_FILE_TYPE = FileType([".css", ".gss"])
-_JS_FILE_TYPE = FileType([".js"])
-
 def _impl(ctx):
+  if not ctx.attr.deps:
+    fail("closure_css_binary rules can not have an empty 'deps' list")
   srcs = set(order="compile")
   for dep in ctx.attr.deps:
     srcs += dep.transitive_css_srcs
-  js_srcs = set(order="compile")
-  js_srcs += ctx.attr._library.transitive_js_srcs
-  js_srcs += _JS_FILE_TYPE.filter([ctx.outputs.js])
-  js_externs = set(order="compile")
-  js_externs += ctx.attr._library.transitive_js_externs
   outputs = [ctx.outputs.out]
-  args = ["--output-file", ctx.outputs.out.path]
+  input_orientation = _get_input_orientation(ctx.attr.deps)
+  args = ["--output-file", ctx.outputs.out.path,
+          "--input-orientation", input_orientation,
+          "--output-orientation", ctx.attr.orientation]
   if ctx.attr.renaming:
     outputs += [ctx.outputs.js]
     args += ["--output-renaming-map", ctx.outputs.js.path,
@@ -60,30 +62,42 @@ def _impl(ctx):
       executable=ctx.executable._compiler,
       progress_message="Compiling %d stylesheets to %s" % (
           len(srcs), ctx.outputs.out.short_path))
-  return struct(files=set([ctx.outputs.out]),
+  css_files = set([ctx.outputs.out], order="compile")
+  return struct(files=css_files,
+                transitive_css_srcs=css_files,
+                css_orientation=(input_orientation
+                                 if ctx.attr.orientation == "NOCHANGE" else
+                                 ctx.attr.orientation),
                 js_language="ANY",
                 js_exports=set(order="compile"),
                 js_provided=set(order="compile"),
-                transitive_js_srcs=js_srcs,
-                transitive_js_externs=js_externs)
+                transitive_js_srcs=set([ctx.file._closure_library_base,
+                                        ctx.outputs.js],
+                                       order="compile"),
+                transitive_js_externs=set(order="compile"))
+
+def _get_input_orientation(deps):
+  orientation = None
+  for dep in deps:
+    if not orientation:
+      orientation = dep.css_orientation
+    elif orientation != dep.css_orientation:
+      fail("Not all deps have the same orientation")
+  return orientation
 
 closure_css_binary = rule(
     implementation=_impl,
     attrs={
-        "deps": attr.label_list(
-            allow_files=False,
-            providers=["transitive_css_srcs"]),
-        "renaming": attr.bool(default=True),
         "debug": attr.bool(default=False),
-        "vendor": attr.string(),
         "defs": attr.string_list(),
+        "deps": CSS_DEPS_ATTR,
+        "orientation": attr.string(default="NOCHANGE"),
+        "renaming": attr.bool(default=True),
+        "vendor": attr.string(),
         "_compiler": attr.label(
             default=Label("//closure/stylesheets"),
             executable=True),
-        "_library": attr.label(
-            default=Label("//closure/library"),
-            providers=["transitive_js_srcs",
-                       "transitive_js_externs"]),
+        "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
     },
     outputs={"out": "%{name}.css",
              "js": "%{name}.css.js"})

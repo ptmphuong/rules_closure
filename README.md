@@ -612,6 +612,16 @@ the following:
 - **deps:** (List of [labels][labels]; optional) List of other
   `closure_css_library` targets on which the CSS files in `srcs` depend.
 
+- **orientation:** (String; required; default is `"LTR"`) Defines the text
+  direction for which this CSS was designed. This value can be:
+
+  - `LTR`: Outputs a sheet suitable for left to right display.
+  - `RTL`: Outputs a sheet suitable for right to left display.
+
+  An error will be raised if any `deps` do not have the same orientation. CSS
+  libraries with different orientations can be linked together by creating an
+  intermediary `closure_css_binary` that flips its orientation.
+
 
 ## closure\_css\_binary
 
@@ -668,7 +678,7 @@ The documentation on using Closure Stylesheets can be found
   causes the compiled stylesheet to be pretty printed. If `renaming = True` then
   class names will be renamed, but still readable to humans.
 
-- **orientation:** (Boolean; optional; default is `NOCHANGE`) Specify this
+- **orientation:** (String; required; default is `"NOCHANGE"`) Specify this
   option to perform automatic right to left conversion of the input. You can
   choose between:
 

@@ -1,8 +1,7 @@
 /*
- * These provide and require statements are not required. They behave like
- * assert statements and serve as documentation. They allow the build system
- * to perform strict dependency checking. They are also checked by the CSS
- * compiler. Therefore they are worth using.
+ * These provide and require statements are not required, but using them is
+ * very important. They document the relationship between stylesheets and allow
+ * the build system to perform strict dependency checking.
  */
 @provide 'closure.rules.bar';
 @require 'closure.rules.foo';
