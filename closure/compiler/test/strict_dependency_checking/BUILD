@@ -123,7 +123,7 @@ file_test(
 closure_js_library(
     name = "didNotSpecifyTransitiveDep",
     srcs = ["c.js"],
-    internal_nofail = True,
+    internal_expect_failure = True,
     tags = ["manual"],
     deps = [":b"],  # oops I forgot :a, it doesn't matter if :b depends on :a
 )
@@ -159,7 +159,7 @@ closure_js_library(
         "a.js",
         "a2.js",
     ],
-    internal_nofail = True,
+    internal_expect_failure = True,
     tags = ["manual"],
 )
 
@@ -172,7 +172,7 @@ file_test(
 closure_js_library(
     name = "duplicateProvideFromDeps",
     srcs = ["a2.js"],
-    internal_nofail = True,
+    internal_expect_failure = True,
     tags = ["manual"],
     deps = [":a"],
 )
@@ -187,7 +187,7 @@ closure_js_library(
     name = "setTestOnlyInLibraryWithoutTestOnly",
     # testonly = True,  # <-- oops I forgot this line
     srcs = ["t.js"],
-    internal_nofail = True,
+    internal_expect_failure = True,
     tags = ["manual"],
 )
 
@@ -232,7 +232,7 @@ file_test(
 closure_js_library(
     name = "es6_didNotSpecifyTransitiveDep",
     srcs = ["es6_c.js"],
-    internal_nofail = True,
+    internal_expect_failure = True,
     language = "ECMASCRIPT6_STRICT",
     tags = ["manual"],
     deps = [":es6_b"],  # oops I forgot :es6_a, it doesn't matter if :es6_b depends on :es6_a

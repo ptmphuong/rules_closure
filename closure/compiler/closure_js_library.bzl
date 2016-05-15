@@ -40,8 +40,6 @@ def _impl(ctx):
           "--language=%s" % _determine_check_language(ctx.attr.language)]
   if ctx.attr.testonly:
     args += ["--testonly"]
-  if ctx.attr.internal_nofail:
-    args += ["--nofail"]
   roots = set(order="compile")
   for direct_src in ctx.files.srcs:
     args += ["--src=%s" % (direct_src.path)]
@@ -61,6 +59,10 @@ def _impl(ctx):
       args += ["--dep=%s" % edep.js_provided.path]
       inputs.append(edep.js_provided)
   args += ["--suppress=%s" % s for s in ctx.attr.suppress]
+  if ctx.attr.internal_expect_failure:
+    args += ["--expect_failure"]
+  if ctx.attr.internal_expect_warnings:
+    args += ["--expect_warnings"]
   ctx.action(
       inputs=inputs,
       outputs=[ctx.outputs.provided, ctx.outputs.stderr],
@@ -96,7 +98,8 @@ closure_js_library = rule(
         "suppress": attr.string_list(),
 
         # internal only
-        "internal_nofail": attr.bool(default=False),
+        "internal_expect_failure": attr.bool(default=False),
+        "internal_expect_warnings": attr.bool(default=False),
         "_jschecker": attr.label(
             default=Label("//java/com/google/javascript/jscomp:jschecker"),
             executable=True),

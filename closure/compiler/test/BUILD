@@ -155,7 +155,7 @@ file_test(
 closure_js_library(
     name = "noClosingParen",
     srcs = ["noClosingParen.js"],
-    internal_nofail = True,
+    internal_expect_failure = True,
     tags = ["manual"],
 )
 

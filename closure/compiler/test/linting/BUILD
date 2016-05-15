@@ -21,6 +21,7 @@ load("//closure/private:rule_test.bzl", "rule_test")
 closure_js_library(
     name = "love",
     srcs = ["love.js"],
+    internal_expect_warnings = True,
 )
 
 file_test(
@@ -38,7 +39,7 @@ file_test(
 closure_js_library(
     name = "superfluousSuppress",
     srcs = ["love.js"],
-    internal_nofail = True,
+    internal_expect_failure = True,
     suppress = ["JSC_WRONG_NUMBER_OF_PARAMS"],
     tags = ["manual"],
 )

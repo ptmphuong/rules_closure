@@ -161,9 +161,14 @@ public final class JsChecker {
   private String outputErrors = "";
 
   @Option(
-      name = "--nofail",
-      usage = "Always return exit code 0.")
-  private boolean nofail;
+      name = "--expect_failure",
+      usage = "Invert exit code and disable printing warnings")
+  private boolean expectFailure;
+
+  @Option(
+      name = "--expect_warnings",
+      usage = "Disables printing warnings")
+  private boolean expectWarnings;
 
   @Option(
       name = "--help",
@@ -284,7 +289,7 @@ public final class JsChecker {
     errorManager.generateReport();
 
     // write errors
-    if (!nofail) {
+    if (!expectFailure && !expectWarnings) {
       for (String line : errorManager.stderr) {
         System.err.println(line);
       }
@@ -327,9 +332,7 @@ public final class JsChecker {
       parser.printUsage(System.out);
       System.out.println();
     } else {
-      if (!checker.run()) {
-        System.exit(checker.nofail ? 0 : 1);
-      }
+      System.exit(checker.run() == !checker.expectFailure ? 0 : 1);
     }
   }
 }
