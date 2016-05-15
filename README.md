@@ -106,16 +106,22 @@ Please see the test directories within this project for concrete examples of usa
 
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
-closure_js_library(name, srcs, externs, deps, language, exports)
+closure_js_library(name, srcs, externs, deps, language, exports, suppress,
+                   convention)
 ```
 
 Defines a set of JavaScript sources or externs.
 
-This rule does not incrementally compile sources. It must be used in conjunction
-with a `closure_js_binary` target, which performs full program compilation.
+The purpose of this rule is to define an abstract graph of JavaScript sources.
+It must be used in conjunction with `closure_js_binary` to output a minified
+file.
+
+This rule will perform syntax checking and linting on your files. This can be
+tuned with the `suppress` attribute. To learn more about what the linter wants,
+read the [Google JavaScript Style Guide][jsstyle].
 
 Strict dependency checking is performed on the sources listed in each library
-targets. See the documentation of the `deps` attribute for further information.
+target. See the documentation of the `deps` attribute for further information.
 
 ### Arguments
 
@@ -139,9 +145,9 @@ targets. See the documentation of the `deps` attribute for further information.
   list. These can point to `closure_js_library`, `closure_template_js_library`,
   and `closure_css_library` rules.
 
-  JavaScript dependencies are checked by Bazel at compile-time. The transitive
-  dependencies of these libraries are not taken into consideration when
-  performing this strict dependency checking.
+  JavaScript dependencies are checked by Bazel at compile-time. If a file in
+  `srcs` requires a namespace, it must be provided by a direct dependency;
+  transitive ones are not taken into consideration.
 
   This rule also checks CSS dependencies at compile-time. The build will fail if
   the class names referenced in sources using `goog.getCssName()` are not
@@ -183,6 +189,36 @@ targets. See the documentation of the `deps` attribute for further information.
   to create aliases or bundle libraries together. However this should be done
   sparingly. If this attribute is specified, then the `srcs`, `externs`, and
   `deps` attributes may not be used.
+
+- **suppress** (List of String; optional; default is `[]`) List of codes the
+  linter should ignore. Warning and error messages that are allowed to be
+  suppressed, will display the codes for disabling it. For example, if the
+  linter says:
+
+  ```
+  foo.js:123: WARNING lintChecks JSC_MUST_BE_PRIVATE - Property bar_ must be marked @private
+  ```
+
+  Then the diagnostic code `"JSC_MUST_BE_PRIVATE"` can be used in the `suppress`
+  list. It is also possible to use the group code `"lintChecks"` to disable all
+  diagnostic codes associated with linting.
+
+  If a code is used that isn't necessary, an error is raised. Therefore the use
+  of fine-grained suppression codes is maintainable.
+
+- **convention** (String; required; default is `"CLOSURE"`) Specifies the coding
+  convention which affects how the linter operates. This can be the following
+  values:
+
+  - `NONE`: Don't take any special practices into consideration.
+  - `CLOSURE`: Take [Closure coding conventions][ClosureCodingConvention] into
+    consideration when linting. See the [Google JavaScript Style Guide][jsstyle]
+    for more information.
+  - `GOOGLE`: Take [Google coding conventions][GoogleCodingConvention] into
+    consideration when linting. See the [Google JavaScript Style Guide][jsstyle]
+    for more information.
+  - `JQUERY`: Take [jQuery coding conventions][JqueryCodingConvention] into
+    consideration when linting.
 
 ### Referencing the Closure Library
 
@@ -665,6 +701,9 @@ The documentation on using Closure Stylesheets can be found
 
 
 
+[ClosureCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/ClosureCodingConvention.java
+[GoogleCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/GoogleCodingConvention.java
+[JqueryCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/JqueryCodingConvention.java
 [asserts]: https://github.com/google/closure-library/blob/master/closure/goog/testing/asserts.js#L1308
 [bazel-install]: http://bazel.io/docs/install.html
 [bazel]: http://bazel.io/
