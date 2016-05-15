@@ -16,6 +16,8 @@
 
 package com.google.javascript.jscomp;
 
+import static com.google.javascript.jscomp.JsCheckerHelper.normalizeClosureNamespace;
+
 import com.google.javascript.jscomp.NodeTraversal.AbstractShallowCallback;
 import com.google.javascript.rhino.Node;
 import com.google.javascript.rhino.Token;
@@ -24,7 +26,7 @@ final class JsCheckerSecondPass extends AbstractShallowCallback implements HotSw
 
   public static final DiagnosticType NOT_PROVIDED =
       DiagnosticType.error(
-          "CR_NOT_PROVIDED", "Namespace not provided by any srcs or direct deps of {0}");
+          "CR_NOT_PROVIDED", "Namespace not provided by any srcs or direct deps of {0}.");
 
   private final JsCheckerState state;
   private final AbstractCompiler compiler;
@@ -48,20 +50,40 @@ final class JsCheckerSecondPass extends AbstractShallowCallback implements HotSw
   public void visit(NodeTraversal t, Node n, Node parent) {
     switch (n.getType()) {
       case Token.CALL:
-        Node callee = n.getFirstChild();
-        Node namespace = n.getLastChild();
-        if (!namespace.isString()) {
-          return;
-        }
-        if (callee.matchesQualifiedName("goog.require")
-            && !state.provided.contains(namespace.getString())
-            && !state.provides.contains(namespace.getString())
-            && state.notProvidedNamespaces.add(namespace.getString())) {
-          t.report(namespace, NOT_PROVIDED, state.label);
-        }
+        visitFunctionCall(t, n);
+        break;
+      case Token.IMPORT:
+        visitEs6Import(t, n);
         break;
       default:
         break;
+    }
+  }
+
+  private void visitFunctionCall(NodeTraversal t, Node n) {
+    Node callee = n.getFirstChild();
+    Node parameter = n.getLastChild();
+    if (!parameter.isString()) {
+      return;
+    }
+    if (callee.matchesQualifiedName("goog.require")) {
+      checkNamespaceIsProvided(t, parameter, normalizeClosureNamespace(parameter.getString()));
+    }
+  }
+
+  private void visitEs6Import(NodeTraversal t, Node n) {
+    Node namespace = n.getChildAtIndex(2);
+    if (!namespace.isString()) {
+      return;
+    }
+    checkNamespaceIsProvided(t, namespace, namespace.getString());
+  }
+
+  private void checkNamespaceIsProvided(NodeTraversal t, Node n, String namespace) {
+    if (!state.provided.contains(namespace)
+        && !state.provides.contains(namespace)
+        && state.notProvidedNamespaces.add(namespace)) {
+      t.report(n, NOT_PROVIDED, state.label);
     }
   }
 }

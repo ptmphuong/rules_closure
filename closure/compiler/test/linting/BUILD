@@ -46,5 +46,5 @@ closure_js_library(
 file_test(
     name = "superfluousSuppress_yellsAtUserToRemoveSuppress",
     file = "superfluousSuppress-stderr.txt",
-    regexp = "superfluous.*removed",
+    regexp = "superfluous suppress code",
 )

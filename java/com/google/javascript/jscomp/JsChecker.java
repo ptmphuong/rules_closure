@@ -85,6 +85,10 @@ public final class JsChecker {
           CheckJSDocStyle.OPTIONAL_PARAM_NOT_MARKED_OPTIONAL,
           CheckJSDocStyle.OPTIONAL_TYPE_NOT_USING_OPTIONAL_NAME);
 
+  private static final DiagnosticType SUPERFLUOUS_SUPPRESS =
+      DiagnosticType.error(
+          "CR_SUPERFLUOUS_SUPPRESS", "Build rule ({0}) contains superfluous suppress codes: {1}");
+
   private enum Convention {
     NONE(CodingConventions.getDefault()),
     CLOSURE(new JsCheckerClosureCodingConvention()),
@@ -120,6 +124,11 @@ public final class JsChecker {
       name = "--dep",
       usage = "foo-provides.txt files from deps targets.")
   private List<String> deps = new ArrayList<>();
+
+  @Option(
+      name = "--root",
+      usage = "Prefixes to disregard in module namespaces, e.g. bazel-out/local-fastbuild/genfiles")
+  private List<String> roots = new ArrayList<>();
 
   @Option(
       name = "--convention",
@@ -162,7 +171,7 @@ public final class JsChecker {
   private boolean help;
 
   private boolean run() throws IOException {
-    final JsCheckerState state = new JsCheckerState(label, testonly);
+    final JsCheckerState state = new JsCheckerState(label, testonly, roots);
     final Set<String> actuallySuppressed = new HashSet<>();
 
     // map diagnostic codes back to groups
@@ -181,6 +190,13 @@ public final class JsChecker {
       state.provided.addAll(Files.readAllLines(Paths.get(dep), UTF_8));
     }
 
+    // if we're using ES6 then the sources themselves count as provides iff no goog.provide
+    if (JsCheckerHelper.isEs6OrHigher(language)) {
+      for (String source : sources) {
+        state.provides.addAll(JsCheckerHelper.convertPathToModuleName(source, state.roots).asSet());
+      }
+    }
+
     // configure compiler
     Compiler compiler = new Compiler();
     CompilerOptions options = new CompilerOptions();
@@ -188,9 +204,9 @@ public final class JsChecker {
     options.setCodingConvention(convention.convention);
     options.setSkipTranspilationAndCrash(true);
     options.setIdeMode(true);
-    JsCheckerErrorManager manager =
-        new JsCheckerErrorManager(state, new JsCheckerErrorFormatter(state, compiler));
-    compiler.setErrorManager(manager);
+    JsCheckerErrorManager errorManager =
+        new JsCheckerErrorManager(new JsCheckerErrorFormatter(state, compiler));
+    compiler.setErrorManager(errorManager);
 
     // configure which error messages appear
     for (String error : ERRORS) {
@@ -213,7 +229,7 @@ public final class JsChecker {
       }
       types.add(type);
     }
-    if (language == LanguageMode.ECMASCRIPT6_STRICT || language == LanguageMode.ECMASCRIPT6_TYPED) {
+    if (JsCheckerHelper.isEs6OrHigher(language)) {
       types.addAll(DISABLE_FOR_ES6);
     }
     if (!types.isEmpty()) {
@@ -229,16 +245,14 @@ public final class JsChecker {
           @Override
           public CheckLevel level(JSError error) {
             if ("lintChecks".equals(state.diagnosticGroups.get(error.getType()))
-                && (error.sourceName.contains("bazel-out/")
-                    || error.sourceName.contains("bazel-genfiles/"))) {
+                && JsCheckerHelper.isGeneratedPath(error.sourceName)) {
               return CheckLevel.OFF;
             }
             return null;
           }
         });
 
-    // keep track of DiagnosticType and DiagnosticGroup names where warnings were actually emitted,
-    // so we can throw an error if the user needs to remove unneeded items from suppress attributes.
+    // keep track of emitted diagnostic codes
     options.addWarningsGuard(
         new WarningsGuard() {
           @Override
@@ -256,28 +270,27 @@ public final class JsChecker {
     // run the compiler
     compiler.setPassConfig(new JsCheckerPassConfig(state, options));
     compiler.disableThreads();
-    Result result = compiler.compile(getSourceFiles(externs), getSourceFiles(sources), options);
-    boolean success = result.success;
+    compiler.compile(getSourceFiles(externs), getSourceFiles(sources), options);
 
-    // check suppress attribute is tidy
+    // make sure all suppress codes were actually suppressed
     Set<String> useless = Sets.difference(ImmutableSet.copyOf(suppress), actuallySuppressed);
     if (!useless.isEmpty()) {
-      state.stderr.add(
-          String.format(
-              "ERROR: The following suppress codes are superfluous and must be removed from the"
-                  + " closure_js_library() build rule: %s\n\n - %s\n",
-              label, Joiner.on("\n - ").join(useless)));
-      success = false;
+      errorManager.report(CheckLevel.ERROR,
+          JSError.make(SUPERFLUOUS_SUPPRESS, label, Joiner.on(", ").join(useless)));
     }
+
+    // TODO: Make compiler.compile() package private so we don't have to do this.
+    errorManager.stderr.clear();
+    errorManager.generateReport();
 
     // write errors
     if (!nofail) {
-      for (String line : state.stderr) {
+      for (String line : errorManager.stderr) {
         System.err.println(line);
       }
     }
     if (!outputErrors.isEmpty()) {
-      Files.write(Paths.get(outputErrors), state.stderr, UTF_8);
+      Files.write(Paths.get(outputErrors), errorManager.stderr, UTF_8);
     }
 
     // write provided file
@@ -285,7 +298,7 @@ public final class JsChecker {
       Files.write(Paths.get(output), state.provides, UTF_8);
     }
 
-    return success;
+    return errorManager.getErrorCount() == 0;
   }
 
   private static ImmutableList<SourceFile> getSourceFiles(Iterable<String> filenames) {

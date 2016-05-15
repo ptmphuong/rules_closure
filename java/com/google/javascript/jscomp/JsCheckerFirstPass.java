@@ -16,6 +16,8 @@
 
 package com.google.javascript.jscomp;
 
+import static com.google.javascript.jscomp.JsCheckerHelper.convertPathToModuleName;
+
 import com.google.javascript.jscomp.NodeTraversal.AbstractShallowCallback;
 import com.google.javascript.rhino.Node;
 import com.google.javascript.rhino.Token;
@@ -56,27 +58,32 @@ final class JsCheckerFirstPass extends AbstractShallowCallback implements HotSwa
   public final void visit(NodeTraversal t, Node n, Node parent) {
     switch (n.getType()) {
       case Token.CALL:
-        Node callee = n.getFirstChild();
-        if (!state.testonly && callee.matchesQualifiedName("goog.setTestOnly")) {
-          t.report(n, INVALID_SETTESTONLY, state.label);
-          return;
-        }
-        Node namespace = n.getLastChild();
-        if (namespace.isString()
-            && (callee.matchesQualifiedName("goog.provide")
-                || callee.matchesQualifiedName("goog.module"))) {
-          if (!state.provides.add(namespace.getString())) {
-            t.report(namespace, DUPLICATE_PROVIDES, state.label);
-          }
-          if (state.provided.contains(namespace.getString())
-              && state.redeclaredProvides.add(namespace.getString())) {
-            t.report(namespace, REDECLARED_PROVIDES, state.label);
-          }
-          return;
-        }
+        visitFunctionCall(t, n);
         break;
       default:
         break;
+    }
+  }
+
+  private void visitFunctionCall(NodeTraversal t, Node n) {
+    Node callee = n.getFirstChild();
+    if (!state.testonly && callee.matchesQualifiedName("goog.setTestOnly")) {
+      t.report(n, INVALID_SETTESTONLY, state.label);
+      return;
+    }
+    Node parameter = n.getLastChild();
+    if (parameter.isString()
+        && (callee.matchesQualifiedName("goog.provide")
+            || callee.matchesQualifiedName("goog.module"))) {
+      String namespace = JsCheckerHelper.normalizeClosureNamespace(parameter.getString());
+      if (!state.provides.add(namespace)) {
+        t.report(parameter, DUPLICATE_PROVIDES, state.label);
+      }
+      if (state.provided.contains(namespace)
+          && state.redeclaredProvides.add(namespace)) {
+        t.report(parameter, REDECLARED_PROVIDES, state.label);
+      }
+      state.provides.removeAll(convertPathToModuleName(t.getSourceName(), state.roots).asSet());
     }
   }
 }

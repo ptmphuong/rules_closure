@@ -16,39 +16,35 @@
 
 package com.google.javascript.jscomp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 final class JsCheckerErrorManager extends BasicErrorManager {
 
-  private final JsCheckerState state;
   private final MessageFormatter formatter;
-  private int summaryDetailLevel = 1;
+  final List<String> stderr = new ArrayList<>();
 
-  JsCheckerErrorManager(JsCheckerState state, MessageFormatter formatter) {
-    this.state = state;
+  JsCheckerErrorManager(MessageFormatter formatter) {
     this.formatter = formatter;
   }
 
   @Override
   public void println(CheckLevel level, JSError error) {
-    state.stderr.add(error.format(level, formatter));
-  }
-
-  public void setSummaryDetailLevel(int summaryDetailLevel) {
-    this.summaryDetailLevel = summaryDetailLevel;
+    stderr.add(error.format(level, formatter));
   }
 
   @Override
   public void printSummary() {
-    if (summaryDetailLevel >= 3 ||
-        (summaryDetailLevel >= 1 && getErrorCount() + getWarningCount() > 0) ||
-        (summaryDetailLevel >= 2 && getTypedPercent() > 0.0)) {
-      if (getTypedPercent() > 0.0) {
-        state.stderr.add(
-            String.format("%d error(s), %d warning(s), %.1f%% typed%n",
-                getErrorCount(), getWarningCount(), getTypedPercent()));
-      } else {
-        state.stderr.add(
-            String.format("%d error(s), %d warning(s)%n", getErrorCount(), getWarningCount()));
-      }
+    if (getErrorCount() + getWarningCount() == 0) {
+      return;
+    }
+    if (getTypedPercent() > 0.0) {
+      stderr.add(
+          String.format("%d error(s), %d warning(s), %.1f%% typed%n",
+              getErrorCount(), getWarningCount(), getTypedPercent()));
+    } else {
+      stderr.add(
+          String.format("%d error(s), %d warning(s)%n", getErrorCount(), getWarningCount()));
     }
   }
 }

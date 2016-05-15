@@ -30,6 +30,8 @@ def _impl(ctx):
   if not ctx.attr.deps:
     fail("closure_js_binary rules can not have an empty 'deps' list")
   srcs, externs = collect_js_srcs(ctx)
+  if not srcs:
+    fail("There are no source files in the transitive closure")
   language_in = determine_js_language(ctx, normalize=True)
   language_out = ctx.attr.language
   args = [
@@ -43,12 +45,14 @@ def _impl(ctx):
       "--new_type_inf",
       "--generate_exports",
   ]
-  roots = set([ctx.outputs.out.root.path])
+  roots = set([ctx.outputs.out.root.path], order="compile")
   for src in srcs:
     roots += [src.root.path]
   for root in roots:
     mapping = ""
-    if not root:
+    if root:
+      args += ["--js_module_root=%s" % root]
+    else:
       mapping += "/"
     args += ["--source_map_location_mapping=%s|%s" % (root, mapping)]
   args += JS_HIDE_WARNING_ARGS

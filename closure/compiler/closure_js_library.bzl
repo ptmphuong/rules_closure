@@ -50,14 +50,20 @@ def _impl(ctx):
     args += ["--testonly"]
   if ctx.attr.internal_nofail:
     args += ["--nofail"]
+  roots = set(order="compile")
   for direct_src in ctx.files.srcs:
-    args += ["--src=%s" % direct_src.path]
+    args += ["--src=%s" % (direct_src.path)]
     inputs.append(direct_src)
+    root = direct_src.root.path
+    if root:
+      roots += [root]
+  for src_root in roots:
+    args += ["--root=%s" % src_root]
   for direct_extern in ctx.files.externs:
     args += ["--extern=%s" % direct_extern.path]
     inputs.append(direct_extern)
   for direct_dep in ctx.attr.deps:
-    args += ["--dep=%s" % direct_dep.js_provided.path]
+    args += ["--dep_provided=%s" % direct_dep.js_provided.path]
     inputs.append(direct_dep.js_provided)
     for edep in direct_dep.js_exports:
       args += ["--dep=%s" % edep.js_provided.path]

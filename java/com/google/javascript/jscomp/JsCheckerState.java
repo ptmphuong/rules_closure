@@ -16,12 +16,11 @@
 
 package com.google.javascript.jscomp;
 
+import com.google.common.collect.ImmutableSortedSet;
 import com.google.common.collect.Ordering;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
@@ -31,9 +30,7 @@ final class JsCheckerState {
 
   final String label;
   final boolean testonly;
-
-  // Error output for compiler which gets written to stderr.
-  final List<String> stderr = new ArrayList<>();
+  final ImmutableSortedSet<String> roots;
 
   // XXX: There are actually cooler data structures we could be using here to save space. Like maybe
   //      a trie represented as an IdentityHashMap. But it'd take too much braining for too little
@@ -61,8 +58,9 @@ final class JsCheckerState {
   // Allows JsCheckerErrorFormatter to turn diagnostic types into their group names.
   final Map<DiagnosticType, String> diagnosticGroups = new HashMap<>();
 
-  JsCheckerState(String label, boolean testonly) {
+  JsCheckerState(String label, boolean testonly, Iterable<String> roots) {
     this.label = label;
     this.testonly = testonly;
+    this.roots = ImmutableSortedSet.copyOf(roots);
   }
 }

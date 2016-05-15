@@ -6,6 +6,7 @@ java_binary(
         "JsCheckerErrorFormatter.java",
         "JsCheckerErrorManager.java",
         "JsCheckerFirstPass.java",
+        "JsCheckerHelper.java",
         "JsCheckerPassConfig.java",
         "JsCheckerSecondPass.java",
         "JsCheckerState.java",
