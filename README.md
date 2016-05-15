@@ -150,8 +150,6 @@ targets. See the documentation of the `deps` attribute for further information.
 - **language:** (String; optional; default is `"ECMASCRIPT5_STRICT"`) Variant of
   JavaScript in which `srcs` are written. The following are valid options:
 
-  - `ECMASCRIPT6_TYPED`: (Experimental) Superset of ES6 which adds
-    Typescript-style type declarations. Always strict.
   - `ECMASCRIPT6_STRICT`: Nitpicky, shiny new JavaScript.
   - `ECMASCRIPT5_STRICT`: Nitpicky, traditional JavaScript.
   - `ECMASCRIPT6`: Shiny new JavaScript.
@@ -173,12 +171,11 @@ targets. See the documentation of the `deps` attribute for further information.
   The default language is ECMASCRIPT5_STRICT for three reasons. First, we want
   to make the most conservative recommendation possible. Some ES6 features have
   not yet been implemented in the Closure Compiler. We're working on
-  that. Secondly, it upgrades easily into ECMASCRIPT6\_STRICT and
-  ECMASCRIPT6\_TYPED, should you choose to use them later. Thirdly, PhantomJS
-  only supports ECMASCRIPT5\_STRICT, so your unit tests will be able to run
-  lightning fast in raw sources mode if you write your code exclusively in that
-  language. (XXX: Unfortunately a [bug][phantomjs-bug] in PhantomJS is blocking
-  this at the moment.)
+  that. Secondly, it upgrades easily into ECMASCRIPT6\_STRICT, should you choose
+  to use it later. Thirdly, PhantomJS only supports ECMASCRIPT5\_STRICT, so your
+  unit tests will be able to run lightning fast in raw sources mode if you write
+  your code exclusively in that language. (XXX: Unfortunately a
+  [bug][phantomjs-bug] in PhantomJS is blocking this at the moment.)
 
 - **depmode:** (String; optional; default is `"CLOSURE"`) Indicates how
   dependencies work within a particular library. This flag is used to calculate
