@@ -18,7 +18,8 @@
 
 load("//closure/private:defs.bzl",
      "CSS_DEPS_ATTR",
-     "CSS_FILE_TYPE")
+     "CSS_FILE_TYPE",
+     "collect_transitive_css_labels")
 
 def _impl(ctx):
   srcs = set(order="compile")
@@ -27,9 +28,18 @@ def _impl(ctx):
     if dep.css_orientation != ctx.attr.orientation:
       fail("%s does not have the same orientation" % dep.label)
   srcs += CSS_FILE_TYPE.filter(ctx.files.srcs)
-  return struct(files=set(),
+  # TODO: Write thing that extracts css:class-name provides.
+  ctx.file_action(output=ctx.outputs.provided, content="")
+  return struct(files=set(order="compile"),
                 css_orientation=ctx.attr.orientation,
-                transitive_css_srcs=srcs)
+                transitive_css_srcs=srcs,
+                transitive_css_labels=collect_transitive_css_labels(ctx),
+                js_language="ANY",
+                js_exports=[],
+                js_provided=ctx.outputs.provided,
+                required_css_labels=set(),
+                transitive_js_srcs=set(order="compile"),
+                transitive_js_externs=set(order="compile"))
 
 closure_css_library = rule(
     implementation=_impl,
@@ -37,4 +47,7 @@ closure_css_library = rule(
         "srcs": attr.label_list(allow_files=CSS_FILE_TYPE),
         "deps": CSS_DEPS_ATTR,
         "orientation": attr.string(default="LTR"),
+    },
+    outputs={
+        "provided": "%{name}-provided.txt",
     })

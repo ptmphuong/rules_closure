@@ -49,13 +49,15 @@ JS_DEPS_ATTR = attr.label_list(
     providers=["js_language",
                "js_exports",
                "js_provided",
+               "required_css_labels",
                "transitive_js_srcs",
                "transitive_js_externs"])
 
 CSS_DEPS_ATTR = attr.label_list(
     allow_files=False,
     providers=["css_orientation",
-               "transitive_css_srcs"])
+               "transitive_css_srcs",
+               "transitive_css_labels"])
 
 CLOSURE_LIBRARY_BASE_ATTR = attr.label(
     default=Label("@closure_library//:closure/goog/base.js"),
@@ -66,7 +68,11 @@ def collect_js_srcs(ctx):
   srcs = set(order="compile")
   externs = set(order="compile")
   base = None
-  if (hasattr(ctx.file, '_closure_library_base')
+  if hasattr(ctx.attr, 'css'):
+    if ctx.attr.css:
+      srcs += [ctx.file._closure_library_base,
+               ctx.attr.css.js_css_renaming_map]
+  elif (hasattr(ctx.file, '_closure_library_base')
       and (not hasattr(ctx.attr, 'no_closure_library')
            or not ctx.attr.no_closure_library)):
     srcs += [ctx.file._closure_library_base]
@@ -81,6 +87,28 @@ def collect_js_srcs(ctx):
   if hasattr(ctx.files, 'externs'):
     externs += JS_FILE_TYPE.filter(ctx.files.externs)
   return srcs, externs
+
+def collect_transitive_css_labels(ctx):
+  result = set(order="compile")
+  if not hasattr(ctx.attr, "debug"):
+    result += [ctx.label]
+  for dep in ctx.attr.deps:
+    result += dep.transitive_css_labels
+  return result
+
+def collect_required_css_labels(ctx):
+  result = set(order="compile")
+  for dep in ctx.attr.deps:
+    result += dep.required_css_labels
+    if hasattr(dep, 'transitive_css_srcs'):
+      result += [dep.label]
+      if hasattr(dep, 'compilation_level'):
+        fail("A closure_js_binary can't depend on a closure_css_library. " +
+             "Use the 'css' attribute to depend on the closure_css_binary")
+  return result
+
+def difference(a, b):
+  return [i for i in a if i not in b]
 
 def determine_js_language(ctx, normalize=False):
   language = "ANY"

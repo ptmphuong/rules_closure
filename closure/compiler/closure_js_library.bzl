@@ -22,6 +22,7 @@ load("//closure/private:defs.bzl",
      "JS_DEPS_ATTR",
      "JS_FILE_TYPE",
      "collect_js_srcs",
+     "collect_required_css_labels",
      "determine_js_language",
      "is_using_closure_library")
 
@@ -53,7 +54,7 @@ def _impl(ctx):
     args += ["--extern=%s" % direct_extern.path]
     inputs.append(direct_extern)
   for direct_dep in ctx.attr.deps:
-    args += ["--dep_provided=%s" % direct_dep.js_provided.path]
+    args += ["--dep=%s" % direct_dep.js_provided.path]
     inputs.append(direct_dep.js_provided)
     for edep in direct_dep.js_exports:
       args += ["--dep=%s" % edep.js_provided.path]
@@ -75,6 +76,7 @@ def _impl(ctx):
                 js_language=determine_js_language(ctx),
                 js_exports=ctx.attr.exports,
                 js_provided=ctx.outputs.provided,
+                required_css_labels=collect_required_css_labels(ctx),
                 transitive_js_srcs=srcs,
                 transitive_js_externs=externs,
                 runfiles=ctx.runfiles(files=[ctx.outputs.provided,

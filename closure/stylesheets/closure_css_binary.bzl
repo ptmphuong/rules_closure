@@ -20,7 +20,8 @@
 load("//closure/private:defs.bzl",
      "CLOSURE_LIBRARY_BASE_ATTR",
      "CSS_DEPS_ATTR",
-     "JS_FILE_TYPE")
+     "JS_FILE_TYPE",
+     "collect_transitive_css_labels")
 
 # XXX: Sourcemap functionality currently not supported because it's broken.
 #      https://github.com/google/closure-stylesheets/issues/78
@@ -65,16 +66,12 @@ def _impl(ctx):
   css_files = set([ctx.outputs.out], order="compile")
   return struct(files=css_files,
                 transitive_css_srcs=css_files,
+                transitive_css_labels=collect_transitive_css_labels(ctx),
                 css_orientation=(input_orientation
                                  if ctx.attr.orientation == "NOCHANGE" else
                                  ctx.attr.orientation),
-                js_language="ANY",
-                js_exports=set(order="compile"),
-                js_provided=set(order="compile"),
-                transitive_js_srcs=set([ctx.file._closure_library_base,
-                                        ctx.outputs.js],
-                                       order="compile"),
-                transitive_js_externs=set(order="compile"))
+                js_css_renaming_map=ctx.outputs.js,
+                compiled_css_labels=set(order="compile"))
 
 def _get_input_orientation(deps):
   orientation = None
@@ -97,7 +94,6 @@ closure_css_binary = rule(
         "_compiler": attr.label(
             default=Label("//closure/stylesheets"),
             executable=True),
-        "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
     },
     outputs={"out": "%{name}.css",
              "js": "%{name}.css.js"})

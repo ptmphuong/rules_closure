@@ -18,12 +18,15 @@
 """
 
 load("//closure/private:defs.bzl",
+     "CLOSURE_LIBRARY_BASE_ATTR",
      "JS_DEPS_ATTR",
      "JS_LANGUAGE_DEFAULT",
      "JS_PEDANTIC_ARGS",
      "JS_HIDE_WARNING_ARGS",
      "collect_js_srcs",
+     "collect_required_css_labels",
      "determine_js_language",
+     "difference",
      "is_using_closure_library")
 
 def _impl(ctx):
@@ -32,6 +35,7 @@ def _impl(ctx):
   srcs, externs = collect_js_srcs(ctx)
   if not srcs:
     fail("There are no source files in the transitive closure")
+  _validate_css_graph(ctx)
   language_in = determine_js_language(ctx, normalize=True)
   language_out = ctx.attr.language
   args = [
@@ -82,6 +86,21 @@ def _impl(ctx):
           ctx.outputs.out.short_path))
   return struct(files=set([ctx.outputs.out]))
 
+def _validate_css_graph(ctx):
+  required_css_labels = collect_required_css_labels(ctx)
+  if ctx.attr.css:
+    missing = difference(required_css_labels,
+                         ctx.attr.css.transitive_css_labels)
+    if missing:
+      fail("Dependent JS libraries depend on CSS libraries that weren't " +
+           "compiled into the referenced CSS binary: " +
+           ", ".join(missing))
+  else:
+    if required_css_labels:
+      fail("Dependent JS libraries depend on CSS libraries, but the 'css' " +
+           "attribute is not set to a closure_css_binary that provides the " +
+           "rename mapping for those CSS libraries")
+
 def _validate_entry_point(entry_point, srcs):
   if entry_point.startswith('goog:'):
     if '/' in entry_point:
@@ -117,6 +136,10 @@ closure_js_binary = rule(
     implementation=_impl,
     attrs={
         "compilation_level": attr.string(default="ADVANCED"),
+        "css": attr.label(
+            allow_files=False,
+            providers=["js_css_renaming_map",
+                       "transitive_css_labels"]),
         "debug": attr.bool(default=False),
         "defs": attr.string_list(),
         "dependency_mode": attr.string(default="LOOSE"),
@@ -128,6 +151,7 @@ closure_js_binary = rule(
         "_compiler": attr.label(
             default=Label("//closure/compiler"),
             executable=True),
+        "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
     },
     outputs={"out": "%{name}.js",
              "map": "%{name}.js.map"})

@@ -14,6 +14,8 @@
 
 package(default_testonly = True)
 
+load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
+load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/stylesheets:closure_css_binary.bzl", "closure_css_binary")
 load("//closure/stylesheets:closure_css_library.bzl", "closure_css_library")
 load("//closure/private:file_test.bzl", "file_test")
@@ -75,6 +77,24 @@ file_test(
                "  \"pain\": \"b\"\n" +
                "});\n"),
     file = "hello_rename_bin.css.js",
+)
+
+closure_js_library(
+    name = "rename_lib",
+    srcs = ["rename.js"],
+    deps = [":hello_lib"],
+)
+
+closure_js_binary(
+    name = "rename_bin",
+    css = ":hello_rename_bin",
+    deps = [":rename_lib"],
+)
+
+file_test(
+    name = "jsBinaryReferencesCssBinary_googGetCssNameCallsGetRewritten",
+    content = "console.log(\"a-b\");\n",
+    file = "rename_bin.js",
 )
 
 closure_css_binary(
