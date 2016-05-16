@@ -72,7 +72,7 @@ def _impl(ctx):
       mnemonic="JSChecker",
       progress_message="Checking %d JS files in %s" % (
           len(ctx.files.srcs) + len(ctx.files.externs), ctx.label))
-  return struct(files=set([ctx.outputs.provided]),
+  return struct(files=set(ctx.files.srcs, order="compile"),
                 js_language=determine_js_language(ctx),
                 js_exports=ctx.attr.exports,
                 js_provided=ctx.outputs.provided,

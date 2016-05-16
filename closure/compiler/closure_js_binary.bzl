@@ -84,7 +84,15 @@ def _impl(ctx):
       progress_message="Compiling %d JavaScript files to %s" % (
           len(srcs) + len(externs),
           ctx.outputs.out.short_path))
-  return struct(files=set([ctx.outputs.out]))
+  ctx.file_action(output=ctx.outputs.provided, content="")
+  js_files = set([ctx.outputs.out], order="compile")
+  return struct(files=js_files,
+                js_language=language_out,
+                js_exports=[],
+                js_provided=ctx.outputs.provided,
+                required_css_labels=set(order="compile"),
+                transitive_js_srcs=js_files,
+                transitive_js_externs=set(order="compile"))
 
 def _validate_css_graph(ctx):
   required_css_labels = collect_required_css_labels(ctx)
@@ -153,5 +161,8 @@ closure_js_binary = rule(
             executable=True),
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
     },
-    outputs={"out": "%{name}.js",
-             "map": "%{name}.js.map"})
+    outputs={
+        "out": "%{name}.js",
+        "map": "%{name}.js.map",
+        "provided": "%{name}-provided.txt",
+    })

@@ -30,7 +30,7 @@ def _impl(ctx):
   srcs += CSS_FILE_TYPE.filter(ctx.files.srcs)
   # TODO: Write thing that extracts css:class-name provides.
   ctx.file_action(output=ctx.outputs.provided, content="")
-  return struct(files=set(order="compile"),
+  return struct(files=set(ctx.files.srcs, order="compile"),
                 css_orientation=ctx.attr.orientation,
                 transitive_css_srcs=srcs,
                 transitive_css_labels=collect_transitive_css_labels(ctx),
