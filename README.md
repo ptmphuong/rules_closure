@@ -9,26 +9,30 @@ JavaScript | Templating | Stylesheets
 
 ## Overview
 
-The Closure Rules provide a polished JavaScript build system for [Bazel][bazel]
+Closure Rules provides a polished JavaScript build system for [Bazel][bazel]
 that emphasizes type safety, strictness, testability, and optimization. These
 rules are built with the [Closure Tools][closure-tools], which are what Google
-used to create websites like Google.com and Gmail.
+used to create websites like Google.com and Gmail. The mission of this project
+is to faithfully reproduce Google's internal JavaScript development praxis.
 
-The mission of this project is to faithfully reproduce Google's internal
-JavaScript development praxis. This is a very "ivory tower" approach to web
-development. Our goal is to make it accessible to everyone—without sacrificing
-any of its excellence.
+Closure Rules is a *abstract* build system. This is what sets it apart from
+Grunt, Gulp, Webpacker, Brunch, Broccoli, etc. These projects all provide a
+concrete framework for explaining *how* to build your project. Closure Rules
+instead provides a framework for declaring *what* your project is. Closure Rules
+is then able to use this abstract definition to infer an optimal build strategy.
 
-### Caveat Emptor
-
-This project is currently in an alpha state. It is not yet ready for general
-consumption. Many of the features have not been implemented. The definitions of
-these rules will change radically as we continue to collect feedback from
-experienced engineers.
+Closure Rules is also an *austere* build system. The Closure Compiler doesn't
+play games. It enforces a type system that can be stricter than Java. From a
+stylistic perspective, Closure is [verbose][verbose] like Java; there's no
+cryptic symbols or implicit behavior; the code says exactly what it's doing.
+This sets Closure apart from traditional JavaScript development, where terseness
+was favored over readability, because minifiers weren't very good. Furthermore,
+the Closure Library and Templates help you follow security best practices which
+will keep your users safe.
 
 ### What's Included
 
-The Closure Rules bundle the following tools and makes them "just work."
+Closure Rules bundles the following tools and makes them "just work."
 
 - [Closure Compiler][closure-compiler]: Type-safe, null-safe, optimizing
   JavaScript compiler that transpiles [ECMASCRIPT6][es6] to minified ES3
@@ -45,6 +49,22 @@ The Closure Rules bundle the following tools and makes them "just work."
   unit tests in a command line environment.
 - [Bazel][bazel]: The build system Google uses to manage a repository with
   petabytes of code.
+
+The Closure Tools were released to the public in 2009, but have previously been
+quite difficult to configure. They were originally designed to be used with
+Bazel, which was not made open source until six years later. Closure Rules
+provides the final piece of the puzzle. Now *all* developers can easily enjoy
+the advantages offered by the Closure Tools.
+
+### Mailing Lists
+
+- [closure-rules-announce](https://groups.google.com/forum/#!forum/closure-rules-announce)
+- [closure-rules-discuss](https://groups.google.com/forum/#!forum/closure-rules-discuss)
+
+### Caveat Emptor
+
+Closure Rules is production ready, but its design is not yet finalized. Breaking
+changes may be introduced. If so, they'll be documented in the release notes.
 
 ## Setup
 
@@ -82,9 +102,9 @@ load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
 closure_repositories(omit_guava=True)
 
 maven_jar(
-  name = "guava",
-  artifact = "...",
-  sha1 = "...",
+    name = "guava",
+    artifact = "...",
+    sha1 = "...",
 )
 ```
 
@@ -145,9 +165,13 @@ target. See the documentation of the `deps` attribute for further information.
   list. These can point to `closure_js_library`, `closure_template_js_library`,
   and `closure_css_library` rules.
 
-  JavaScript dependencies are checked by Bazel at compile-time. If a file in
-  `srcs` requires a namespace, it must be provided by a direct dependency;
-  transitive ones are not taken into consideration.
+  This rule performs strict dependency checking. Your dependency graph must form
+  an [acyclic][acyclic] transitive closure, otherwise a build error is
+  raised. Google discovered the hard way that these properties are essential for
+  ensuring the maintainability of large codebases. What it means is explained in
+  the following diagram:
+
+  ![Strict Dependency Checking Diagram](https://i.imgur.com/sN30nmC.png)
 
   This rule also checks CSS dependencies at compile-time. The build will fail if
   the class names referenced in sources using `goog.getCssName()` are not
@@ -165,11 +189,14 @@ target. See the documentation of the `deps` attribute for further information.
 
   Maintaining this attribute for your library rules is important because
   `closure_js_binary` checks the `language` attribute of dependencies to
-  determine if it's a [legal combination](https://i.imgur.com/38lybNO.png)
-  that's safe to compile. Combinations that traverse a red line cause strictness
-  to decay and a warning will be emitted. For example, if just one library is
-  unstrict, then strictness will be removed for your entire binary.  Therefore
-  we *strongly* recommend that you use strict variants.
+  determine if it's a legal combination that's safe to compile.
+
+  ![ECMAScript Language Combinations Diagram](https://i.imgur.com/xNZ9FAr.png)
+
+  Combinations that traverse a red line cause strictness to decay and a warning
+  will be emitted. For example, if just one library is unstrict, then strictness
+  will be removed for your entire binary.  Therefore we *strongly* recommend
+  that you use strict variants.
 
   **ProTip:** You are not required to put `"use strict"` at the tops of your
   files. The Closure Compiler generates that in the output for you.
@@ -607,7 +634,10 @@ the following:
   The order of stylsheets is `srcs` is undefined. If a CSS file overrides
   definitions in another CSS file, then each file must be specified in separate
   `closure_css_library` targets. That way Bazel can order your CSS definitions
-  based on the partial ordering of build targets.
+  based on the depth-first preordering of dependent rules.
+
+  It is strongly recommended you use `@provide` and `@require` statements in
+  your stylesheets so the CSS compiler can assert that the ordering is accurate.
 
 - **deps:** (List of [labels][labels]; optional) List of other
   `closure_css_library` targets on which the CSS files in `srcs` depend.
@@ -637,11 +667,13 @@ The documentation on using Closure Stylesheets can be found
 
 #### Implicit Output Targets
 
-- *name*.css: A minified CSS file containing all transitive sources.
+- *name*.css: A minified CSS file defining the transitive closure of dependent
+  stylesheets compiled in a depth-first preordering.
 
 - *name*.css.map: [CSS sourcemap file][css-sourcemap]. This tells browsers like
   Chrome and Firefox where your CSS definitions are located in their original
-  source files.
+  source files. (XXX: Currently unavailable due to
+  [#64](https://github.com/bazelbuild/rules_closure/issues/78))
 
 - *name*.css.js: JavaScript file containing a `goog.setCssNameMapping()`
   statement which tells the Closure Compiler and Library how to minify CSS
@@ -715,6 +747,7 @@ The documentation on using Closure Stylesheets can be found
 [ClosureCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/ClosureCodingConvention.java
 [GoogleCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/GoogleCodingConvention.java
 [JqueryCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/JqueryCodingConvention.java
+[acyclic]: https://en.wikipedia.org/wiki/Directed_acyclic_graph
 [asserts]: https://github.com/google/closure-library/blob/master/closure/goog/testing/asserts.js#L1308
 [bazel-install]: http://bazel.io/docs/install.html
 [bazel]: http://bazel.io/
@@ -738,3 +771,4 @@ The documentation on using Closure Stylesheets can be found
 [managing-dependencies]: https://github.com/google/closure-compiler/wiki/Managing-Dependencies
 [phantomjs-bug]: https://github.com/ariya/phantomjs/issues/14028
 [phantomjs]: http://phantomjs.org/
+[verbose]: https://github.com/google/closure-library/blob/master/closure/goog/html/safehtml.js
