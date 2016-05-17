@@ -23,6 +23,13 @@ def aopalliance():
       sha1 = "0235ba8b489512805ac13a8f9ea77a1ca5ebe3e8",
   )
 
+def args4j():
+  native.maven_jar(
+      name = "args4j",
+      artifact = "args4j:args4j:2.0.26",
+      sha1 = "01ebb18ebb3b379a74207d5af4ea7c8338ebd78b",
+  )
+
 def asm():
   native.maven_jar(
       name = "asm",
@@ -49,13 +56,6 @@ def asm_util():
       name = "asm_util",
       artifact = "org.ow2.asm:asm-util:5.0.3",
       sha1 = "1512e5571325854b05fb1efce1db75fcced54389",
-  )
-
-def args4j():
-  native.maven_jar(
-      name = "args4j",
-      artifact = "args4j:args4j:2.0.26",
-      sha1 = "01ebb18ebb3b379a74207d5af4ea7c8338ebd78b",
   )
 
 def closure_compiler():
@@ -97,18 +97,18 @@ def fonts_noto_mono_deb():
       sha256 = "74b457715f275ed893998a70d6bc955f67da6d36b36b422dbeeb045160edacb6",
   )
 
-def guava():
-  native.maven_jar(
-      name = "guava",
-      artifact = "com.google.guava:guava:19.0",
-      sha1 = "6ce200f6b23222af3d8abb6b6459e6c44f4bb0e9",
-  )
-
 def gson():
   native.maven_jar(
       name = "gson",
       artifact = "com.google.code.gson:gson:2.4",
       sha1 = "0695b63d702f505b9b916e02272e3b6381bade7f",
+  )
+
+def guava():
+  native.maven_jar(
+      name = "guava",
+      artifact = "com.google.guava:guava:19.0",
+      sha1 = "6ce200f6b23222af3d8abb6b6459e6c44f4bb0e9",
   )
 
 def guice():
@@ -211,18 +211,18 @@ def soyutils_usegoog():
 
 def closure_repositories(
     omit_aopalliance=False,
+    omit_args4j=False,
     omit_asm=False,
     omit_asm_analysis=False,
     omit_asm_commons=False,
     omit_asm_util=False,
-    omit_args4j=False,
     omit_closure_compiler=False,
     omit_closure_library=False,
     omit_closure_stylesheets=False,
     omit_fonts_noto_hinted_deb=False,
     omit_fonts_noto_mono_deb=False,
-    omit_guava=False,
     omit_gson=False,
+    omit_guava=False,
     omit_guice=False,
     omit_guice_assistedinject=False,
     omit_guice_multibindings=False,
@@ -239,6 +239,8 @@ def closure_repositories(
     omit_soyutils_usegoog=False):
   if not omit_aopalliance:
     aopalliance()
+  if not omit_args4j:
+    args4j()
   if not omit_asm:
     asm()
   if not omit_asm_analysis:
@@ -247,8 +249,6 @@ def closure_repositories(
     asm_commons()
   if not omit_asm_util:
     asm_util()
-  if not omit_args4j:
-    args4j()
   if not omit_closure_compiler:
     closure_compiler()
   if not omit_closure_library:
@@ -259,10 +259,10 @@ def closure_repositories(
     fonts_noto_hinted_deb()
   if not omit_fonts_noto_mono_deb:
     fonts_noto_mono_deb()
-  if not omit_guava:
-    guava()
   if not omit_gson:
     gson()
+  if not omit_guava:
+    guava()
   if not omit_guice:
     guice()
   if not omit_guice_assistedinject:
