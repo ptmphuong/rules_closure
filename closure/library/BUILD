@@ -19,7 +19,7 @@ load("//closure/stylesheets:closure_css_library.bzl", "closure_css_library")
 
 closure_js_library(
     name = "library",
-    srcs = ["@closure_library//:js_files"],
+    srcs = ["@closure_library//:js_library_files"],
     language = "ECMASCRIPT5_STRICT",
     suppress = [
         "JSC_DUPLICATE_ENUM_VALUE",

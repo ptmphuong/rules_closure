@@ -66,8 +66,9 @@ def closure_compiler():
   )
 
 def closure_library():
-  # To update Closure Library, one needs to uncomment and run the js_files_maker
-  # and js_testing_files_maker genrules in closure_library.BUILD.
+  # To update Closure Library, one needs to uncomment and run the
+  # js_library_files_maker and js_testing_files_maker genrules in
+  # closure_library.BUILD.
   native.new_http_archive(
       name = "closure_library",
       url = "https://bazel-mirror.storage.googleapis.com/github.com/google/closure-library/archive/v20160315.zip",
