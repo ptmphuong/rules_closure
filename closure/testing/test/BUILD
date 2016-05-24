@@ -25,37 +25,9 @@ closure_js_test(
 )
 
 closure_js_library(
-    name = "arithmetic_es6typed_lib",
-    srcs = ["arithmetic_es6typed.js"],
-    language = "ECMASCRIPT6_TYPED",
-    deps = ["//closure/library"],
-)
-
-closure_js_test(
-    name = "arithmetic_es6typed_test",
-    srcs = ["arithmetic_es6typed_test.js"],
-    language = "ECMASCRIPT6_STRICT",
-    deps = [
-        ":arithmetic_es6typed_lib",
-        "//closure/library",
-    ],
-)
-
-closure_js_test(
-    name = "arithmetic_scope_test",
-    srcs = ["arithmetic_scope_test.js"],
-    language = "ECMASCRIPT6_STRICT",
-    deps = [
-        ":arithmetic_es6typed_lib",
-        "//closure/library",
-        "//closure/library:testing",
-    ],
-)
-
-closure_js_library(
     name = "arithmetic_module_lib",
     srcs = ["arithmetic_module.js"],
-    language = "ECMASCRIPT6_TYPED",
+    language = "ECMASCRIPT6_STRICT",
     deps = ["//closure/library"],
 )
 
@@ -63,6 +35,17 @@ closure_js_test(
     name = "arithmetic_module_test",
     srcs = ["arithmetic_module_test.js"],
     defs = ["--entry_point=goog:arithmetic_module_test"],
+    language = "ECMASCRIPT6_STRICT",
+    deps = [
+        ":arithmetic_module_lib",
+        "//closure/library",
+        "//closure/library:testing",
+    ],
+)
+
+closure_js_test(
+    name = "arithmetic_scope_test",
+    srcs = ["arithmetic_scope_test.js"],
     language = "ECMASCRIPT6_STRICT",
     deps = [
         ":arithmetic_module_lib",

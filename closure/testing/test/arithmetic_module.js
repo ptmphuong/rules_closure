@@ -17,7 +17,10 @@ goog.module('arithmetic_module');
 
 /**
  * Adds two numbers.
+ * @param {number} a
+ * @param {number} b
+ * @return {number}
  */
-exports.add = function(a: number, b: number): number {
+exports.add = function(a, b) {
   return a + b;
 };
