@@ -11,6 +11,7 @@ java_binary(
         "JsCheckerSecondPass.java",
         "JsCheckerState.java",
     ],
+    jvm_flags = ["-client"],
     main_class = "com.google.javascript.jscomp.JsChecker",
     visibility = ["//visibility:public"],
     deps = ["@closure_compiler//jar"],
