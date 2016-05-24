@@ -50,7 +50,7 @@ Closure Rules bundles the following tools and makes them "just work."
 - [Bazel][bazel]: The build system Google uses to manage a repository with
   petabytes of code.
 
-The Closure Tools were released to the public in 2009, but have previously been
+The Closure Tools were released to the public in 2009, but had previously been
 quite difficult to configure. They were originally designed to be used with
 Bazel, which was not made open source until six years later. Closure Rules
 provides the final piece of the puzzle. Now *all* developers can easily enjoy
@@ -85,7 +85,7 @@ closure_repositories()
 You are not required to install the Closure Tools or PhantomJS. They will be
 fetched automatically.
 
-### Overriding Dependency Versions
+#### Overriding Dependency Versions
 
 When you call `closure_repositories()` in your `WORKSPACE` file, it causes a
 few dozen external dependencies to be added to your project, e.g. Guava, Guice,
@@ -248,20 +248,24 @@ target. See the documentation of the `deps` attribute for further information.
   - `JQUERY`: Take [jQuery coding conventions][JqueryCodingConvention] into
     consideration when linting.
 
-### Referencing the Closure Library
+- **no_closure_library** (Boolean; optional; default is `False`) Do not link
+  Closure Library [base.js][base-js]. If this flag is used, an error will be
+  raised if any `deps` do not also specify this flag.
 
-In order to use `goog.provide` and `goog.require` in your javascript code, make
-sure to add the Closure Library as a dependency in `closure_js_library` rules:
+  All `closure_js_library` rules have an implicit dependency on
+  `@closure_library//:closure/goog/base.js` by default. This is a lightweight
+  file that boostraps very important functions, e.g. `goog.provide`. Linking
+  this file by default is important because:
 
-```python
-closure_js_library(
-    name = "my_js_library",
-    srcs = glob(["*.js"]),
-    deps = [
-        "@io_bazel_rules_closure//closure/library",
-    ],
-)
-```
+  1. It is logically impossible to say `goog.require('goog')`.
+  2. The Closure Compiler will sometimes generate synthetic code that calls
+     these functions. For example, the [ProcessEs6Modules][ProcessEs6Modules]
+     compiler pass turns ES6 module directives into `goog.provide` /
+     `goog.require` statements.
+
+  The only tradeoff is that when compiling in `WHITESPACE_ONLY` mode, this code
+  will show up in the resulting binary. Therefore this flag provides the option
+  to remove it.
 
 
 ## closure\_js\_binary
@@ -302,9 +306,9 @@ This rule must be used in conjunction with `closure_js_library`.
   a `closure_css_library`. This rule will check that all the referenced CSS
   libraries are present in the CSS binary.
 
-- **pedantic:** (Boolean; optional; default is `0`) Setting this flag to `1`
-  will turn on every single warning, and treat warnings as errors. Your reward
-  is that type-based optimizations becomes enabled.
+- **pedantic:** (Boolean; optional; default is `False`) Setting this flag to
+  `True` will turn on every single warning, and treat warnings as errors. Your
+  reward is that type-based optimizations becomes enabled.
 
   This flag is recommended for greenfield projects, however *caveat emptor*
   applies. Some of the checks that get enabled aren't yet mature. The Closure
@@ -315,10 +319,11 @@ This rule must be used in conjunction with `closure_js_library`.
   will take into consideration `goog.asserts.assert` statements and conditionals
   like `if (foo != null)`.
 
-- **debug:** (Boolean; optional; default is `0`) Enables debug mode. Many types
-  of properties and variable names will be renamed to include `$` characters, to
-  help you spot bugs when using `ADVANCED` compilation mode. Assert statements
-  will not be stripped. Dependency directives will be removed.
+- **debug:** (Boolean; optional; default is `False`) Enables debug mode. Many
+  types of properties and variable names will be renamed to include `$`
+  characters, to help you spot bugs when using `ADVANCED` compilation
+  mode. Assert statements will not be stripped. Dependency directives will be
+  removed.
 
 - **language:** (String; optional; default is `"ECMASCRIPT3"`) Output language
   variant to which library sources are transpiled. The default is ES3 because it
@@ -474,7 +479,7 @@ admin-only path named `/filez/`, then raw source mode could be used as follows:
 - *name*.js: A JavaScript source file containing `goog.addDependency()`
   statements which map Closure Library namespaces to JavaScript source paths.
   Each path is expressed relative to the location of the Closure Library
-  `base.js` file.
+  [base.js][base-js] file.
 
 ### Arguments
 
@@ -540,17 +545,17 @@ the following:
 - **plugin_modules:** (List of [labels][labels]; default is `[]`) Passed along
   verbatim to the SoyToJsSrcCompiler above.
 
-- **should_generate_js_doc:** (List of [labels][labels]; default is `1`) Passed
-  along verbatim to the SoyToJsSrcCompiler above.
-
-- **should_provide_require_soy_namespaces:** (List of [labels][labels]; default
-  is `1`) Passed along verbatim to the SoyToJsSrcCompiler above.
-
-- **should_generate_soy_msg_defs:** (List of [labels][labels]; default is `0`)
+- **should_generate_js_doc:** (List of [labels][labels]; default is `True`)
   Passed along verbatim to the SoyToJsSrcCompiler above.
 
-- **soy_msgs_are_external:** (List of [labels][labels]; default is `0`) Passed
-  along verbatim to the SoyToJsSrcCompiler above.
+- **should_provide_require_soy_namespaces:** (List of [labels][labels]; default
+  is `True`) Passed along verbatim to the SoyToJsSrcCompiler above.
+
+- **should_generate_soy_msg_defs:** (List of [labels][labels]; default is
+  `False`) Passed along verbatim to the SoyToJsSrcCompiler above.
+
+- **soy_msgs_are_external:** (List of [labels][labels]; default is `False`)
+  Passed along verbatim to the SoyToJsSrcCompiler above.
 
 
 ## closure\_template\_java\_library
@@ -689,7 +694,7 @@ The documentation on using Closure Stylesheets can be found
   targets to compile. All dependencies must have their `orientation` attribute
   set to the same value.
 
-- **renaming:** (Boolean; optional; default is `1`) Enables CSS class name
+- **renaming:** (Boolean; optional; default is `True`) Enables CSS class name
   minification. This is one of the most powerful features of the Closure Tools.
   By default, this will turn class names like `.foo-bar` into things like
   `.a-b`. If `debug = True` then it will be renamed `.foo_-bar_`.
@@ -706,7 +711,7 @@ The documentation on using Closure Stylesheets can be found
   class names. The `closure_template_js_library` must also depend on the
   appropriate CSS library.
 
-- **debug:** (Boolean; optional; default is `0`) Enables debug mode, which
+- **debug:** (Boolean; optional; default is `False`) Enables debug mode, which
   causes the compiled stylesheet to be pretty printed. If `renaming = True` then
   class names will be renamed, but still readable to humans.
 
@@ -747,8 +752,10 @@ The documentation on using Closure Stylesheets can be found
 [ClosureCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/ClosureCodingConvention.java
 [GoogleCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/GoogleCodingConvention.java
 [JqueryCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/JqueryCodingConvention.java
+[ProcessEs6Modules]: https://github.com/google/closure-compiler/blob/1281ed9ded137eaf578bb65a588850bf13f38aa4/src/com/google/javascript/jscomp/ProcessEs6Modules.java
 [acyclic]: https://en.wikipedia.org/wiki/Directed_acyclic_graph
 [asserts]: https://github.com/google/closure-library/blob/master/closure/goog/testing/asserts.js#L1308
+[base-js]: https://github.com/google/closure-library/blob/master/closure/goog/base.js
 [bazel-install]: http://bazel.io/docs/install.html
 [bazel]: http://bazel.io/
 [blockers]: https://github.com/bazelbuild/rules_closure/labels/launch%20blocker
