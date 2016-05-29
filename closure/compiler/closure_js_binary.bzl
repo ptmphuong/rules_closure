@@ -30,6 +30,12 @@ load("//closure/private:defs.bzl",
      "difference",
      "is_using_closure_library")
 
+_STRICT_LANGUAGES = set([
+    "ECMASCRIPT6_TYPED",
+    "ECMASCRIPT6_STRICT",
+    "ECMASCRIPT5_STRICT",
+])
+
 def _impl(ctx):
   if not ctx.attr.deps:
     fail("closure_js_binary rules can not have an empty 'deps' list")
@@ -67,6 +73,8 @@ def _impl(ctx):
     args += ["--debug"]
   elif is_using_closure_library(srcs):
     args += ["--define=goog.DEBUG=false"]
+  if is_using_closure_library(srcs) and language_out in _STRICT_LANGUAGES:
+    args += ["--define=goog.STRICT_MODE_COMPATIBLE"]
   for entry_point in ctx.attr.entry_points:
     _validate_entry_point(entry_point, srcs)
     args += ["--entry_point=" + entry_point]
