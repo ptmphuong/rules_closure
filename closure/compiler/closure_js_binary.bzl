@@ -73,6 +73,10 @@ def _impl(ctx):
   if ctx.attr.pedantic:
     args += JS_PEDANTIC_ARGS
     args += ["--use_types_for_optimization"]
+  if ctx.attr.output_wrapper:
+    if ctx.attr.output_wrapper == "%output%":
+      fail("To disable use 'output_wrapper = \"\"'")
+    args += ["--output_wrapper=%s" % ctx.attr.output_wrapper]
   args += ctx.attr.defs
   args += ["--externs=%s" % extern.path for extern in externs]
   args += ["--js=%s" % src.path for src in srcs]
@@ -156,6 +160,8 @@ closure_js_binary = rule(
         "entry_points": attr.string_list(default=[]),
         "formatting": attr.string(),
         "language": attr.string(default="ECMASCRIPT3"),
+        "output_wrapper": attr.string(
+            default="(function(){%output%}).call(this);"),
         "pedantic": attr.bool(default=False),
         "_compiler": attr.label(
             default=Label("//closure/compiler"),

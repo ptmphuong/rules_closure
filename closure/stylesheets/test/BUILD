@@ -93,7 +93,7 @@ closure_js_binary(
 
 file_test(
     name = "jsBinaryReferencesCssBinary_googGetCssNameCallsGetRewritten",
-    content = "console.log(\"a-b\");\n",
+    content = "(function(){console.log(\"a-b\");}).call(this);\n",
     file = "rename_bin.js",
 )
 

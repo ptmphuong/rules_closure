@@ -40,7 +40,7 @@ closure_js_binary(
 
 file_test(
     name = "fileWithoutNamespacesExportsOrEntryPoints_producesBinaryThatExecutesCodeInGlobalNamespace",
-    content = "console.log(\"hi\");\n",
+    content = "(function(){console.log(\"hi\");}).call(this);\n",
     file = "program_bin.js",
 )
 
@@ -65,7 +65,7 @@ closure_js_binary(
 
 file_test(
     name = "es6_exportedFunction_isOnlyThingInResultingBinary",
-    content = "function a(){console.log(\"hi\")}var b=[\"iWillGoIntoTheBinary\"],c=this;b[0]in c||!c.execScript||c.execScript(\"var \"+b[0]);for(var d;b.length&&(d=b.shift());)b.length||void 0===a?c[d]?c=c[d]:c=c[d]={}:c[d]=a;\n",
+    content = "(function(){function a(){console.log(\"hi\")}var b=[\"iWillGoIntoTheBinary\"],c=this;b[0]in c||!c.execScript||c.execScript(\"var \"+b[0]);for(var d;b.length&&(d=b.shift());)b.length||void 0===a?c[d]?c=c[d]:c=c[d]={}:c[d]=a;}).call(this);\n",
     file = "library_bin.js",
 )
 
@@ -94,7 +94,7 @@ file_test(
     name = "goog_exportedFunction_isOnlyThingInResultingBinary",
     # This looks more complicated than you'd expect, because it's actually
     # compiling the synthetic goog.exportSymbol() call that @export generates.
-    content = "function a(){console.log(\"hi\")}var b=[\"io\",\"bazel\",\"rules\",\"closure\",\"iWillGoIntoTheBinary\"],c=this;b[0]in c||!c.execScript||c.execScript(\"var \"+b[0]);for(var d;b.length&&(d=b.shift());)b.length||void 0===a?c[d]?c=c[d]:c=c[d]={}:c[d]=a;\n",
+    content = "(function(){function a(){console.log(\"hi\")}var b=[\"io\",\"bazel\",\"rules\",\"closure\",\"iWillGoIntoTheBinary\"],c=this;b[0]in c||!c.execScript||c.execScript(\"var \"+b[0]);for(var d;b.length&&(d=b.shift());)b.length||void 0===a?c[d]?c=c[d]:c=c[d]={}:c[d]=a;}).call(this);\n",
     file = "library_goog_bin.js",
 )
 
@@ -115,7 +115,7 @@ closure_js_binary(
 
 file_test(
     name = "strictModeGlobalCodeNotListedInEntryPoints_codeGoesPoof",
-    content = "\n",
+    content = "(function(){}).call(this);\n",
     file = "program_strict_bin.js",
 )
 
@@ -131,6 +131,6 @@ closure_js_binary(
 
 file_test(
     name = "strictModeGlobalCodeIsListedInEntryPoints_codeShowsUp",
-    content = "console.log(\"hi\");\n",
+    content = "(function(){console.log(\"hi\");}).call(this);\n",
     file = "program_strict_bin2.js",
 )

@@ -1,7 +1,7 @@
 # Closure Rules for Bazel (αlpha) [![Build Status](https://travis-ci.org/bazelbuild/rules_closure.svg?branch=master)](https://travis-ci.org/bazelbuild/rules_closure)
 
 JavaScript | Templating | Stylesheets | Miscellaneous
---- | --- | --- | --- | ---
+--- | --- | --- | ---
 [closure_js_library](#closure_js_library) | [closure_template_js_library](#closure_template_js_library) | [closure_css_library](#closure_css_library) | [closure_proto_js_library](#closure_proto_js_library)
 [closure_js_binary](#closure_js_binary) | [closure_template_java_library](#closure_template_java_library) | [closure_css_binary](#closure_css_binary) | [phantomjs_test](#phantomjs_test)
 [closure_js_deps](#closure_js_deps) | [closure_template_py_library](#closure_template_py_library) | |
@@ -278,7 +278,8 @@ target. See the documentation of the `deps` attribute for further information.
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
 closure_js_binary(name, deps, css, pedantic, debug, language, entry_points,
-                  dependency_mode, compilation_level, formatting, defs)
+                  dependency_mode, compilation_level, formatting,
+                  output_wrapper, defs)
 ```
 
 Turns JavaScript libraries into a minified optimized blob of code.
@@ -375,6 +376,13 @@ This rule must be used in conjunction with `closure_js_library`.
   - `PRETTY_PRINT`
   - `PRINT_INPUT_DELIMITER`
   - `SINGLE_QUOTES`
+
+- **output_wrapper:** (String; optional; default is
+  `"(function(){%output%}).call(this);"`) Wraps the compiled code. The
+  [default][output-wrapper-faq] specifies an anonymous function to prevent
+  variables from polluting the global scope. If you are using compiler level
+  modules you should disable this option with `output_wrapper=""` and pass
+  `module_wrapper` via `defs` instead.
 
 - **defs:** (List of strings; optional) Specifies additional flags to be passed
   to the Closure Compiler, e.g. `"--hide_warnings_for=some/path/"`. To see what
@@ -856,6 +864,7 @@ Documentation: [Protocol Buffers][protobuf] [JS][protobuf-js]
 [labels]: http://bazel.io/docs/build-ref.html#labels
 [name]: http://bazel.io/docs/build-ref.html#name
 [managing-dependencies]: https://github.com/google/closure-compiler/wiki/Managing-Dependencies
+[output-wrapper-faq]: https://github.com/google/closure-compiler/wiki/FAQ#when-using-advanced-optimizations-closure-compiler-adds-new-variables-to-the-global-scope-how-do-i-make-sure-my-variables-dont-collide-with-other-scripts-on-the-page
 [phantomjs-bug]: https://github.com/ariya/phantomjs/issues/14028
 [phantomjs]: http://phantomjs.org/
 [protobuf]: https://github.com/google/protobuf

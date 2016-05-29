@@ -33,7 +33,7 @@ closure_js_binary(
 
 file_test(
     name = "minification",
-    content = "console.log(\"hello world\");\n",
+    content = "(function(){console.log(\"hello world\");}).call(this);\n",
     file = "hello_bin.js",
 )
 
@@ -43,7 +43,7 @@ file_test(
                "\"version\":3,\n" +
                "\"file\":\"/closure/compiler/test/hello_bin.js\",\n" +
                "\"lineCount\":1,\n" +
-               "\"mappings\":\"AAgBAA,OAAAC,IAAA,CAAgB,aAAhB;\",\n" +
+               "\"mappings\":\"A,YAgBAA,OAAAC,IAAA,CAAgB,aAAhB;\",\n" +
                "\"sources\":[\"/closure/compiler/test/hello.js\"],\n" +
                "\"names\":[\"console\",\"log\"]\n" +
                "}\n"),
@@ -58,7 +58,7 @@ closure_js_binary(
 
 file_test(
     name = "strictOutputLanguage_addsUseStrict",
-    content = "'use strict';console.log(\"hello world\");\n",
+    content = "(function(){'use strict';console.log(\"hello world\");}).call(this);\n",
     file = "hello_es5strict_bin.js",
 )
 
@@ -88,7 +88,7 @@ closure_js_binary(
 
 file_test(
     name = "es6strictWithEs3Dep_isAllowed",
-    content = "console.log(\"hello world\");\n",
+    content = "(function(){console.log(\"hello world\");}).call(this);\n",
     file = "hello_decay_bin.js",
 )
 
@@ -108,7 +108,7 @@ closure_js_binary(
 
 file_test(
     name = "es6WithConstKeyword_getsRemoved",
-    content = "var hello=\"hello world\";console.log(hello);\n",
+    content = "(function(){var hello=\"hello world\";console.log(hello);}).call(this);\n",
     file = "es6const_bin.js",
 )
 
@@ -128,7 +128,7 @@ closure_js_binary(
 
 file_test(
     name = "es6WithArrowFunction_getsExpanded",
-    content = "var hello=function(e){return e+\" world\"};console.log(hello(\"hello\"));\n",
+    content = "(function(){var hello=function(e){return e+\" world\"};console.log(hello(\"hello\"));}).call(this);\n",
     file = "es6arrow_bin.js",
 )
 
@@ -148,7 +148,7 @@ closure_js_binary(
 
 file_test(
     name = "es6typed_works",
-    content = "var hello=\"hello world\";console.log(hello);\n",
+    content = "(function(){var hello=\"hello world\";console.log(hello);}).call(this);\n",
     file = "es6typed_bin.js",
 )
 
@@ -176,4 +176,30 @@ closure_js_library(
     name = "empty_lib",  # this is an alias rule
     visibility = ["//closure/compiler/test/exports_and_entry_points:__pkg__"],
     exports = [":empty_lib_indirectly_hidden"],
+)
+
+closure_js_binary(
+    name = "hello_no_output_wrapper_bin",
+    language = "ECMASCRIPT3",
+    deps = [":hello_lib"],
+    output_wrapper = "",
+)
+
+file_test(
+    name = "no_output_wrapper",
+    content = "console.log(\"hello world\");\n",
+    file = "hello_no_output_wrapper_bin.js",
+)
+
+closure_js_binary(
+    name = "hello_output_wrapper_dash_dash_space_bin",
+    language = "ECMASCRIPT3",
+    deps = [":hello_lib"],
+    output_wrapper = "-- %output%",
+)
+
+file_test(
+    name = "output_wrapper_dash_dash_space",
+    content = "-- console.log(\"hello world\");\n",
+    file = "hello_output_wrapper_dash_dash_space_bin.js",
 )
