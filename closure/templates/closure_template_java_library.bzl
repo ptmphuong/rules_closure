@@ -108,7 +108,6 @@ def _gen_soy_java_wrappers(name, java_package, srcs, deps, outs,
     soycompilerbin = str(Label('//closure/templates:SoyParseInfoGenerator')),
     **kwargs):
   additional_flags = ''
-  targets = " ".join(["$(locations " + src + ")" for src in srcs])
   srcs_flag_file_name = name + '__srcs'
   deps_flag_file_name = name + '__deps'
   _soy__gen_file_list_arg_as_file(
