@@ -138,7 +138,7 @@ def determine_js_language(ctx, normalize=False):
   return language
 
 def is_using_closure_library(srcs):
-  return _contains_file(srcs, "external/closure_library/closure/goog/base.js")
+  return contains_file(srcs, "external/closure_library/closure/goog/base.js")
 
 # Maps (current, dependent) -> (compatible, is_decay)
 _JS_LANGUAGE_COMBINATIONS = {
@@ -187,7 +187,7 @@ def _mix_js_languages(ctx, current, dependent):
     return compatible
   fail("Can not link an %s library against an %s one." % (dependent, current))
 
-def _contains_file(srcs, path):
+def contains_file(srcs, path):
   for src in srcs:
     if src.short_path == path:
       return True

@@ -28,7 +28,8 @@ load("//closure/private:defs.bzl",
      "collect_required_css_labels",
      "determine_js_language",
      "difference",
-     "is_using_closure_library")
+     "is_using_closure_library",
+     "contains_file")
 
 _STRICT_LANGUAGES = set([
     "ECMASCRIPT6_TYPED",
@@ -75,6 +76,8 @@ def _impl(ctx):
     args += ["--define=goog.DEBUG=false"]
   if is_using_closure_library(srcs) and language_out in _STRICT_LANGUAGES:
     args += ["--define=goog.STRICT_MODE_COMPATIBLE"]
+  if contains_file(srcs, ctx.file._soyutils_usegoog.short_path):
+    args += ["--define=goog.soy.REQUIRE_STRICT_AUTOESCAPE"]
   for entry_point in ctx.attr.entry_points:
     _validate_entry_point(entry_point, srcs)
     args += ["--entry_point=" + entry_point]
@@ -176,6 +179,9 @@ closure_js_binary = rule(
             executable=True),
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_closure_library_deps": CLOSURE_LIBRARY_DEPS_ATTR,
+        "_soyutils_usegoog": attr.label(
+            default=Label("@soyutils_usegoog//file"),
+            single_file=True),
     },
     outputs={
         "out": "%{name}.js",
