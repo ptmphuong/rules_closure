@@ -17,8 +17,7 @@
 """Utilities for compiling Closure Templates to JavaScript.
 """
 
-load("//closure/compiler:closure_js_library.bzl",
-     "closure_js_library")
+load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 
 def closure_template_js_library(
     name,

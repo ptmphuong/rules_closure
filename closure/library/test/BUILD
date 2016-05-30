@@ -14,7 +14,7 @@
 
 package(default_testonly = True)
 
-load("//closure/testing:closure_js_test.bzl", "closure_js_test")
+load("//closure:defs.bzl", "closure_js_test")
 
 closure_js_test(
     name = "dom_test",

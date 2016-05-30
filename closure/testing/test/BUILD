@@ -14,9 +14,9 @@
 
 package(default_testonly = True)
 
-load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
-load("//closure/testing:closure_js_test.bzl", "closure_js_test")
-load("//closure/private:files_equal_test.bzl", "files_equal_test")
+load("//closure:defs.bzl", "closure_js_library")
+load("//closure:defs.bzl", "closure_js_test")
+load("//closure:defs.bzl", "files_equal_test")
 
 closure_js_library(
     name = "arithmetic_lib",

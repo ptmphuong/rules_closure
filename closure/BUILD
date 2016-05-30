@@ -34,3 +34,10 @@ lines_sorted_test(
     error_message = "The param call list in repositories.bzl must be sorted",
     file = "repositories.bzl",
 )
+
+lines_sorted_test(
+    name = "defs_loads_sorted_test",
+    cmd = "grep -e '^load' $< >$@",
+    error_message = "The load list in defs.bzl must be sorted",
+    file = "defs.bzl",
+)

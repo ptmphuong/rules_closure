@@ -14,9 +14,9 @@
 
 package(default_testonly = True)
 
-load("//closure/compiler:closure_js_deps.bzl", "closure_js_deps")
-load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:file_test.bzl", "file_test")
+load("//closure:defs.bzl", "closure_js_deps")
+load("//closure:defs.bzl", "closure_js_library")
 
 closure_js_library(
     name = "hyperion",

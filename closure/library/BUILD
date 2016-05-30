@@ -14,8 +14,8 @@
 
 package(default_visibility = ["//visibility:public"])
 
-load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
-load("//closure/stylesheets:closure_css_library.bzl", "closure_css_library")
+load("//closure:defs.bzl", "closure_js_library")
+load("//closure:defs.bzl", "closure_css_library")
 
 closure_js_library(
     name = "library",

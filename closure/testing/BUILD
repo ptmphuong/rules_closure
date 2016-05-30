@@ -3,7 +3,7 @@ package(
     default_visibility = ["//visibility:public"],
 )
 
-load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
+load("//closure:defs.bzl", "closure_js_library")
 
 exports_files(["empty.html"])
 

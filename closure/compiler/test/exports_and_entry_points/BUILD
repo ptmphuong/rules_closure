@@ -14,9 +14,9 @@
 
 package(default_testonly = True)
 
-load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
-load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:file_test.bzl", "file_test")
+load("//closure:defs.bzl", "closure_js_binary")
+load("//closure:defs.bzl", "closure_js_library")
 
 ################################################################################
 # Assume we want to write a JavaScript program (not a library) that we compile
