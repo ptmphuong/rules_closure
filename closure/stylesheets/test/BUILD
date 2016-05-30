@@ -88,6 +88,7 @@ closure_js_library(
 closure_js_binary(
     name = "rename_bin",
     css = ":hello_rename_bin",
+    pedantic = True,
     deps = [":rename_lib"],
 )
 

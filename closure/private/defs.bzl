@@ -37,6 +37,8 @@ JS_PEDANTIC_ARGS = [
     "--jscomp_error=*",
     "--jscomp_warning=deprecated",
     "--jscomp_warning=unnecessaryCasts",
+    "--jscomp_off=lintChecks",  # closure_js_library does this
+    "--jscomp_off=missingRequire",  # closure_js_library does this
 ]
 
 JS_HIDE_WARNING_ARGS = [

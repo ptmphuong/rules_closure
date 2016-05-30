@@ -302,6 +302,7 @@ closure_js_library(
 
 closure_js_binary(
     name = "es6_g2_bin",
+    pedantic = True,
     deps = [":es6_g2"],
 )
 

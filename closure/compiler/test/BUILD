@@ -28,6 +28,7 @@ closure_js_library(
 closure_js_binary(
     name = "hello_bin",
     language = "ECMASCRIPT3",
+    pedantic = True,
     deps = [":hello_lib"],
 )
 
@@ -53,6 +54,7 @@ file_test(
 closure_js_binary(
     name = "hello_es5strict_bin",
     language = "ECMASCRIPT5_STRICT",
+    pedantic = True,
     deps = [":hello_lib"],
 )
 
@@ -83,6 +85,7 @@ rule_test(
 
 closure_js_binary(
     name = "hello_decay_bin",
+    pedantic = True,
     deps = [":hello_decay_lib"],
 )
 
@@ -103,6 +106,7 @@ closure_js_binary(
     name = "es6const_bin",
     compilation_level = "WHITESPACE_ONLY",
     language = "ECMASCRIPT5",
+    pedantic = True,
     deps = [":es6const_lib"],
 )
 
@@ -123,6 +127,7 @@ closure_js_binary(
     name = "es6arrow_bin",
     compilation_level = "WHITESPACE_ONLY",
     language = "ECMASCRIPT5",
+    pedantic = True,
     deps = [":es6arrow_lib"],
 )
 
@@ -143,6 +148,7 @@ closure_js_binary(
     name = "es6typed_bin",
     compilation_level = "WHITESPACE_ONLY",
     language = "ECMASCRIPT3",
+    pedantic = True,
     deps = [":es6typed_lib"],
 )
 
@@ -181,8 +187,9 @@ closure_js_library(
 closure_js_binary(
     name = "hello_no_output_wrapper_bin",
     language = "ECMASCRIPT3",
-    deps = [":hello_lib"],
     output_wrapper = "",
+    pedantic = True,
+    deps = [":hello_lib"],
 )
 
 file_test(
@@ -194,8 +201,9 @@ file_test(
 closure_js_binary(
     name = "hello_output_wrapper_dash_dash_space_bin",
     language = "ECMASCRIPT3",
-    deps = [":hello_lib"],
     output_wrapper = "-- %output%",
+    pedantic = True,
+    deps = [":hello_lib"],
 )
 
 file_test(
