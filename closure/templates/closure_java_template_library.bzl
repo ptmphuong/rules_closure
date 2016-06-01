@@ -42,7 +42,7 @@
 #     undefined templates). This parameter is passed to SoyParseInfoGenerator and
 #     it defaults to true.
 # soycompilerbin: Optional Soy to ParseInfo compiler target.
-def closure_template_java_library(
+def closure_java_template_library(
     name,
     java_package = None,
     srcs = [],
@@ -182,3 +182,9 @@ def _soy__GetJavaPackageForCurrentDirectory():
         None,
         'Unable to infer java package from directory [%s]' % (directory))
   return '.'.join(directory[idx + 1:].split('/'))
+
+
+def closure_template_java_library(**kwargs):
+  print("Deprecated: use closure_java_template_library() instead, " +
+        "closure_template_java_library will be removed in version 0.3.0")
+  closure_java_template_library(**kwargs)

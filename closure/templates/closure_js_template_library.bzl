@@ -19,7 +19,7 @@
 
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 
-def closure_template_js_library(
+def closure_js_template_library(
     name,
     srcs,
     deps = [],
@@ -87,3 +87,9 @@ def closure_template_js_library(
       srcs = js_srcs,
       deps = deps,
   )
+
+
+def closure_template_js_library(**kwargs):
+  print("Deprecated: use closure_js_template_library() instead, " +
+        "closure_template_java_library will be removed in version 0.3.0")
+  closure_js_template_library(**kwargs)
