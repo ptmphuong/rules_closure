@@ -34,35 +34,55 @@ def closure_js_test(name,
                     suppress=None,
                     visibility=None,
                     **kwargs):
+  if not srcs:
+    fail("closure_js_test rules can not have an empty 'srcs' list")
+  for src in srcs:
+    if not src.endswith('_test.js'):
+      fail("closure_js_test srcs must be files ending with _test.js")
+  if len(srcs) == 1:
+    work = [(name, srcs)]
+  else:
+    work = [(name + _make_suffix(src), [src]) for src in srcs]
+  for shard, sauce in work:
 
-  closure_js_library(
-      name = "%s_lib" % name,
-      srcs = srcs,
-      deps = deps,
-      language = language,
-      suppress = suppress,
-      visibility = visibility,
-      testonly = True,
-  )
+    closure_js_library(
+        name = "%s_lib" % shard,
+        srcs = sauce,
+        deps = deps,
+        language = language,
+        suppress = suppress,
+        visibility = visibility,
+        testonly = True,
+    )
 
-  closure_js_binary(
-      name = "%s_bin" % name,
-      deps = [":%s_lib" % name],
-      compilation_level = compilation_level,
-      css = css,
-      debug = True,
-      defs = defs,
-      entry_points = entry_points,
-      formatting = "PRETTY_PRINT",
-      pedantic = pedantic,
-      visibility = visibility,
-      testonly = True,
-  )
+    closure_js_binary(
+        name = "%s_bin" % shard,
+        deps = [":%s_lib" % shard],
+        compilation_level = compilation_level,
+        css = css,
+        debug = True,
+        defs = defs,
+        entry_points = entry_points,
+        formatting = "PRETTY_PRINT",
+        pedantic = pedantic,
+        visibility = visibility,
+        testonly = True,
+    )
 
-  phantomjs_test(
-      name = name,
-      deps = [":%s_bin" % name],
-      html = html,
-      visibility = visibility,
-      **kwargs
-  )
+    phantomjs_test(
+        name = shard,
+        deps = [":%s_bin" % shard],
+        html = html,
+        visibility = visibility,
+        **kwargs
+    )
+
+  if len(srcs) > 1:
+    native.test_suite(
+        name = name,
+        tests = [":" + shard for shard, _ in work],
+    )
+
+
+def _make_suffix(path):
+  return '_' + path.replace('_test.js', '').replace('-', '_').replace('/', '_')
