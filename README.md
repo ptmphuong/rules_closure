@@ -380,12 +380,12 @@ This rule must be used in conjunction with `closure_js_library`.
   - `PRINT_INPUT_DELIMITER`
   - `SINGLE_QUOTES`
 
-- **output_wrapper:** (String; optional; default is
-  `"(function(){%output%}).call(this);"`) Wraps the compiled code. The
-  [default][output-wrapper-faq] specifies an anonymous function to prevent
-  variables from polluting the global scope. If you are using compiler level
-  modules you should disable this option with `output_wrapper=""` and pass
-  `module_wrapper` via `defs` instead.
+- **output_wrapper:** (String; optional) Interpolate output into this string at
+  the place denoted by the marker token `%output%`. Use the marker token
+  `%output|jsstring%` to do JS string escaping on the output. The default
+  behavior is to generate code that pollutes the global namespace. Many users
+  will want to set this to `"(function(){%output%}).call(this);"` instead. See
+  the [Closure Compiler FAQ][output-wrapper-faq] for more details.
 
 - **defs:** (List of strings; optional) Specifies additional flags to be passed
   to the Closure Compiler, e.g. `"--hide_warnings_for=some/path/"`. To see what

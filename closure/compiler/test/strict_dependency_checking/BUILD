@@ -308,6 +308,6 @@ closure_js_binary(
 
 file_test(
     name = "es6ModulesWithRootPaths_compileCorrectlyWhenReferencedWithoutRootPrefix",
-    content = "(function(){console.log(\"hi\");}).call(this);\n",
+    content = "console.log(\"hi\");\n",
     file = "es6_g2_bin.js",
 )

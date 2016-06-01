@@ -90,8 +90,6 @@ def _impl(ctx):
     args += ["--jscomp_off=unknownDefines",
              "--define=goog.json.USE_NATIVE_JSON"]
   if ctx.attr.output_wrapper:
-    if ctx.attr.output_wrapper == "%output%":
-      fail("To disable use 'output_wrapper = \"\"'")
     args += ["--output_wrapper=%s" % ctx.attr.output_wrapper]
   args += ctx.attr.defs
   args += ["--externs=%s" % extern.path for extern in externs]
@@ -176,8 +174,7 @@ closure_js_binary = rule(
         "entry_points": attr.string_list(default=[]),
         "formatting": attr.string(),
         "language": attr.string(default="ECMASCRIPT3"),
-        "output_wrapper": attr.string(
-            default="(function(){%output%}).call(this);"),
+        "output_wrapper": attr.string(),
         "pedantic": attr.bool(default=False),
         "_compiler": attr.label(
             default=Label("//closure/compiler"),

@@ -34,7 +34,7 @@ closure_js_binary(
 
 file_test(
     name = "minification",
-    content = "(function(){console.log(\"hello world\");}).call(this);\n",
+    content = "console.log(\"hello world\");\n",
     file = "hello_bin.js",
 )
 
@@ -44,11 +44,38 @@ file_test(
                "\"version\":3,\n" +
                "\"file\":\"/closure/compiler/test/hello_bin.js\",\n" +
                "\"lineCount\":1,\n" +
-               "\"mappings\":\"A,YAgBAA,OAAAC,IAAA,CAAgB,aAAhB;\",\n" +
+               "\"mappings\":\"AAgBAA,OAAAC,IAAA,CAAgB,aAAhB;\",\n" +
                "\"sources\":[\"/closure/compiler/test/hello.js\"],\n" +
                "\"names\":[\"console\",\"log\"]\n" +
                "}\n"),
     file = "hello_bin.js.map",
+)
+
+closure_js_binary(
+    name = "hello_wrap_bin",
+    language = "ECMASCRIPT3",
+    output_wrapper = "(function(){%output%}).call(this);",
+    pedantic = True,
+    deps = [":hello_lib"],
+)
+
+file_test(
+    name = "minificationWithWrapper",
+    content = "(function(){console.log(\"hello world\");}).call(this);\n",
+    file = "hello_wrap_bin.js",
+)
+
+file_test(
+    name = "sourcemapWithWrapper_hasDifferentMappingCodes",
+    content = ("{\n" +
+               "\"version\":3,\n" +
+               "\"file\":\"/closure/compiler/test/hello_wrap_bin.js\",\n" +
+               "\"lineCount\":1,\n" +
+               "\"mappings\":\"A,YAgBAA,OAAAC,IAAA,CAAgB,aAAhB;\",\n" +
+               "\"sources\":[\"/closure/compiler/test/hello.js\"],\n" +
+               "\"names\":[\"console\",\"log\"]\n" +
+               "}\n"),
+    file = "hello_wrap_bin.js.map",
 )
 
 closure_js_binary(
@@ -60,7 +87,7 @@ closure_js_binary(
 
 file_test(
     name = "strictOutputLanguage_addsUseStrict",
-    content = "(function(){'use strict';console.log(\"hello world\");}).call(this);\n",
+    content = "'use strict';console.log(\"hello world\");\n",
     file = "hello_es5strict_bin.js",
 )
 
@@ -91,7 +118,7 @@ closure_js_binary(
 
 file_test(
     name = "es6strictWithEs3Dep_isAllowed",
-    content = "(function(){console.log(\"hello world\");}).call(this);\n",
+    content = "console.log(\"hello world\");\n",
     file = "hello_decay_bin.js",
 )
 
@@ -112,7 +139,7 @@ closure_js_binary(
 
 file_test(
     name = "es6WithConstKeyword_getsRemoved",
-    content = "(function(){var hello=\"hello world\";console.log(hello);}).call(this);\n",
+    content = "var hello=\"hello world\";console.log(hello);\n",
     file = "es6const_bin.js",
 )
 
@@ -133,7 +160,7 @@ closure_js_binary(
 
 file_test(
     name = "es6WithArrowFunction_getsExpanded",
-    content = "(function(){var hello=function(e){return e+\" world\"};console.log(hello(\"hello\"));}).call(this);\n",
+    content = "var hello=function(e){return e+\" world\"};console.log(hello(\"hello\"));\n",
     file = "es6arrow_bin.js",
 )
 
@@ -154,7 +181,7 @@ closure_js_binary(
 
 file_test(
     name = "es6typed_works",
-    content = "(function(){var hello=\"hello world\";console.log(hello);}).call(this);\n",
+    content = "var hello=\"hello world\";console.log(hello);\n",
     file = "es6typed_bin.js",
 )
 
@@ -182,20 +209,6 @@ closure_js_library(
     name = "empty_lib",  # this is an alias rule
     visibility = ["//closure/compiler/test/exports_and_entry_points:__pkg__"],
     exports = [":empty_lib_indirectly_hidden"],
-)
-
-closure_js_binary(
-    name = "hello_no_output_wrapper_bin",
-    language = "ECMASCRIPT3",
-    output_wrapper = "",
-    pedantic = True,
-    deps = [":hello_lib"],
-)
-
-file_test(
-    name = "no_output_wrapper",
-    content = "console.log(\"hello world\");\n",
-    file = "hello_no_output_wrapper_bin.js",
 )
 
 closure_js_binary(
