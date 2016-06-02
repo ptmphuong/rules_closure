@@ -541,7 +541,7 @@ admin-only path named `/filez/`, then raw source mode could be used as follows:
   in your application.
 
 
-## closure\_template\_js\_library
+## closure\_js\_template\_library
 
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_template_library")
@@ -615,7 +615,7 @@ the following:
   [incremental-dom][incremental-dom] compatible templates.
 
 
-## closure\_template\_java\_library
+## closure\_java\_template\_library
 
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_java_template_library")
@@ -660,7 +660,7 @@ the following:
   Java files that are generated, e.g. `"com.foo.soy"`.
 
 
-## closure\_template\_py\_library
+## closure\_py\_template\_library
 
 TODO
 
@@ -805,7 +805,7 @@ The documentation on using Closure Stylesheets can be found
   `bazel run @io_bazel_rules_closure//closure/stylesheets -- --help`
 
 
-## closure\_proto\_js\_library
+## closure\_js\_proto\_library
 
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_proto_library")
