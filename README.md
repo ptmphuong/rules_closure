@@ -15,7 +15,7 @@ rules are built with the [Closure Tools][closure-tools], which are what Google
 used to create websites like Google.com and Gmail. The mission of this project
 is to faithfully reproduce Google's internal JavaScript development praxis.
 
-Closure Rules is a *abstract* build system. This is what sets it apart from
+Closure Rules is an *abstract* build system. This is what sets it apart from
 Grunt, Gulp, Webpacker, Brunch, Broccoli, etc. These projects all provide a
 concrete framework for explaining *how* to build your project. Closure Rules
 instead provides a framework for declaring *what* your project is. Closure Rules
