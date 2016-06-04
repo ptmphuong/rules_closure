@@ -47,7 +47,7 @@ final class JsCheckerState {
   // Nearly all closure_js_library rules will directly depend on //closure/library which has 4788
   // provides. This sets a very large lower bound for the size of this hash table. Since HashMap has
   // a default load factor of 0.75, it would need to have a capacity of 6385 (4788/0.75+1) to store
-  // those namespaces without redimensioning. We're expanded this to 9000 to allow plenty of room
+  // those namespaces without redimensioning. We've expanded this to 9000 to allow plenty of room
   // for other dependencies.
   final Set<String> provided = new HashSet<>(9000);
 
