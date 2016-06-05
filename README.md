@@ -393,7 +393,7 @@ This rule must be used in conjunction with `closure_js_library`.
 - **defs:** (List of strings; optional) Specifies additional flags to be passed
   to the Closure Compiler, e.g. `"--hide_warnings_for=some/path/"`. To see what
   flags are available, run:
-  `bazel run @io_bazel_rules_closure//closure/compiler -- --help`
+  `bazel run @io_bazel_rules_closure//java/com/google/javascript/jscomp:jscompiler -- --help`
 
 ### Support for AngularJS
 

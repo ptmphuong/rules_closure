@@ -13,8 +13,3 @@
 # limitations under the License.
 
 package(default_visibility = ["//visibility:public"])
-
-alias(
-    name = "compiler",
-    actual = "//java/com/google/javascript/jscomp:jscompiler",
-)
