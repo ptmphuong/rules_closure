@@ -85,6 +85,8 @@ def _impl(ctx):
   for entry_point in ctx.attr.entry_points:
     _validate_entry_point(entry_point, srcs)
     args += ["--entry_point=" + entry_point]
+  if ctx.attr.testonly:
+    args += ["--export_test_functions"]
   if ctx.attr.pedantic:
     args += JS_PEDANTIC_ARGS
     args += ["--use_types_for_optimization"]

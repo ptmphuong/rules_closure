@@ -23,7 +23,7 @@ goog.scope(function() {
 var add = io.bazel.rules.closure.arithmetic.add;
 
 goog.testing.testSuite({
-  'testAdd': function() {
+  testAdd: function() {
     assertEquals(4, add(2, 2));
   }
 });

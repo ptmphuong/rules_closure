@@ -15,17 +15,13 @@
 goog.require('goog.asserts');
 goog.require('goog.testing.asserts');
 goog.require('goog.testing.jsunit');
-goog.require('goog.testing.testSuite');
 goog.require('io.bazel.rules.closure.Greeter');
 
-goog.testing.testSuite({
 
-  'testGreet': function() {
-    var greeter = new io.bazel.rules.closure.Greeter('Justine');
-    greeter.greet();
-    var body = document.body;
-    goog.asserts.assert(body != null);
-    assertHTMLEquals('<p>Hello <b>Justine</b>!', body.innerHTML);
-  }
-
-});  // goog.testing.testSuite
+function testGreet() {
+  var greeter = new io.bazel.rules.closure.Greeter('Justine');
+  greeter.greet();
+  var body = document.body;
+  goog.asserts.assert(body != null);
+  assertHTMLEquals('<p>Hello <b>Justine</b>!', body.innerHTML);
+}

@@ -12,18 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+goog.require('goog.module');
 goog.require('goog.testing.asserts');
 goog.require('goog.testing.jsunit');
-goog.require('goog.testing.testSuite');
 goog.require('io.bazel.rules.closure.GreeterIdom');
 
-goog.testing.testSuite({
 
-  'testGreet': function() {
-    var GreeterIdom = goog.module.get('io.bazel.rules.closure.GreeterIdom');
-    var greeter = new GreeterIdom('Andy');
-    greeter.greet();
-    assertHTMLEquals('<p>Hello <b>Andy</b>!</p>', document.body.innerHTML);
-  }
-
-});  // goog.testing.testSuite
+function testGreet() {
+  var GreeterIdom = goog.module.get('io.bazel.rules.closure.GreeterIdom');
+  var greeter = new GreeterIdom('Andy');
+  greeter.greet();
+  assertHTMLEquals('<p>Hello <b>Andy</b>!</p>', document.body.innerHTML);
+}

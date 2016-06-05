@@ -35,10 +35,12 @@ public final class JsCompiler {
   private static final class Runner extends CommandLineRunner {
 
     private final Compiler compiler;
+    private final boolean exportTestFunctions;
 
-    Runner(Iterable<String> args, Compiler compiler) {
+    Runner(Iterable<String> args, Compiler compiler, boolean exportTestFunctions) {
       super(Iterables.toArray(args, String.class));
       this.compiler = compiler;
+      this.exportTestFunctions = exportTestFunctions;
     }
 
     int go() throws IOException {
@@ -55,6 +57,13 @@ public final class JsCompiler {
     protected Compiler createCompiler() {
       return compiler;
     }
+
+    @Override
+    protected CompilerOptions createOptions() {
+      CompilerOptions options = super.createOptions();
+      options.setExportTestFunctions(exportTestFunctions);
+      return options;
+    }
   }
 
   public static void main(String[] args) throws IOException {
@@ -62,6 +71,7 @@ public final class JsCompiler {
     Path outputErrors = null;
     boolean expectFailure = false;
     boolean expectWarnings = false;
+    boolean exportTestFunctions = false;
 
     // Compiler flags we want to read.
     Path jsOutputFile = null;
@@ -76,6 +86,8 @@ public final class JsCompiler {
         expectFailure = true;
       } else if (arg.equals("--expect_warnings")) {
         expectWarnings = true;
+      } else if (arg.equals("--export_test_functions")) {
+        exportTestFunctions = true;
       } else {
         if (arg.startsWith("--js_output_file=")) {
           jsOutputFile = Paths.get(arg.substring(17));
@@ -93,7 +105,7 @@ public final class JsCompiler {
     errorFormatter.setColorize(true);
     JsCheckerErrorManager errorManager = new JsCheckerErrorManager(errorFormatter);
     compiler.setErrorManager(errorManager);
-    Runner runner = new Runner(passThroughArgs, compiler);
+    Runner runner = new Runner(passThroughArgs, compiler, exportTestFunctions);
     if (runner.shouldRunCompiler()) {
       failed |= runner.go() != 0;
     }

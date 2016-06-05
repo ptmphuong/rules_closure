@@ -14,15 +14,11 @@
 
 goog.require('goog.testing.asserts');
 goog.require('goog.testing.jsunit');
-goog.require('goog.testing.testSuite');
 goog.require('io.bazel.rules.closure.protobuf.Example');
 
-goog.testing.testSuite({
 
-  'testExample': function() {
-    var msg = new io.bazel.rules.closure.protobuf.Example('value');
-    msg.field();
-    assertHTMLEquals('value', msg.field());
-  }
-
-});  // goog.testing.testSuite
+function testExample() {
+  var msg = new io.bazel.rules.closure.protobuf.Example('value');
+  msg.field();
+  assertHTMLEquals('value', msg.field());
+}

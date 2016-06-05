@@ -18,9 +18,6 @@ import 'goog:goog.testing.jsunit';
 import { add } from 'closure/testing/test/arithmetic_es6module';
 
 
-/**
- * @export
- */
 function testAdd() {
   assertEquals(4, add(2, 2));
 }

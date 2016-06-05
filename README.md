@@ -416,9 +416,10 @@ This is a build macro that composes [closure_js_library](#closure_js_library),
 [phantomjs_test](#phantomjs_test).
 
 A test is defined as any function in the global namespace that begins with
-`test`, `setUp`, or `tearDown`. If you don't have a global namespace, because
-you're either using modules or `goog.scope`, then you must register your test
-functions with `goog.testing.testSuite`.
+`test`, `setUp`, or `tearDown`. You are not required to `@export` these
+functions. If you don't have a global namespace, because you're using
+`goog.module` or `goog.scope`, then you must register your test functions with
+`goog.testing.testSuite`.
 
 Each test file should require `goog.testing.jsunit` and `goog.testing.asserts`
 because they run the tests and provide useful [testing functions][asserts] such
