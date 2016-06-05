@@ -14,8 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Rule for building JavaScript binaries with Closure Compiler.
-"""
+"""Rule for building JavaScript binaries with Closure Compiler."""
 
 load("//closure/private:defs.bzl",
      "CLOSURE_LIBRARY_BASE_ATTR",
@@ -49,6 +48,7 @@ def _impl(ctx):
   args = [
       "--js_output_file=%s" % ctx.outputs.out.path,
       "--create_source_map=%s" % ctx.outputs.map.path,
+      "--output_errors=%s" % ctx.outputs.stderr.path,
       "--language_in=%s" % language_in,
       "--language_out=%s" % language_out,
       "--compilation_level=%s" % ctx.attr.compilation_level,
@@ -57,6 +57,10 @@ def _impl(ctx):
       "--new_type_inf",
       "--generate_exports",
   ]
+  if ctx.attr.internal_expect_failure:
+    args += ["--expect_failure"]
+  if ctx.attr.internal_expect_warnings:
+    args += ["--expect_warnings"]
   roots = set([ctx.outputs.out.root.path], order="compile")
   for src in srcs:
     roots += [src.root.path]
@@ -96,10 +100,10 @@ def _impl(ctx):
   args += ["--js=%s" % src.path for src in srcs]
   ctx.action(
       inputs=list(srcs) + list(externs),
-      outputs=[ctx.outputs.out, ctx.outputs.map],
-      executable=ctx.executable._compiler,
+      outputs=[ctx.outputs.out, ctx.outputs.map, ctx.outputs.stderr],
+      executable=ctx.executable._jscompiler,
       arguments=args,
-      mnemonic="JSCompile",
+      mnemonic="JsCompiler",
       progress_message="Compiling %d JavaScript files to %s" % (
           len(srcs) + len(externs),
           ctx.outputs.out.short_path))
@@ -176,8 +180,12 @@ closure_js_binary = rule(
         "language": attr.string(default="ECMASCRIPT3"),
         "output_wrapper": attr.string(),
         "pedantic": attr.bool(default=False),
-        "_compiler": attr.label(
-            default=Label("//closure/compiler"),
+
+        # internal only
+        "internal_expect_failure": attr.bool(default=False),
+        "internal_expect_warnings": attr.bool(default=False),
+        "_jscompiler": attr.label(
+            default=Label("//java/com/google/javascript/jscomp:jscompiler"),
             executable=True),
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_closure_library_deps": CLOSURE_LIBRARY_DEPS_ATTR,
@@ -189,4 +197,5 @@ closure_js_binary = rule(
         "out": "%{name}.js",
         "map": "%{name}.js.map",
         "provided": "%{name}-provided.txt",
+        "stderr": "%{name}-stderr.txt",
     })

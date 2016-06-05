@@ -14,9 +14,7 @@
 
 package(default_visibility = ["//visibility:public"])
 
-java_binary(
+alias(
     name = "compiler",
-    jvm_flags = ["-client"],
-    main_class = "com.google.javascript.jscomp.CommandLineRunner",
-    runtime_deps = ["//third_party/java/jscomp"],
+    actual = "//java/com/google/javascript/jscomp:jscompiler",
 )
