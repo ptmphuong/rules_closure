@@ -90,6 +90,7 @@ public final class JsCompiler {
     boolean failed = false;
     Compiler compiler = new Compiler();
     LightweightMessageFormatter errorFormatter = new LightweightMessageFormatter(compiler);
+    errorFormatter.setColorize(true);
     JsCheckerErrorManager errorManager = new JsCheckerErrorManager(errorFormatter);
     compiler.setErrorManager(errorManager);
     Runner runner = new Runner(passThroughArgs, compiler);

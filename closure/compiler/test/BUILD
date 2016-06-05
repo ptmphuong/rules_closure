@@ -195,7 +195,7 @@ closure_js_library(
 file_test(
     name = "noClosingParen_failsToCompile",
     file = "noClosingParen-stderr.txt",
-    regexp = "noClosingParen\\.js:16: ERROR - Parse error\\.",
+    regexp = "noClosingParen\\.js:16:.*ERROR.*- Parse error\\.",
 )
 
 closure_js_library(

@@ -214,8 +214,9 @@ public final class JsChecker {
     options.setCodingConvention(convention.convention);
     options.setSkipTranspilationAndCrash(true);
     options.setIdeMode(true);
-    JsCheckerErrorManager errorManager =
-        new JsCheckerErrorManager(new JsCheckerErrorFormatter(state, compiler));
+    JsCheckerErrorFormatter errorFormatter = new JsCheckerErrorFormatter(state, compiler);
+    errorFormatter.setColorize(true);
+    JsCheckerErrorManager errorManager = new JsCheckerErrorManager(errorFormatter);
     compiler.setErrorManager(errorManager);
 
     // configure which error messages appear

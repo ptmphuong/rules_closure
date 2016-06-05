@@ -27,13 +27,13 @@ closure_js_library(
 file_test(
     name = "memberWithUnderscoreButNoPrivateMarker_causesWarning",
     file = "love-stderr.txt",
-    regexp = "WARNING lintChecks JSC_MUST_BE_PRIVATE - Property b_ must be marked @private",
+    regexp = "WARNING.*lintChecks JSC_MUST_BE_PRIVATE - Property b_ must be marked @private",
 )
 
 file_test(
     name = "methodMissingJsdoc_causesWarning",
     file = "love-stderr.txt",
-    regexp = "WARNING lintChecks JSC_MISSING_JSDOC",
+    regexp = "WARNING.*lintChecks JSC_MISSING_JSDOC",
 )
 
 closure_js_library(
