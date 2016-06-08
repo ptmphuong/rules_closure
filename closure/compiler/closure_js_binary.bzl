@@ -106,6 +106,11 @@ def _impl(ctx):
     files += [report]
     outputs += [report]
     args += ["--property_renaming_report=%s" % report.path]
+
+  # validate defs
+  for flag in ctx.attr.defs:
+    if not flag.startswith("--") or (" " in flag and "=" not in flag):
+      fail("Please use --flag=value syntax for defs")
   args += ctx.attr.defs
 
   # add gigantic list of files
