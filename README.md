@@ -285,7 +285,7 @@ target. See the documentation of the `deps` attribute for further information.
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_binary")
 closure_js_binary(name, deps, css, pedantic, debug, language, entry_points,
                   dependency_mode, compilation_level, formatting,
-                  output_wrapper, defs)
+                  output_wrapper, property_renaming_report, defs)
 ```
 
 Turns JavaScript libraries into a minified optimized blob of code.
@@ -389,6 +389,11 @@ This rule must be used in conjunction with `closure_js_library`.
   behavior is to generate code that pollutes the global namespace. Many users
   will want to set this to `"(function(){%output%}).call(this);"` instead. See
   the [Closure Compiler FAQ][output-wrapper-faq] for more details.
+
+- **property_renaming_report:** (File; optional) Output file for property
+  renaming report. It will contain lines in the form of `old:new`. This feature
+  has some fringe use cases, such as minifying JSON messages. However it's
+  recommended that you use protobuf instead.
 
 - **defs:** (List of strings; optional) Specifies additional flags to be passed
   to the Closure Compiler, e.g. `"--hide_warnings_for=some/path/"`. To see what

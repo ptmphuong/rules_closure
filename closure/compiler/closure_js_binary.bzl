@@ -45,6 +45,10 @@ def _impl(ctx):
   _validate_css_graph(ctx)
   language_in = determine_js_language(ctx, normalize=True)
   language_out = ctx.attr.language
+  files = set([ctx.outputs.out, ctx.outputs.map], order="compile")
+  outputs = [ctx.outputs.out, ctx.outputs.map, ctx.outputs.stderr]
+
+  # build list of flags for closure compiler
   args = [
       "--js_output_file=%s" % ctx.outputs.out.path,
       "--create_source_map=%s" % ctx.outputs.map.path,
@@ -97,26 +101,37 @@ def _impl(ctx):
              "--define=goog.json.USE_NATIVE_JSON"]
   if ctx.attr.output_wrapper:
     args += ["--output_wrapper=%s" % ctx.attr.output_wrapper]
+  if ctx.outputs.property_renaming_report:
+    report = ctx.outputs.property_renaming_report
+    files += [report]
+    outputs += [report]
+    args += ["--property_renaming_report=%s" % report.path]
   args += ctx.attr.defs
+
+  # add gigantic list of files
   args += ["--externs=%s" % extern.path for extern in externs]
   args += ["--js=%s" % src.path for src in srcs]
+
+  # tell bazel how the javascript compiler should be run
   ctx.action(
       inputs=list(srcs) + list(externs),
-      outputs=[ctx.outputs.out, ctx.outputs.map, ctx.outputs.stderr],
+      outputs=outputs,
       executable=ctx.executable._jscompiler,
       arguments=args,
       mnemonic="JsCompiler",
       progress_message="Compiling %d JavaScript files to %s" % (
           len(srcs) + len(externs),
           ctx.outputs.out.short_path))
+
+  # this is necessary for closure_js_binary to behave like closure_js_library
   ctx.file_action(output=ctx.outputs.provided, content="")
-  js_files = set([ctx.outputs.out], order="compile")
-  return struct(files=js_files,
+
+  return struct(files=files,
                 js_language=language_out,
                 js_exports=[],
                 js_provided=ctx.outputs.provided,
                 required_css_labels=set(order="compile"),
-                transitive_js_srcs=js_files,
+                transitive_js_srcs=set([ctx.outputs.out], order="compile"),
                 transitive_js_externs=set(order="compile"))
 
 def _validate_css_graph(ctx):
@@ -182,6 +197,7 @@ closure_js_binary = rule(
         "language": attr.string(default="ECMASCRIPT3"),
         "output_wrapper": attr.string(),
         "pedantic": attr.bool(default=False),
+        "property_renaming_report": attr.output(),
 
         # internal only
         "internal_expect_failure": attr.bool(default=False),
