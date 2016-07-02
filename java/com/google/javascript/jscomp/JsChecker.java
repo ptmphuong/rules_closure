@@ -63,10 +63,11 @@ public final class JsChecker {
 
   static {
     DiagnosticGroups.registerGroup("strictDependencies",
-        JsCheckerFirstPass.DUPLICATE_PROVIDES,
-        JsCheckerFirstPass.INVALID_SETTESTONLY,
-        JsCheckerFirstPass.REDECLARED_PROVIDES,
-        JsCheckerSecondPass.NOT_PROVIDED);
+        CheckStrictDeps.DUPLICATE_PROVIDES,
+        CheckStrictDeps.REDECLARED_PROVIDES,
+        CheckStrictDeps.NOT_PROVIDED);
+    DiagnosticGroups.registerGroup("setTestOnly",
+        CheckSetTestOnly.INVALID_SETTESTONLY);
   }
 
   private static final ImmutableSet<String> WARNINGS =
@@ -84,6 +85,7 @@ public final class JsChecker {
           "extraRequire",
           "misplacedTypeAnnotation",
           "missingRequire",
+          "setTestOnly",
           "strictDependencies");
 
   private static final ImmutableSet<DiagnosticType> DISABLE_FOR_ES6 =

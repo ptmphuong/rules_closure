@@ -17,24 +17,24 @@ load("//closure/private:java_proto_library.bzl", "java_proto_library")
 java_binary(
     name = "jschecker",
     srcs = [
+        "CheckSetTestOnly.java",
+        "CheckStrictDeps.java",
         "JsChecker.java",
         "JsCheckerClosureCodingConvention.java",
         "JsCheckerErrorFormatter.java",
-        "JsCheckerFirstPass.java",
         "JsCheckerHelper.java",
         "JsCheckerPassConfig.java",
-        "JsCheckerSecondPass.java",
         "JsCheckerState.java",
     ],
     main_class = "com.google.javascript.jscomp.JsChecker",
     visibility = ["//visibility:public"],
     deps = [
-        "@args4j//jar",
-        "@guava//jar",
-        "@protobuf_java//jar",
         ":common",
         ":worker_protocol_proto",
         "//third_party/java/jscomp",
+        "@args4j//jar",
+        "@guava//jar",
+        "@protobuf_java//jar",
     ],
 )
 
@@ -44,10 +44,10 @@ java_binary(
     main_class = "com.google.javascript.jscomp.JsCompiler",
     visibility = ["//visibility:public"],
     deps = [
-        "@args4j//jar",
-        "@guava//jar",
         ":common",
         "//third_party/java/jscomp",
+        "@args4j//jar",
+        "@guava//jar",
     ],
 )
 

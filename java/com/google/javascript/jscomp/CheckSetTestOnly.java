@@ -16,29 +16,22 @@
 
 package com.google.javascript.jscomp;
 
-import static com.google.javascript.jscomp.JsCheckerHelper.convertPathToModuleName;
-
 import com.google.javascript.jscomp.NodeTraversal.AbstractShallowCallback;
 import com.google.javascript.rhino.Node;
+import com.google.javascript.rhino.Token;
 
-final class JsCheckerFirstPass extends AbstractShallowCallback implements HotSwapCompilerPass {
+final class CheckSetTestOnly
+    extends AbstractShallowCallback implements HotSwapCompilerPass {
 
   public static final DiagnosticType INVALID_SETTESTONLY =
       DiagnosticType.error(
           "CR_INVALID_SETTESTONLY",
           "Not allowed here because closure_js_library {0} does not have testonly=1.");
 
-  public static final DiagnosticType DUPLICATE_PROVIDES =
-      DiagnosticType.error(
-          "CR_DUPLICATE_PROVIDES", "Namespace provided multiple times by srcs of {0}.");
-
-  public static final DiagnosticType REDECLARED_PROVIDES =
-      DiagnosticType.error("CR_REDECLARED_PROVIDES", "Namespace already provided by deps of {0}.");
-
   private final JsCheckerState state;
   private final AbstractCompiler compiler;
 
-  JsCheckerFirstPass(JsCheckerState state, AbstractCompiler compiler) {
+  CheckSetTestOnly(JsCheckerState state, AbstractCompiler compiler) {
     this.state = state;
     this.compiler = compiler;
   }
@@ -55,34 +48,11 @@ final class JsCheckerFirstPass extends AbstractShallowCallback implements HotSwa
 
   @Override
   public final void visit(NodeTraversal t, Node n, Node parent) {
-    switch (n.getType()) {
-      case CALL:
-        visitFunctionCall(t, n);
-        break;
-      default:
-        break;
-    }
-  }
-
-  private void visitFunctionCall(NodeTraversal t, Node n) {
-    Node callee = n.getFirstChild();
-    if (!state.testonly && callee.matchesQualifiedName("goog.setTestOnly")) {
+    if (!state.testonly
+        && n.getType() == Token.CALL
+        && n.getFirstChild().matchesQualifiedName("goog.setTestOnly")) {
       t.report(n, INVALID_SETTESTONLY, state.label);
       return;
-    }
-    Node parameter = n.getLastChild();
-    if (parameter.isString()
-        && (callee.matchesQualifiedName("goog.provide")
-            || callee.matchesQualifiedName("goog.module"))) {
-      String namespace = JsCheckerHelper.normalizeClosureNamespace(parameter.getString());
-      if (!state.provides.add(namespace)) {
-        t.report(parameter, DUPLICATE_PROVIDES, state.label);
-      }
-      if (state.provided.contains(namespace)
-          && state.redeclaredProvides.add(namespace)) {
-        t.report(parameter, REDECLARED_PROVIDES, state.label);
-      }
-      state.provides.removeAll(convertPathToModuleName(t.getSourceName(), state.roots).asSet());
     }
   }
 }

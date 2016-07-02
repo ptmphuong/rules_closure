@@ -76,7 +76,8 @@ final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
                   new CheckUselessBlocks(compiler),
                   new ClosureCheckModule(compiler),
                   new Es6SuperCheck(compiler),
-                  new JsCheckerFirstPass(state, compiler)));
+                  new CheckSetTestOnly(state, compiler),
+                  new CheckStrictDeps.FirstPass(state, compiler)));
         }
       };
 
@@ -105,7 +106,7 @@ final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
               ImmutableList.<Callback>of(
                   new CheckInterfaces(compiler),
                   new CheckPrototypeProperties(compiler),
-                  new JsCheckerSecondPass(state, compiler)));
+                  new CheckStrictDeps.SecondPass(state, compiler)));
         }
       };
 
