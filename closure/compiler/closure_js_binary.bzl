@@ -118,8 +118,13 @@ def _impl(ctx):
   args += ["--js=%s" % src.path for src in srcs]
 
   # tell bazel how the javascript compiler should be run
+  inputs = list(srcs) + list(externs)
+  # These rule-provided.txt files will not be used by JsCompiler. But we list
+  # them as inputs anyway to ensure that JsChecker runs. This is because Bazel
+  # only runs an action if something else in the graph depends on its output.
+  inputs += [dep.js_provided for dep in ctx.attr.deps]
   ctx.action(
-      inputs=list(srcs) + list(externs),
+      inputs=inputs,
       outputs=outputs,
       executable=ctx.executable._jscompiler,
       arguments=args,
