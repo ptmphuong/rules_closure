@@ -34,6 +34,8 @@ will keep your users safe.
 
 Closure Rules bundles the following tools and makes them "just work."
 
+- [Bazel][bazel]: The build system Google uses to manage a repository with
+  petabytes of code.
 - [Closure Compiler][closure-compiler]: Type-safe, null-safe, optimizing
   JavaScript compiler that transpiles [ECMASCRIPT6][es6] to minified ES3
   JavaScript that can run in any browser.
@@ -47,17 +49,15 @@ Closure Rules bundles the following tools and makes them "just work."
   layout.
 - [PhantomJS][phantomjs]: Headless web browser used for automating JavaScript
   unit tests in a command line environment.
-- [Bazel][bazel]: The build system Google uses to manage a repository with
-  petabytes of code.
 - [Protocol Buffers][protobuf]: Google's language-neutral, platform-neutral,
   extensible mechanism for serializing structured data. This is used instead of
   untyped JSON.
-- [Incremental DOM][incremental-dom]: Google's in-place DOM diffing library.
-  This optional backend for Closure Templates builds DOM trees and updates
-  them in-place when data changes.
 - [ClangFormat][clang-format]: Code formatting tool to automatically
   format JavaScript and Protocol Buffer source code per Google's style
   conventions.
+- [Incremental DOM][incremental-dom] (experimental): Google's in-place DOM
+  diffing library. This optional backend for Closure Templates builds DOM trees
+  and updates them in-place when data changes.
 
 The Closure Tools were released to the public in 2009, but had previously been
 quite difficult to configure. They were originally designed to be used with
@@ -620,8 +620,19 @@ the following:
   along verbatim to the SoyToJsSrcCompiler above. Does not apply when using
   Incremental DOM.
 
-- **incremental_dom:** (Boolean; optional; default is `False`) Generate
-  [incremental-dom][incremental-dom] compatible templates.
+- **incremental_dom:** (Boolean; optional; default is `False`;
+  [example][idom-example]; **experimental**) Generate [incremental-dom]
+  compatible templates.
+
+  Incremental DOM is a different algorithm for rendering templates. It updates
+  DOM elements in-place, rather than destroying and recreating them. This makes
+  a tradeoff of less memory for more CPU. It also carries practical benefits;
+  for example, the entire page could re-rendered and an input field would not
+  lose its focus.
+
+  Google is already using this feature for multiple production services. However
+  it is marked experimental because it's a relatively recent development. The
+  web frameworks team at Google is still battle testing this library internally.
 
 
 ## closure\_java\_template\_library
@@ -855,7 +866,6 @@ Documentation: [Protocol Buffers][protobuf] [JS][protobuf-js]
   - `IMPORT_ES6`        // import { member } from ''
 
 
-
 [ClosureCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/ClosureCodingConvention.java
 [GoogleCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/GoogleCodingConvention.java
 [JqueryCodingConvention]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/JqueryCodingConvention.java
@@ -876,18 +886,19 @@ Documentation: [Protocol Buffers][protobuf] [JS][protobuf-js]
 [compiler-issue]: https://github.com/google/closure-compiler/issues/new
 [css-sourcemap]: https://developer.chrome.com/devtools/docs/css-preprocessors
 [dependency]: http://bazel.io/docs/build-ref.html#dependencies
-[es6]: http://es6-features.org/
 [entry-export]: https://github.com/bazelbuild/rules_closure/blob/master/closure/compiler/test/exports_and_entry_points/BUILD
+[es6]: http://es6-features.org/
+[idom-example]: https://github.com/bazelbuild/rules_closure/blob/80d493d5ffc3099372929a8cd4a301da72e1b43f/closure/templates/test/greeter_idom.js
 [incremental-dom]: https://github.com/google/incremental-dom/
 [java-exports]: http://bazel.io/docs/be/java.html#java_library.exports
-[jsstyle]: https://google.github.io/styleguide/javascriptguide.xml
 [jquery]: http://jquery.com/
+[jsstyle]: https://google.github.io/styleguide/javascriptguide.xml
 [labels]: http://bazel.io/docs/build-ref.html#labels
-[name]: http://bazel.io/docs/build-ref.html#name
 [managing-dependencies]: https://github.com/google/closure-compiler/wiki/Managing-Dependencies
+[name]: http://bazel.io/docs/build-ref.html#name
 [output-wrapper-faq]: https://github.com/google/closure-compiler/wiki/FAQ#when-using-advanced-optimizations-closure-compiler-adds-new-variables-to-the-global-scope-how-do-i-make-sure-my-variables-dont-collide-with-other-scripts-on-the-page
 [phantomjs-bug]: https://github.com/ariya/phantomjs/issues/14028
 [phantomjs]: http://phantomjs.org/
-[protobuf]: https://github.com/google/protobuf
 [protobuf-js]: https://github.com/google/protobuf/tree/master/js
+[protobuf]: https://github.com/google/protobuf
 [verbose]: https://github.com/google/closure-library/blob/master/closure/goog/html/safehtml.js
