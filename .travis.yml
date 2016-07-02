@@ -42,3 +42,6 @@ script:
       --genrule_strategy=standalone \
       --local_resources=1000,1,1.0 \
       $FLAGS
+
+notifications:
+  email: false
