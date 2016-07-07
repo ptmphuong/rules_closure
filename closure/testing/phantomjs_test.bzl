@@ -47,10 +47,10 @@ def _impl(ctx):
   runfiles += ctx.attr._phantomjs.data_runfiles.files
   runfiles += ctx.attr.harness.transitive_js_srcs
   runfiles += srcs
-  args = ["#!/bin/sh\nexec " + ctx.files._phantomjs[0].short_path,
-          _first(ctx.attr.harness.transitive_js_srcs).short_path,
-          ctx.file.html.short_path]
-  args += [src.short_path for src in srcs]
+  args = ["#!/bin/sh\npwd\nexec " + _runpath(ctx.files._phantomjs[0]),
+          _runpath(_first(ctx.attr.harness.transitive_js_srcs)),
+          _runpath(ctx.file.html)]
+  args += [_runpath(src) for src in srcs]
   ctx.file_action(
       executable=True,
       output=ctx.outputs.executable,
@@ -58,6 +58,12 @@ def _impl(ctx):
   return struct(
       files=set([ctx.outputs.executable]),
       runfiles=ctx.runfiles(transitive_files=runfiles, collect_data=True))
+
+def _runpath(f):
+  if f.path.startswith('bazel-out/'):
+    return f.short_path
+  else:
+    return f.path
 
 def _check_language(dep):
   if dep.js_language in _INCOMPATIBLE_LANGUAGES:
