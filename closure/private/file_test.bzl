@@ -41,6 +41,8 @@ def _impl(ctx):
         matches, repr(regexp), file_.short_path)
   else:
     script = "grep %s %s" % (repr(regexp), file_.short_path)
+  if ctx.attr.invert:
+    script = "! " + script
   ctx.file_action(
       output=exe,
       content=script,
@@ -57,6 +59,7 @@ file_test = rule(
         "content": attr.string(default = ""),
         "regexp": attr.string(default = ""),
         "matches": attr.int(default = -1),
+        "invert": attr.bool(),
     },
     executable = True,
     implementation = _impl,
