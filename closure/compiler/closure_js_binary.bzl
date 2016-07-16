@@ -28,7 +28,8 @@ load("//closure/private:defs.bzl",
      "determine_js_language",
      "difference",
      "is_using_closure_library",
-     "contains_file")
+     "contains_file",
+     "runpath")
 
 _STRICT_LANGUAGES = set([
     "ECMASCRIPT6_TYPED",

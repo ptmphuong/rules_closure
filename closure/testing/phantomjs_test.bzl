@@ -22,7 +22,8 @@
 load("//closure/private:defs.bzl",
      "HTML_FILE_TYPE",
      "JS_DEPS_ATTR",
-     "JS_DEPS_PROVIDERS")
+     "JS_DEPS_PROVIDERS",
+     "runpath")
 
 _INCOMPATIBLE_LANGUAGES = set([
     "ECMASCRIPT6",
@@ -47,10 +48,10 @@ def _impl(ctx):
   runfiles += ctx.attr._phantomjs.data_runfiles.files
   runfiles += ctx.attr.harness.transitive_js_srcs
   runfiles += srcs
-  args = ["#!/bin/sh\npwd\nexec " + _runpath(ctx.files._phantomjs[0]),
-          _runpath(_first(ctx.attr.harness.transitive_js_srcs)),
-          _runpath(ctx.file.html)]
-  args += [_runpath(src) for src in srcs]
+  args = ["#!/bin/sh\npwd\nexec " + runpath(ctx.files._phantomjs[0]),
+          runpath(_first(ctx.attr.harness.transitive_js_srcs)),
+          runpath(ctx.file.html)]
+  args += [runpath(src) for src in srcs]
   ctx.file_action(
       executable=True,
       output=ctx.outputs.executable,
@@ -60,12 +61,6 @@ def _impl(ctx):
       runfiles=ctx.runfiles(transitive_files=runfiles,
                             collect_data=True,
                             collect_default=True))
-
-def _runpath(f):
-  if f.path.startswith('bazel-out/'):
-    return f.short_path
-  else:
-    return f.path
 
 def _check_language(dep):
   if dep.js_language in _INCOMPATIBLE_LANGUAGES:

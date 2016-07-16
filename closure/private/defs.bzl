@@ -142,6 +142,13 @@ def determine_js_language(ctx, normalize=False):
 def is_using_closure_library(srcs):
   return contains_file(srcs, "external/closure_library/closure/goog/base.js")
 
+def runpath(f):
+  """Figures out the proper runfiles path for a file, using voodoo"""
+  if f.path.startswith('bazel-out/'):
+    return f.short_path
+  else:
+    return f.path
+
 # Maps (current, dependent) -> (compatible, is_decay)
 _JS_LANGUAGE_COMBINATIONS = {
     ("ECMASCRIPT3", "ECMASCRIPT5"): ("ECMASCRIPT5", False),
