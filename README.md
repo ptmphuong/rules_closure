@@ -77,7 +77,7 @@ to your `WORKSPACE` file:
 ```python
 http_archive(
     name = "io_bazel_rules_closure",
-    url = "https://github.com/bazelbuild/rules_closure/archive/0.2.3.zip",
+    url = "https://github.com/bazelbuild/rules_closure/archive/0.2.4.zip",
 )
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
