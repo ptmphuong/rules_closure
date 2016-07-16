@@ -75,10 +75,9 @@ First you must [install][bazel-install] Bazel. Then you must add the following
 to your `WORKSPACE` file:
 
 ```python
-git_repository(
+http_archive(
     name = "io_bazel_rules_closure",
-    remote = "https://github.com/bazelbuild/rules_closure.git",
-    tag = "0.2.3",
+    url = "https://github.com/bazelbuild/rules_closure/archive/0.2.3.zip",
 )
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
