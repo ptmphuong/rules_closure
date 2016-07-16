@@ -40,7 +40,7 @@ script:
       --test_strategy=standalone \
       --spawn_strategy=standalone \
       --genrule_strategy=standalone \
-      --local_resources=800,1,1.0 \
+      --local_resources=400,1,1.0 \
       $FLAGS
 
 notifications:
