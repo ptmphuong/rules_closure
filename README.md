@@ -79,6 +79,7 @@ http_archive(
     name = "io_bazel_rules_closure",
     url = "https://github.com/bazelbuild/rules_closure/archive/0.2.4.zip",
     sha256 = "ca606485e56eddb5fa40146a11baa149d0be5cc2c7eb0e4830e0941164cbd1b0",
+    strip_prefix = "rules_closure-0.2.4",
 )
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
