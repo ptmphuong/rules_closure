@@ -20,18 +20,31 @@ java_library(
     name = "templates",
     exports = ["@soy//jar"],
     runtime_deps = [
+        ":safe_html_types",
         "@aopalliance//jar",
         "@asm//jar",
         "@asm_analysis//jar",
         "@asm_commons//jar",
         "@asm_util//jar",
+        "@gson//jar",
         "@guava//jar",
         "@guice//jar",
         "@guice_assistedinject//jar",
         "@guice_multibindings//jar",
         "@icu4j//jar",
+        "@json//jar",
         "@jsr305//jar",
         "@jsr330_inject//jar",
+        "@protobuf_java//jar",
+    ],
+)
+
+java_library(
+    name = "safe_html_types",
+    exports = ["@safe_html_types//jar"],
+    runtime_deps = [
+        "@guava//jar",
+        "@protobuf_java//jar",
     ],
 )
 
@@ -49,8 +62,18 @@ java_binary(
     jvm_flags = ["-client"],
     main_class = "com.google.template.soy.SoyParseInfoGenerator",
     runtime_deps = [
-        "@args4j//jar",
         ":templates",
+        "@args4j//jar",
+    ],
+)
+
+java_binary(
+    name = "SoyToJbcSrcCompiler",
+    jvm_flags = ["-client"],
+    main_class = "com.google.template.soy.SoyToJbcSrcCompiler",
+    runtime_deps = [
+        ":templates",
+        "@args4j//jar",
     ],
 )
 
@@ -59,8 +82,18 @@ java_binary(
     jvm_flags = ["-client"],
     main_class = "com.google.template.soy.SoyToJsSrcCompiler",
     runtime_deps = [
-        "@args4j//jar",
         ":templates",
+        "@args4j//jar",
+    ],
+)
+
+java_binary(
+    name = "SoyToPySrcCompiler",
+    jvm_flags = ["-client"],
+    main_class = "com.google.template.soy.SoyToPySrcCompiler",
+    runtime_deps = [
+        ":templates",
+        "@args4j//jar",
     ],
 )
 
@@ -69,8 +102,8 @@ java_binary(
     jvm_flags = ["-client"],
     main_class = "com.google.template.soy.SoyToIncrementalDomSrcCompiler",
     runtime_deps = [
+        ":templates",
         "@args4j//jar",
-        "@incremental_dom_soy//:compiler_jar",
     ],
 )
 
@@ -78,7 +111,4 @@ closure_js_library(
     name = "incremental_dom",
     srcs = ["//third_party/incremental_dom"],
     language = "ECMASCRIPT6_STRICT",
-    suppress = [
-        "JSC_MISSING_JSDOC",
-    ],
 )

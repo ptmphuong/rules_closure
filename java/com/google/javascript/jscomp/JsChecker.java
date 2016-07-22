@@ -84,9 +84,9 @@ public final class JsChecker {
           "checkRegExp",
           "extraRequire",
           "misplacedTypeAnnotation",
-          "missingRequire",
           "setTestOnly",
-          "strictDependencies");
+          "strictDependencies",
+          "strictMissingRequire");
 
   private static final ImmutableSet<DiagnosticType> DISABLE_FOR_ES6 =
       ImmutableSet.of(

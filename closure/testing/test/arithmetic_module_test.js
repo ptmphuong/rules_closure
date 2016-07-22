@@ -15,11 +15,11 @@
 goog.module('arithmetic_module_test');
 goog.setTestOnly('arithmetic_module_test');
 
-var arithmetic = goog.require('arithmetic_module');
+var add = goog.require('arithmetic_module.add');
 var testSuite = goog.require('goog.testing.testSuite');
 
 testSuite({
   testAdd: function() {
-    assertEquals(4, arithmetic.add(2, 2));
+    assertEquals(4, add(2, 2));
   }
 });

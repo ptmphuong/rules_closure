@@ -33,7 +33,6 @@ closure_js_test(
 closure_js_library(
     name = "arithmetic_module_lib",
     srcs = ["arithmetic_module.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = ["//closure/library"],
 )
 
@@ -41,7 +40,6 @@ closure_js_test(
     name = "arithmetic_module_test",
     srcs = ["arithmetic_module_test.js"],
     entry_points = ["goog:arithmetic_module_test"],
-    language = "ECMASCRIPT6_STRICT",
     pedantic = True,
     deps = [
         ":arithmetic_module_lib",

@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-goog.module('arithmetic_module');
+goog.module('arithmetic_module.add');
 
 
 /**
@@ -21,6 +21,9 @@ goog.module('arithmetic_module');
  * @param {number} b
  * @return {number}
  */
-exports.add = function(a, b) {
+function add(a, b) {
   return a + b;
-};
+}
+
+
+exports = add;

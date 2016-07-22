@@ -45,10 +45,8 @@ final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
   protected List<PassFactory> getChecks() {
     return ImmutableList.of(
         earlyLintChecks,
-        closureGoogScopeAliases,
         closureRewriteClass,
-        lateLintChecks,
-        checkRequires);
+        lateLintChecks);
   }
 
   @Override
@@ -72,20 +70,14 @@ final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
                   new CheckMissingSuper(compiler),
                   new CheckPrimitiveAsObject(compiler),
                   new CheckRequiresAndProvidesSorted(compiler),
+                  new CheckRequiresForConstructors(
+                      compiler, CheckRequiresForConstructors.Mode.SINGLE_FILE),
                   new CheckUnusedLabels(compiler),
                   new CheckUselessBlocks(compiler),
                   new ClosureCheckModule(compiler),
                   new Es6SuperCheck(compiler),
                   new CheckSetTestOnly(state, compiler),
                   new CheckStrictDeps.FirstPass(state, compiler)));
-        }
-      };
-
-  private final PassFactory closureGoogScopeAliases =
-      new PassFactory("closureGoogScopeAliases", true) {
-        @Override
-        protected HotSwapCompilerPass create(AbstractCompiler compiler) {
-          return new ScopedAliases(compiler, null, options.getAliasTransformationHandler());
         }
       };
 
@@ -107,17 +99,6 @@ final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
                   new CheckInterfaces(compiler),
                   new CheckPrototypeProperties(compiler),
                   new CheckStrictDeps.SecondPass(state, compiler)));
-        }
-      };
-
-  // This cannot be part of lintChecks because the callbacks in the CombinedCompilerPass don't
-  // get access to the externs.
-  private final PassFactory checkRequires =
-      new PassFactory("checkRequires", true) {
-        @Override
-        protected CompilerPass create(AbstractCompiler compiler) {
-          return new CheckRequiresForConstructors(
-              compiler, CheckRequiresForConstructors.Mode.SINGLE_FILE);
         }
       };
 }

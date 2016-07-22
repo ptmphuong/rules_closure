@@ -37,8 +37,8 @@ def closure_repositories(
     omit_guice_assistedinject=False,
     omit_guice_multibindings=False,
     omit_icu4j=False,
-    omit_incremental_dom = False,
-    omit_incremental_dom_soy = False,
+    omit_incremental_dom=False,
+    omit_json=False,
     omit_jsr305=False,
     omit_jsr330_inject=False,
     omit_libexpat_amd64_deb=False,
@@ -50,6 +50,7 @@ def closure_repositories(
     omit_protobuf_js=False,
     omit_protoc_linux_x86_64=False,
     omit_protoc_macosx=False,
+    omit_safe_html_types=False,
     omit_soy=False,
     omit_soyutils_usegoog=False):
   closure_maven_server()
@@ -91,8 +92,8 @@ def closure_repositories(
     icu4j()
   if not omit_incremental_dom:
     incremental_dom()
-  if not omit_incremental_dom_soy:
-    incremental_dom_soy()
+  if not omit_json:
+    json()
   if not omit_jsr305:
     jsr305()
   if not omit_jsr330_inject:
@@ -115,6 +116,8 @@ def closure_repositories(
     protoc_linux_x86_64()
   if not omit_protoc_macosx:
     protoc_macosx()
+  if not omit_safe_html_types:
+    safe_html_types()
   if not omit_soy:
     soy()
   if not omit_soyutils_usegoog:
@@ -216,8 +219,8 @@ def clang():
 def closure_compiler():
   native.maven_jar(
       name = "closure_compiler",
-      artifact = "com.google.javascript:closure-compiler-unshaded:v20160619",
-      sha1 = "a4c585a704eedb91f535e56fb92134132354aa10",
+      artifact = "com.google.javascript:closure-compiler-unshaded:v20160713",
+      sha1 = "7df7b683e16c93f65361a15356283599ba012c78",
       server = "closure_maven_server",
   )
 
@@ -227,9 +230,9 @@ def closure_library():
   # closure_library.BUILD.
   native.new_http_archive(
       name = "closure_library",
-      url = "http://bazel-mirror.storage.googleapis.com/github.com/google/closure-library/archive/v20160619.tar.gz",
-      sha256 = "8bd4df6468e01e7b5ad9920fd0a9977942b989fccbab24143dc43d6fe021aeec",
-      strip_prefix = "closure-library-20160619",
+      url = "http://bazel-mirror.storage.googleapis.com/github.com/google/closure-library/archive/v20160713.tar.gz",
+      sha256 = "869c360dc4dc224fc4261f41778e77630bf9e71176a184add687a5c8c0c54b60",
+      strip_prefix = "closure-library-20160713",
       build_file = str(Label("//closure/library:closure_library.BUILD")),
   )
 
@@ -264,8 +267,8 @@ def fonts_noto_mono_deb():
 def gson():
   native.maven_jar(
       name = "gson",
-      artifact = "com.google.code.gson:gson:2.4",
-      sha1 = "0695b63d702f505b9b916e02272e3b6381bade7f",
+      artifact = "com.google.code.gson:gson:2.7",
+      sha1 = "751f548c85fa49f330cecbb1875893f971b33c4e",
       server = "closure_maven_server",
   )
 
@@ -304,8 +307,8 @@ def guice_multibindings():
 def icu4j():
   native.maven_jar(
       name = "icu4j",
-      artifact = "com.ibm.icu:icu4j:56.1",
-      sha1 = "8dd6671f52165a0419e6de5e1016400875a90fa9",
+      artifact = "com.ibm.icu:icu4j:57.1",
+      sha1 = "198ea005f41219f038f4291f0b0e9f3259730e92",
       server = "closure_maven_server",
   )
 
@@ -320,15 +323,12 @@ def incremental_dom():
       sha256 = "f8abce145b235e1b0f94f2d923e49c49c16c9bca462ecfcc7e787ae15d84fc74",
   )
 
-def incremental_dom_soy():
-  native.new_http_archive(
-      name = "incremental_dom_soy",
-      # TODO(hochhaus): Use soy jar when SoyToIncrementalDomSrcCompiler is
-      # synced to github.
-      # https://github.com/google/closure-templates/issues/85
-      url = "http://bazel-mirror.storage.googleapis.com/registry.npmjs.org/closure-templates-incrementaldom/-/closure-templates-incrementaldom-0.0.3.tgz",
-      sha256 = "c72be8b1596e6ac2d2d484532803e75515d38561fded604074a287495a00bdd2",
-      build_file = str(Label("//closure/templates:incremental_dom_soy.BUILD")),
+def json():
+  native.maven_jar(
+      name = "json",
+      artifact = "org.json:json:20160212",
+      sha1 = "a742e3f85161835b95877478c5dd5b405cefaab9",
+      server = "closure_maven_server",
   )
 
 def jsr305():
@@ -417,17 +417,25 @@ def protoc_macosx():
       sha256 = "b009b2b433affcf00dbe645d0637139f9a6c1e38c2c7d4cc99c30919f5c2eaac",
   )
 
+def safe_html_types():
+  native.maven_jar(
+      name = "safe_html_types",
+      artifact = "com.google.common.html.types:types:1.0.4",
+      sha1 = "2adf4c8bfccc0ff7346f9186ac5aa57d829ad065",
+      server = "closure_maven_server",
+  )
+
 def soy():
   native.maven_jar(
       name = "soy",
-      artifact = "com.google.template:soy:2016-01-12",
-      sha1 = "adadc37aecf1042de7c9c6a6eb8f34719500ed69",
+      artifact = "com.google.template:soy:2016-07-21",
+      sha1 = "7a1b0cc72eb3873a5a8cb1d5da185f57efa3084a",
       server = "closure_maven_server",
   )
 
 def soyutils_usegoog():
   native.http_file(
       name = "soyutils_usegoog",
-      sha256 = "fdb0e318949c1af668038df1d85d45353a00ff585f321c86efe91ac2a10cc91f",
-      url = "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/template/soy/2016-01-12/soy-2016-01-12-soyutils_usegoog.js",
+      sha256 = "a1128ad98fd918a55eb1f86c46d92c488320b2beba55bf5dec28ece89e61c743",
+      url = "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/template/soy/2016-07-21/soy-2016-07-21-soyutils_usegoog.js",
   )
