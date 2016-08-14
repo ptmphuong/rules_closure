@@ -140,6 +140,7 @@ def closure_js_template_library(
           "JSC_NTI_COULD_NOT_INFER_CONST_TYPE",
           "analyzerChecks",
           "reportUnknownTypes",
+          "unusedLocalVariables",
       ],
       **kwargs
   )
