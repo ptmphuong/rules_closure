@@ -40,6 +40,7 @@ cat src/util.js \
     src/notifications.js \
     src/context.js \
     src/assertions.js \
+    src/dom_util.js \
     src/core.js \
     src/virtual_elements.js | \
     tr '\n' '\r' | \

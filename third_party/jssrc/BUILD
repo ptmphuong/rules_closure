@@ -33,7 +33,7 @@ genrule(
         "TMP=$$(mktemp -d $${TMPDIR:-/tmp}/genrule.XXXXXXXXXX)",
         "cd $$TMP",
         "tar xf $$IN",
-        "mv safe-html-types-release-*/proto/src/main/protobuf/html.proto $$OUT",
+        "mv safe-html-types-release-*/proto/src/main/protobuf/webutil/html/types/proto/html.proto $$OUT",
         "rm -rf $$TMP",
     ]),
 )

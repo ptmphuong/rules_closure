@@ -322,8 +322,8 @@ def incremental_dom():
   # https://github.com/google/incremental-dom/blob/master/gulpfile.js
   native.http_file(
       name = "incremental_dom",
-      url = "http://bazel-mirror.storage.googleapis.com/github.com/google/incremental-dom/archive/0.4.0.tar.gz",
-      sha256 = "f8abce145b235e1b0f94f2d923e49c49c16c9bca462ecfcc7e787ae15d84fc74",
+      url = "http://bazel-mirror.storage.googleapis.com/github.com/google/incremental-dom/archive/0.5.0.tar.gz",
+      sha256 = "bb268af74c411c84372fb9926021859f1ebdbeff86d4ec3e8865758f10482fda",
   )
 
 def json():
@@ -423,6 +423,8 @@ def protoc_macosx():
 def safe_html_types():
   native.maven_jar(
       name = "safe_html_types",
+      # TODO(hochhaus): Update to 1.0.5 once upstream jar includes dependencies
+      # https://github.com/google/safe-html-types/issues/1
       artifact = "com.google.common.html.types:types:1.0.4",
       sha1 = "2adf4c8bfccc0ff7346f9186ac5aa57d829ad065",
       server = "closure_maven_server",
@@ -431,21 +433,21 @@ def safe_html_types():
 def safe_html_types_html_proto():
   native.http_file(
       name = "safe_html_types_html_proto",
-      sha256 = "63fa9410f262b4e57588cdad19196d96a1052234d81212c3356728199c2de393",
-      url = "http://bazel-mirror.storage.googleapis.com/github.com/google/safe-html-types/archive/release-1.0.4.tar.gz",
+      sha256 = "f91252c91cdbb11ff3c65fae78daeeb5870c10de64e95efbb589763e84b886f8",
+      url = "http://bazel-mirror.storage.googleapis.com/github.com/google/safe-html-types/archive/release-1.0.5.tar.gz",
   )
 
 def soy():
   native.maven_jar(
       name = "soy",
-      artifact = "com.google.template:soy:2016-08-19",
-      sha1 = "bcd2e516217bd2cd058ccae719301177c4ebb6b0",
+      artifact = "com.google.template:soy:2016-08-25",
+      sha1 = "bb2a8a8b08f0668abc80e5b25eaffca000cecf57",
       server = "closure_maven_server",
   )
 
 def soy_jssrc():
   native.http_file(
       name = "soy_jssrc",
-      sha256 = "878cae5b36002c8614d5af759320361f19388b83e4c2430d462def63e03b0143",
-      url = "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/template/soy/2016-08-19/soy-2016-08-19-jssrc_js.jar",
+      sha256 = "15f5bf0b8ca40211a29bcd6486bd3198155ecc76e8bbf06407deb695ca848be6",
+      url = "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/template/soy/2016-08-25/soy-2016-08-25-jssrc_js.jar",
   )
