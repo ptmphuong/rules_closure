@@ -231,9 +231,8 @@ This rule can be referenced as though it were the following:
   them to become *direct* dependencies in parent rules. This functions similarly
   to [java_library.exports]. This can be used to create aliases for rules in
   another package. It can also be also be used to export private targets within
-  the package. However this feature should ideally never be used. If you find
-  yourself needing `exports`, then you may wish to consider refactoring things
-  so it's no longer necessary.
+  the package. Another use is to roll up a bunch of fine-grained libraries into
+  a single big one.
 
 - **suppress** (List of String; optional; default is `[]`) List of codes the
   linter should ignore. Warning and error messages that are allowed to be
