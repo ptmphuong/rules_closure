@@ -139,9 +139,3 @@ def closure_js_template_library(
       visibility = visibility,
       testonly = testonly,
   )
-
-
-def closure_template_js_library(**kwargs):
-  print("Deprecated: use closure_js_template_library() instead, " +
-        "closure_template_java_library will be removed in version 0.3.0")
-  closure_js_template_library(**kwargs)
