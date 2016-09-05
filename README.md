@@ -855,8 +855,7 @@ Closure Compiler know how to substitute the minified class names. See the
 
 - *name*.css.map: [CSS sourcemap file][css-sourcemap]. This tells browsers like
   Chrome and Firefox where your CSS definitions are located in their original
-  source files. (XXX: Currently unavailable due to
-  [#64](https://github.com/bazelbuild/rules_closure/issues/78))
+  source files.
 
 - *name*.css.js: JavaScript file containing a `goog.setCssNameMapping()`
   statement which tells the Closure Compiler and Library how to minify CSS class

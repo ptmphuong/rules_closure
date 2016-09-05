@@ -81,6 +81,19 @@ file_test(
     file = "hello_rename_bin.css.js",
 )
 
+file_test(
+    name = "sourcemap",
+    content = ("{\n" +
+               "\"version\":3,\n" +
+               "\"file\":\"hello_rename_bin.css.map\",\n" +
+               "\"lineCount\":1,\n" +
+               "\"mappings\":\"AAEuC,iBADN;\",\n" +
+               "\"sources\":[\"closure/stylesheets/test/hello.css\"],\n" +
+               "\"names\":[]\n" +
+               "}\n"),
+    file = "hello_rename_bin.css.map",
+)
+
 closure_js_library(
     name = "rename_lib",
     srcs = ["rename.js"],
