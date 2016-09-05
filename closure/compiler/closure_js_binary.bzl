@@ -59,7 +59,6 @@ def _impl(ctx):
       "--compilation_level=%s" % ctx.attr.compilation_level,
       "--dependency_mode=%s" % ctx.attr.dependency_mode,
       "--warning_level=%s" % ctx.attr.warning_level,
-      "--new_type_inf",
       "--generate_exports",
   ]
   if ctx.attr.internal_expect_failure:
