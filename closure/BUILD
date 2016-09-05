@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+licenses(["notice"])  # Apache 2.0
+
 load("//closure/private:lines_sorted_test.bzl", "lines_sorted_test")
 
 lines_sorted_test(

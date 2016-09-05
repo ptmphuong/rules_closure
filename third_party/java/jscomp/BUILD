@@ -1,6 +1,9 @@
 package(default_visibility = ["//visibility:public"])
 
-licenses(["notice"])  # Apache License 2.0
+licenses([
+    "notice",  # Apache License 2.0 (Closure Compiler)
+    "reciprocal",  # Mozilla Public License Version 1.1 (Rhino AST)
+])
 
 java_library(
     name = "jscomp",

@@ -14,6 +14,8 @@
 
 package(default_testonly = True)
 
+licenses(["notice"])  # Apache 2.0
+
 load("//closure:defs.bzl", "closure_js_library")
 load("//closure:defs.bzl", "closure_js_proto_library")
 load("//closure:defs.bzl", "closure_js_template_library")
@@ -46,8 +48,8 @@ closure_js_template_library(
 closure_js_template_library(
     name = "greeter_idom_proto_soy",
     srcs = ["greeter_idom_proto.soy"],
-    deps = [":person_proto"],
     incremental_dom = 1,
+    deps = [":person_proto"],
 )
 
 closure_js_library(

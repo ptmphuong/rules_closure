@@ -14,6 +14,8 @@
 
 package(default_testonly = True)
 
+licenses(["notice"])  # Apache 2.0
+
 load("//closure:defs.bzl", "closure_js_test")
 
 closure_js_test(

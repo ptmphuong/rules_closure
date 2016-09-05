@@ -14,6 +14,8 @@
 
 package(default_testonly = True)
 
+licenses(["notice"])  # Apache 2.0
+
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/protobuf:closure_js_proto_library.bzl", "closure_js_proto_library")
 load("//closure/testing:closure_js_test.bzl", "closure_js_test")

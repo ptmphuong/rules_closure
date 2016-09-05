@@ -14,6 +14,8 @@
 
 package(default_visibility = ["//visibility:public"])
 
+licenses(["notice"])  # Apache 2.0
+
 sh_binary(
     name = "gensrcjar",
     srcs = ["gensrcjar.sh"],

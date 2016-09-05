@@ -14,6 +14,8 @@
 
 package(default_testonly = True)
 
+licenses(["notice"])  # Apache 2.0
+
 load("//closure/private:file_test.bzl", "file_test")
 load("//closure:defs.bzl", "closure_css_binary")
 load("//closure:defs.bzl", "closure_css_library")
