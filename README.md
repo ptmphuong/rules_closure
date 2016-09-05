@@ -934,7 +934,7 @@ This rule can be referenced as though it were the following:
 
 - **defs:** (List of strings; optional) Specifies additional flags to be passed
   to the Closure Stylesheets compiler. To see what flags are available, run:
-  `bazel run @io_bazel_rules_closure//closure/stylesheets -- --help`
+  `bazel run @io_bazel_rules_closure//third_party/java/csscomp:ClosureCommandLineCompiler`
 
 
 ## closure\_js\_proto\_library
