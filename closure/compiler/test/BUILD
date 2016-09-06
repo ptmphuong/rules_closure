@@ -167,27 +167,6 @@ file_test(
 )
 
 closure_js_library(
-    name = "es6typed_lib",
-    srcs = ["es6typed.js"],
-    language = "ECMASCRIPT6_TYPED",
-    no_closure_library = True,
-)
-
-closure_js_binary(
-    name = "es6typed_bin",
-    compilation_level = "WHITESPACE_ONLY",
-    language = "ECMASCRIPT3",
-    pedantic = True,
-    deps = [":es6typed_lib"],
-)
-
-file_test(
-    name = "es6typed_works",
-    content = "var hello=\"hello world\";console.log(hello);\n",
-    file = "es6typed_bin.js",
-)
-
-closure_js_library(
     name = "noClosingParen",
     srcs = ["noClosingParen.js"],
     internal_expect_failure = True,

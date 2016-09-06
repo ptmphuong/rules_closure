@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+package(default_testonly = True)
+
 licenses(["notice"])  # Apache 2.0
 
 load("//closure/private:file_test.bzl", "file_test")
@@ -187,7 +189,7 @@ file_test(
 
 closure_js_library(
     name = "setTestOnlyInLibraryWithoutTestOnly",
-    # testonly = True,  # <-- oops I forgot this line
+    testonly = False,  # <-- oops I forgot this line
     srcs = ["t.js"],
     internal_expect_failure = True,
     tags = ["manual"],

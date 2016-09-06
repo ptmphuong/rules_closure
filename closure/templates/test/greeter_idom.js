@@ -37,9 +37,9 @@ exports = class GreeterIdom {
    * Renders HTML greeting as document body.
    */
   greet() {
-    idom.patchInner(goog.global.document.body, greeter.greet,
-                    {name: this.name_});
+    idom.patchInner(
+        /** @type {!Element} */ (goog.global.document.body),
+        greeter.greet,
+        {name: this.name_});
   }
 };
-
-

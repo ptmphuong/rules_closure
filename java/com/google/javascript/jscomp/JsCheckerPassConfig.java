@@ -29,7 +29,6 @@ import com.google.javascript.jscomp.lint.CheckPrototypeProperties;
 import com.google.javascript.jscomp.lint.CheckRequiresAndProvidesSorted;
 import com.google.javascript.jscomp.lint.CheckUnusedLabels;
 import com.google.javascript.jscomp.lint.CheckUselessBlocks;
-
 import java.util.List;
 
 final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {

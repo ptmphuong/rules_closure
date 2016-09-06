@@ -5,7 +5,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
-
 import java.util.NavigableSet;
 
 final class JsCheckerHelper {

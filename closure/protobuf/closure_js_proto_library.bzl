@@ -28,7 +28,7 @@ def closure_js_proto_library(
     testonly = 0,
     binary = 1,
     import_style = None,
-    protocbin = Label("//third_party/protobuf:protoc_bin")):
+    protocbin = Label("//third_party/protobuf:protoc")):
   cmd = ["$(location %s)" % protocbin]
   js_out_options = ["library=%s,error_on_name_conflict" % name]
   if add_require_for_enums:
