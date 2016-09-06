@@ -68,7 +68,7 @@ closure_js_library(
     deps = [
         ":greeter_idom_soy",
         "//closure/library",
-        "//closure/templates:incremental_dom",
+        "//third_party/javascript/incremental_dom",
     ],
 )
 
@@ -90,7 +90,7 @@ closure_js_library(
         ":greeter_idom_proto_soy",
         ":person_proto",
         "//closure/library",
-        "//closure/templates:incremental_dom",
+        "//third_party/javascript/incremental_dom",
     ],
 )
 

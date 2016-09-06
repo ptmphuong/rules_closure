@@ -12,17 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-package(default_visibility = ["//visibility:public"])
-
 licenses(["notice"])  # Apache License Version 2.0
 
-sh_binary(
-    name = "build",
-    srcs = ["build.sh"],
+load("//closure:defs.bzl", "closure_js_library")
+
+closure_js_library(
+    name = "incremental_dom",
+    srcs = ["incremental-dom-closure.js"],
+    language = "ECMASCRIPT6_STRICT",
+    visibility = ["//visibility:public"],
 )
 
 genrule(
-    name = "incremental_dom",
+    name = "extract",
     srcs = ["@incremental_dom//file"],
     outs = ["incremental-dom-closure.js"],
     cmd = " && ".join([
@@ -34,5 +36,10 @@ genrule(
         "$$SCRIPT $$IN $$OUT",
         "rm -rf $$TMP",
     ]),
-    tools = [ ":build" ],
+    tools = [":build"],
+)
+
+sh_binary(
+    name = "build",
+    srcs = ["build.sh"],
 )

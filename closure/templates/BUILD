@@ -117,9 +117,3 @@ java_binary(
         "@args4j//jar",
     ],
 )
-
-closure_js_library(
-    name = "incremental_dom",
-    srcs = ["//third_party/incremental_dom"],
-    language = "ECMASCRIPT6_STRICT",
-)
