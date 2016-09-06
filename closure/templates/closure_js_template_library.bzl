@@ -20,6 +20,9 @@
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:defs.bzl", "SOY_DEPS_ATTR", "SOY_FILE_TYPE")
 
+_SOYTOJSSRCCOMPILER = '//third_party/java/soy:SoyToJsSrcCompiler'
+
+_SOYTOINCREMENTALDOMSRCCOMPILER = '//third_party/java/soy:SoyToIncrementalDomSrcCompiler'
 
 def _impl(ctx):
   if ctx.attr.incremental_dom:
@@ -100,9 +103,9 @@ def closure_js_template_library(
     soy_msgs_are_external = None,
     **kwargs):
   if incremental_dom:
-    compiler = str(Label("//closure/templates:SoyToIncrementalDomSrcCompiler"))
+    compiler = str(Label(_SOYTOINCREMENTALDOMSRCCOMPILER))
   else:
-    compiler = str(Label("//closure/templates:SoyToJsSrcCompiler"))
+    compiler = str(Label(_SOYTOJSSRCCOMPILER))
   js_srcs = [src + ".js" for src in srcs]
   _closure_js_template_library(
       name = name + "_soy_js",

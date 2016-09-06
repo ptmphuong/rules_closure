@@ -19,38 +19,6 @@ licenses(["notice"])  # Apache 2.0
 load("//closure:defs.bzl", "closure_js_library")
 load("//closure:defs.bzl", "closure_js_proto_library")
 
-java_library(
-    name = "templates",
-    exports = ["@soy//jar"],
-    runtime_deps = [
-        ":safe_html_types",
-        "@aopalliance//jar",
-        "@asm//jar",
-        "@asm_analysis//jar",
-        "@asm_commons//jar",
-        "@asm_util//jar",
-        "@gson//jar",
-        "@guava//jar",
-        "@guice//jar",
-        "@guice_assistedinject//jar",
-        "@guice_multibindings//jar",
-        "@icu4j//jar",
-        "@json//jar",
-        "@jsr305//jar",
-        "@jsr330_inject//jar",
-        "@protobuf_java//jar",
-    ],
-)
-
-java_library(
-    name = "safe_html_types",
-    exports = ["@safe_html_types//jar"],
-    runtime_deps = [
-        "@guava//jar",
-        "@protobuf_java//jar",
-    ],
-)
-
 closure_js_proto_library(
     name = "soy_html_proto",
     srcs = ["//third_party/jssrc:html_proto"],
@@ -68,52 +36,11 @@ closure_js_library(
     ],
 )
 
-java_binary(
-    name = "SoyParseInfoGenerator",
-    jvm_flags = ["-client"],
-    main_class = "com.google.template.soy.SoyParseInfoGenerator",
+java_library(
+    name = "safe_html_types",
+    exports = ["@safe_html_types//jar"],
     runtime_deps = [
-        ":templates",
-        "@args4j//jar",
-    ],
-)
-
-java_binary(
-    name = "SoyToJbcSrcCompiler",
-    jvm_flags = ["-client"],
-    main_class = "com.google.template.soy.SoyToJbcSrcCompiler",
-    runtime_deps = [
-        ":templates",
-        "@args4j//jar",
-    ],
-)
-
-java_binary(
-    name = "SoyToJsSrcCompiler",
-    jvm_flags = ["-client"],
-    main_class = "com.google.template.soy.SoyToJsSrcCompiler",
-    runtime_deps = [
-        ":templates",
-        "@args4j//jar",
-    ],
-)
-
-java_binary(
-    name = "SoyToPySrcCompiler",
-    jvm_flags = ["-client"],
-    main_class = "com.google.template.soy.SoyToPySrcCompiler",
-    runtime_deps = [
-        ":templates",
-        "@args4j//jar",
-    ],
-)
-
-java_binary(
-    name = "SoyToIncrementalDomSrcCompiler",
-    jvm_flags = ["-client"],
-    main_class = "com.google.template.soy.SoyToIncrementalDomSrcCompiler",
-    runtime_deps = [
-        ":templates",
-        "@args4j//jar",
+        "@guava//jar",
+        "@protobuf_java//jar",
     ],
 )

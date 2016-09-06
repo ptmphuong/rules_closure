@@ -621,7 +621,8 @@ The documentation on using Closure Templates can be found
 For additional help on using some of these attributes, please see the output of
 the following:
 
-    bazel run @io_bazel_rules_closure//closure/templates:SoyToJsSrcCompiler -- --help
+    bazel run @io_bazel_rules_closure//third_party/java/soy:SoyToJsSrcCompiler -- --help
+    bazel run @io_bazel_rules_closure//third_party/java/soy:SoyToIncrementalDomSrcCompiler -- --help
 
 #### Implicit Output Targets
 
@@ -721,7 +722,7 @@ The documentation on using Closure Templates can be found
 For additional help on using some of these attributes, please see the output of
 the following:
 
-    bazel run @io_bazel_rules_closure//closure/templates:SoyParseInfoGenerator -- --help
+    bazel run @io_bazel_rules_closure//third_party/java/soy:SoyParseInfoGenerator -- --help
 
 #### Implicit Output Targets
 
