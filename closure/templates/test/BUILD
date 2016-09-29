@@ -74,17 +74,6 @@ closure_js_library(
 )
 
 closure_js_library(
-    name = "greeter_idom_fail_lib",
-    srcs = ["greeter_idom_fail.js", "greeter_idom_fail_test.js"],
-    language = "ECMASCRIPT6_STRICT",
-    deps = [
-        ":greeter_idom_soy",
-        "//closure/library",
-        "//third_party/javascript/incremental_dom",
-    ],
-)
-
-closure_js_library(
     name = "greeter_proto_lib",
     srcs = ["greeter_proto.js"],
     deps = [
@@ -128,18 +117,6 @@ closure_js_test(
     ],
 )
 
-closure_js_binary(
-    name = "greeter_idom_fail_bin",
-    language = "ECMASCRIPT5_STRICT",
-    deps = [
-        ":greeter_idom_fail_lib",
-        "//closure/library",
-        "//closure/library:testing",
-    ],
-    pedantic = True,
-    internal_expect_failure = True,
-)
-
 closure_js_test(
     name = "greeter_proto_test",
     srcs = ["greeter_proto_test.js"],
@@ -172,4 +149,32 @@ file_test(
     size = "small",
     file = "GreeterSoyInfo.java",
     regexp = "class GreeterSoyInfo",
+)
+
+################################################################################
+# If we forget to pass a parameter to a template, it will fail to compile
+
+closure_js_library(
+    name = "greeter_idom_fail_lib",
+    srcs = ["greeter_idom_fail.js"],
+    language = "ECMASCRIPT6_STRICT",
+    deps = [
+        ":greeter_idom_soy",
+        "//closure/library",
+        "//third_party/javascript/incremental_dom",
+    ],
+)
+
+closure_js_binary(
+    name = "greeter_idom_fail_bin",
+    entry_points = ["goog:io.bazel.rules.closure.GreeterIdomFail"],
+    internal_expect_failure = True,
+    pedantic = True,
+    deps = [":greeter_idom_fail_lib"],
+)
+
+file_test(
+    name = "idom_missingTemplateParameter_failsToCompile",
+    file = "greeter_idom_fail_bin-stderr.txt",
+    regexp = "actual parameter 2 of .*patchInner does not match formal parameter",
 )

@@ -17,30 +17,10 @@ goog.module('io.bazel.rules.closure.GreeterIdomFail');
 const idom = goog.require('incrementaldom');
 const greeter = goog.require('io.bazel.rules.closure.soy.greeter.incrementaldom');
 
-
-
-exports = class GreeterIdomFail {
-  /**
-   * Greeter page.
-   * @param {string} name Name of person to greet.
-   */
-  constructor(name) {
-    /**
-     * Name of person to greet.
-     * @private {string}
-     * @const
-     */
-    this.name_ = name;
-  }
-
-  /**
-   * Renders HTML greeting as document body.
-   */
-  greet() {
-    idom.patchInner(
-        /** @type {!Element} */ (goog.global.document.body),
-        greeter.greet,
-        // Missing required 'name' param
-        {});
-  }
-};
+idom.patchInner(
+    /** @type {!Element} */ (goog.global.document.body),
+    greeter.greet,
+    // This code will fail to compile because the `greet` template in
+    // greeter_idom.soy requires a `name` parameter which is not specified in
+    // the object below.
+    {});
