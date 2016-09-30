@@ -53,10 +53,10 @@ def _impl(ctx):
   if ctx.attr.plugin_modules:
     args += ["--pluginModules=%s" % ",".join(ctx.attr.plugin_modules)]
   args += [src.path for src in ctx.files.srcs]
-  srcs = ctx.files.srcs
-  if ctx.attr.globals:
-    args += ["--compileTimeGlobalsFile='%s'" % ctx.attr.globals.path]
-    srcs += ctx.attr.globals
+  srcs = ctx.files.srcs[:]
+  if ctx.file.globals:
+    args += ["--compileTimeGlobalsFile=%s" % ctx.file.globals.path]
+    srcs += [ctx.file.globals]
   for dep in ctx.attr.deps:
     for desc in dep.proto_descriptor_sets:
       srcs += list(desc.files)
@@ -81,7 +81,7 @@ _closure_js_template_library = rule(
         "srcs": attr.label_list(allow_files=SOY_FILE_TYPE),
         "deps": SOY_DEPS_ATTR,
         "outputs": attr.output_list(),
-        "globals": attr.label_list(),
+        "globals": attr.label(allow_files=True, single_file=True),
         "plugin_modules": attr.label_list(),
         "should_generate_js_doc": attr.bool(default=True),
         "should_provide_require_soy_namespaces": attr.bool(default=True),

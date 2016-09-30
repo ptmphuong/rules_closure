@@ -241,7 +241,7 @@ closure_js_binary = rule(
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_closure_library_deps": CLOSURE_LIBRARY_DEPS_ATTR,
         "_soyutils_usegoog": attr.label(
-            default=Label("//third_party/jssrc:soyutils_usegoog.js"),
+            default=Label("@soy_jssrc//:soyutils_usegoog.js"),
             single_file=True, allow_files=True),
     },
     outputs={

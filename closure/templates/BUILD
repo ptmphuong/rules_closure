@@ -19,17 +19,24 @@ licenses(["notice"])  # Apache 2.0
 load("//closure:defs.bzl", "closure_js_library")
 load("//closure:defs.bzl", "closure_js_proto_library")
 
+java_library(
+    name = "templates",
+    exports = ["//third_party/java/soy"],
+)
+
 closure_js_proto_library(
     name = "soy_html_proto",
-    srcs = ["//third_party/jssrc:html_proto"],
+    srcs = ["@safe_html_types_html_proto//file"],
 )
 
 closure_js_library(
     name = "soy_jssrc",
-    srcs = ["//third_party/jssrc"],
-    suppress = [
-        "JSC_OPTIONAL_PARAM_NOT_MARKED_OPTIONAL",
+    srcs = [
+        "@soy_jssrc//:jspbconversions.js",
+        "@soy_jssrc//:soydata_converters.js",
+        "@soy_jssrc//:soyutils_usegoog.js",
     ],
+    suppress = ["JSC_OPTIONAL_PARAM_NOT_MARKED_OPTIONAL"],
     deps = [
         ":soy_html_proto",
         "//closure/library",

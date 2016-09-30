@@ -421,18 +421,16 @@ def protoc_macosx():
 def safe_html_types():
   native.maven_jar(
       name = "safe_html_types",
-      # TODO(hochhaus): Update to 1.0.5 once upstream jar includes dependencies
-      # https://github.com/google/safe-html-types/issues/1
-      artifact = "com.google.common.html.types:types:1.0.4",
-      sha1 = "2adf4c8bfccc0ff7346f9186ac5aa57d829ad065",
+      artifact = "com.google.common.html.types:types:1.0.5",
+      sha1 = "cbf72feac4a1599add33222a876e24ab31a3f387",
       server = "closure_maven_server",
   )
 
 def safe_html_types_html_proto():
   native.http_file(
       name = "safe_html_types_html_proto",
-      sha256 = "f91252c91cdbb11ff3c65fae78daeeb5870c10de64e95efbb589763e84b886f8",
-      url = "http://bazel-mirror.storage.googleapis.com/github.com/google/safe-html-types/archive/release-1.0.5.tar.gz",
+      sha256 = "6ece202f11574e37d0c31d9cf2e9e11a0dbc9218766d50d211059ebd495b49c3",
+      url = "http://bazel-mirror.storage.googleapis.com/raw.githubusercontent.com/google/safe-html-types/release-1.0.5/proto/src/main/protobuf/webutil/html/types/proto/html.proto",
   )
 
 def soy():
@@ -444,8 +442,10 @@ def soy():
   )
 
 def soy_jssrc():
-  native.http_file(
+  native.new_http_archive(
       name = "soy_jssrc",
       sha256 = "15f5bf0b8ca40211a29bcd6486bd3198155ecc76e8bbf06407deb695ca848be6",
       url = "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/template/soy/2016-08-25/soy-2016-08-25-jssrc_js.jar",
+      build_file = str(Label("//closure/templates:soy_jssrc.BUILD")),
+      type = "zip",
   )

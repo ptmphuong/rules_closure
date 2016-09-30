@@ -178,3 +178,22 @@ file_test(
     file = "greeter_idom_fail_bin-stderr.txt",
     regexp = "actual parameter 2 of .*patchInner does not match formal parameter",
 )
+
+################################################################################
+# Globals variables can be defined in txt files
+
+closure_js_template_library(
+    name = "globals_soy",
+    srcs = ["globals.soy"],
+    globals = "globals.txt",
+)
+
+closure_js_test(
+    name = "globals_test",
+    srcs = ["globals_test.js"],
+    deps = [
+        ":globals_soy",
+        "//closure/library",
+        "//closure/library:testing",
+    ],
+)
