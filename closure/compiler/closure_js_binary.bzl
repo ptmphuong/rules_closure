@@ -228,7 +228,7 @@ closure_js_binary = rule(
         "pedantic": attr.bool(default=False),
         "property_renaming_report": attr.output(),
         "warning_level": attr.string(default="VERBOSE"),
-        "data": attr.label_list(cfg=DATA_CFG, allow_files=True),
+        "data": attr.label_list(cfg="data", allow_files=True),
         "conformance": attr.label_list(allow_files=True),
 
         # internal only
@@ -236,7 +236,8 @@ closure_js_binary = rule(
         "internal_expect_warnings": attr.bool(default=False),
         "_ClosureUberAlles": attr.label(
             default=Label("//java/io/bazel/rules/closure:ClosureUberAlles"),
-            executable=True),
+            executable=True,
+            cfg="host"),
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_closure_library_deps": CLOSURE_LIBRARY_DEPS_ATTR,
         "_soyutils_usegoog": attr.label(

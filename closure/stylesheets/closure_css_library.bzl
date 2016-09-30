@@ -51,7 +51,7 @@ closure_css_library = rule(
         "srcs": attr.label_list(allow_files=CSS_FILE_TYPE),
         "deps": CSS_DEPS_ATTR,
         "orientation": attr.string(default="LTR"),
-        "data": attr.label_list(cfg=DATA_CFG, allow_files=True),
+        "data": attr.label_list(cfg="data", allow_files=True),
     },
     outputs={
         "provided": "%{name}-provided.txt",

@@ -77,11 +77,12 @@ closure_js_deps = rule(
         "deps": attr.label_list(
             allow_files=False,
             providers=["transitive_js_srcs"]),
-        "data": attr.label_list(cfg=DATA_CFG, allow_files=True),
+        "data": attr.label_list(cfg="data", allow_files=True),
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_closure_library_deps": CLOSURE_LIBRARY_DEPS_ATTR,
         "_depswriter": attr.label(
             default=Label("@closure_library//:depswriter"),
-            executable=True),
+            executable=True,
+            cfg="host"),
     },
     outputs={"out": "%{name}.js"})

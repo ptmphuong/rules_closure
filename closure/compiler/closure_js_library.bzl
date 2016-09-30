@@ -117,14 +117,15 @@ closure_js_library = rule(
         "srcs": attr.label_list(allow_files=JS_FILE_TYPE),
         "proto_descriptor_set": attr.label(allow_files=True),
         "suppress": attr.string_list(),
-        "data": attr.label_list(cfg=DATA_CFG, allow_files=True),
+        "data": attr.label_list(cfg="data", allow_files=True),
 
         # internal only
         "internal_expect_failure": attr.bool(default=False),
         "internal_expect_warnings": attr.bool(default=False),
         "_ClosureUberAlles": attr.label(
             default=Label("//java/io/bazel/rules/closure:ClosureUberAlles"),
-            executable=True),
+            executable=True,
+            cfg="host"),
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_closure_library_deps": CLOSURE_LIBRARY_DEPS_ATTR,
     },

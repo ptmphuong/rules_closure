@@ -90,10 +90,12 @@ closure_css_binary = rule(
         "orientation": attr.string(default="NOCHANGE"),
         "renaming": attr.bool(default=True),
         "vendor": attr.string(),
-        "data": attr.label_list(cfg=DATA_CFG, allow_files=True),
+        "data": attr.label_list(cfg="data", allow_files=True),
         "_compiler": attr.label(
-            default=Label("//third_party/java/csscomp:ClosureCommandLineCompiler"),
-            executable=True),
+            default=Label(
+                "//third_party/java/csscomp:ClosureCommandLineCompiler"),
+            executable=True,
+            cfg="host"),
     },
     outputs={"out": "%{name}.css",
              "map": "%{name}.css.map",

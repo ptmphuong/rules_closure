@@ -88,7 +88,7 @@ _closure_js_template_library = rule(
         "should_generate_soy_msg_defs": attr.bool(),
         "soy_msgs_are_external": attr.bool(),
         "incremental_dom": attr.bool(),
-        "compiler": attr.label(executable=True, mandatory=True),
+        "compiler": attr.label(cfg="host", executable=True, mandatory=True),
     },
 )
 

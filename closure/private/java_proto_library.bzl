@@ -40,17 +40,20 @@ _gensrcjar = rule(
             single_file = True),
         "_gensrcjar": attr.label(
             default = Label(str(Label("//closure/private:gensrcjar"))),
-            executable = True),
+            executable = True,
+            cfg = "host"),
         "_proto_compiler": attr.label(
             default = Label("//third_party/protobuf:protoc"),
             allow_files = True,
             executable = True,
-            single_file = True),
+            single_file = True,
+            cfg = "host"),
         "_jar": attr.label(
             default = Label("@local_jdk//:jar"),
             allow_files = True,
             executable = True,
-            single_file = True),
+            single_file = True,
+            cfg = "host"),
         "_jdk": attr.label(
             default = Label("@local_jdk//:jdk-default"),
             allow_files = True),
