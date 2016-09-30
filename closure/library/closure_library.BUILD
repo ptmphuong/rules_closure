@@ -17,6 +17,7 @@ package(default_visibility = ["//visibility:public"])
 exports_files([
     "closure/goog/base.js",
     "closure/goog/deps.js",
+    "closure/goog/transpile.js",
 ])
 
 filegroup(
@@ -613,7 +614,6 @@ filegroup(
         "closure/goog/style/transform.js",
         "closure/goog/style/transition.js",
         "closure/goog/timer/timer.js",
-        "closure/goog/transpile.js",
         "closure/goog/tweak/entries.js",
         "closure/goog/tweak/registry.js",
         "closure/goog/tweak/tweak.js",
@@ -1025,6 +1025,7 @@ py_binary(
 #             "closure/goog/test_module.js",
 #             "closure/goog/test_module_dep.js",
 #             "closure/goog/testing/**/*.js",
+#             "closure/goog/transpile.js",
 #             "closure/goog/tweak/testhelpers.js",
 #             "closure/goog/useragent/useragenttestutil.js",
 #             "third_party/closure/goog/**/*_test.js",
