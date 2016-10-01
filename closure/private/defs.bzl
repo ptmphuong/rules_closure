@@ -151,12 +151,13 @@ def determine_js_language(ctx, normalize=False):
 def is_using_closure_library(srcs):
   return contains_file(srcs, "../closure_library/closure/goog/base.js")
 
-def runpath(f):
-  """Figures out the proper runfiles path for a file, using voodoo"""
-  if f.path.startswith('bazel-out/'):
-    return f.short_path
+def long_path(ctx, f):
+  """Returns short_path relative to parent directory."""
+  short = f.short_path
+  if short.startswith("../"):
+    return short[3:]
   else:
-    return f.path
+    return ctx.workspace_name + "/" + short
 
 # Maps (current, dependent) -> (compatible, is_decay)
 _JS_LANGUAGE_COMBINATIONS = {

@@ -23,7 +23,7 @@ load("//closure/private:defs.bzl",
      "HTML_FILE_TYPE",
      "JS_DEPS_ATTR",
      "JS_DEPS_PROVIDERS",
-     "runpath")
+     "long_path")
 
 _INCOMPATIBLE_LANGUAGES = set([
     "ECMASCRIPT6",
@@ -48,10 +48,10 @@ def _impl(ctx):
   runfiles += ctx.attr._phantomjs.data_runfiles.files
   runfiles += ctx.attr.harness.transitive_js_srcs
   runfiles += srcs
-  args = ["#!/bin/sh\npwd\nexec " + runpath(ctx.files._phantomjs[0]),
-          runpath(_first(ctx.attr.harness.transitive_js_srcs)),
-          runpath(ctx.file.html)]
-  args += [runpath(src) for src in srcs]
+  args = ["#!/bin/sh\nexec " + ctx.executable._phantomjs.short_path,
+          _first(ctx.attr.harness.transitive_js_srcs).short_path,
+          ctx.file.html.short_path]
+  args += [long_path(ctx, src) for src in srcs]
   ctx.file_action(
       executable=True,
       output=ctx.outputs.executable,
@@ -92,7 +92,8 @@ _phantomjs_test = rule(
         "data": attr.label_list(cfg="data", allow_files=True),
         "_phantomjs": attr.label(
             default=Label("//third_party/phantomjs"),
-            allow_files=True),
+            executable=True,
+            cfg="host"),
     })
 
 # Workaround https://github.com/ariya/phantomjs/issues/13876 by setting

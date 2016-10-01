@@ -16,8 +16,6 @@
 
 """Tests that two files contain the same data."""
 
-load("//closure/private:defs.bzl", "runpath")
-
 def _impl(ctx):
   if ctx.file.golden == ctx.file.actual:
     fail("GOLDEN and ACTUAL should be different files")
@@ -37,12 +35,12 @@ def _impl(ctx):
           "    exit 1",
           "  fi",
           "}",
-          "SUM1=$(checksum %s)" % runpath(ctx.file.golden),
-          "SUM2=$(checksum %s)" % runpath(ctx.file.actual),
+          "SUM1=$(checksum %s)" % ctx.file.golden.short_path,
+          "SUM2=$(checksum %s)" % ctx.file.actual.short_path,
           "if [[ ${SUM1} != ${SUM2} ]]; then",
           "  echo ERROR: %s >&2" % ctx.attr.error_message,
-          "  echo %s ${SUM1} >&2" % runpath(ctx.file.golden),
-          "  echo %s ${SUM2} >&2" % runpath(ctx.file.actual),
+          "  echo %s ${SUM1} >&2" % ctx.file.golden.short_path,
+          "  echo %s ${SUM2} >&2" % ctx.file.actual.short_path,
           "  exit 1",
           "fi",
       ]),

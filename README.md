@@ -464,8 +464,8 @@ functions.
 Your test will run within a hermetically sealed environment. You are not allowed
 to send HTTP requests to any external servers. It is expected that you'll use
 Closure Library mocks for things like XHR. However a local HTTP server is
-started up on a random port that allows to request runfiles under the `/filez/`
-path.
+started up on a random port that allows to request runfiles under the
+`/filez/WORKSPACE_NAME/` path.
 
 #### Rule Polymorphism
 

@@ -18,24 +18,10 @@
 #         export LD_DEBUG="files"
 #         export FC_DEBUG="1024"
 
-shopt -s nullglob
-
-if [[ "${RUNFILES}" == "" ]]; then
-  if [[ "$(pwd)" =~ ^(.*\.runfiles)(/.*)?$ ]]; then
-    RUNFILES="${BASH_REMATCH[1]}"
-  else
-    RUNFILES="${0}.runfiles"
-  fi
-fi
-if [[ -d "${RUNFILES}/io_bazel_rules_closure" ]]; then
-  RUNFILES="${RUNFILES}/io_bazel_rules_closure"
-fi
-if [[ -d "${RUNFILES}/external/io_bazel_rules_closure" ]]; then
-  RUNFILES="${RUNFILES}/external/io_bazel_rules_closure"
-fi
-OMFG=(${RUNFILES}/*/external/io_bazel_rules_closure)
-if [[ ${#OMFG[@]} > 0 ]]; then
-  RUNFILES="${OMFG[0]}"
+if [[ -d "$0.runfiles" ]]; then
+  RUNFILES="$0.runfiles/io_bazel_rules_closure"
+else
+  RUNFILES="${PWD}/../io_bazel_rules_closure"
 fi
 
 export LD_LIBRARY_PATH="${RUNFILES}/third_party/fontconfig/k8:${LD_LIBRARY_PATH}"

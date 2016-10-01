@@ -112,7 +112,7 @@ function onRequest(request, response) {
     response.write(virtualPageHtml);
     response.closeGracefully();
   } else if (path.indexOf(RUNFILES_PREFIX) == 0) {
-    path = path.substr(RUNFILES_PREFIX.length);
+    path = '../' + path.substr(RUNFILES_PREFIX.length);
     if (!fs.exists(path)) {
       send404(request, response);
       return;
