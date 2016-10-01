@@ -17,6 +17,11 @@
 """Common build definitions for Closure Compiler build definitions.
 """
 
+BASE_JS = Label("@closure_library//:closure/goog/base.js")
+DEPS_JS = Label("@closure_library//:closure/goog/deps.js")
+JSON_JS = Label("@closure_library//:closure/goog/json/json.js")
+SOYUTILS_USEGOOG_JS = Label("@soy_jssrc//:soyutils_usegoog.js")
+
 CSS_FILE_TYPE = FileType([".css", ".gss"])
 HTML_FILE_TYPE = FileType([".html"])
 JS_FILE_TYPE = FileType([".js"])
@@ -36,24 +41,11 @@ JS_LANGUAGES = set([
 
 JS_PEDANTIC_ARGS = [
     "--jscomp_error=*",
-    "--jscomp_warning=deprecated",
     "--jscomp_warning=unnecessaryCasts",
-    "--jscomp_off=lintChecks",  # closure_js_library does this
-    "--jscomp_off=missingRequire",  # closure_js_library does this
 ]
 
 JS_HIDE_WARNING_ARGS = [
-    # bazel > 0.3.1
-    "--hide_warnings_for=../closure_library/",
-    "--hide_warnings_for=../incremental_dom/",
-    "--hide_warnings_for=../protobuf_js/",
-    "--hide_warnings_for=../soy_jssrc/",
-    # bazel <= 0.3.1
-    "--hide_warnings_for=external/closure_library/",
-    "--hide_warnings_for=external/incremental_dom/",
-    "--hide_warnings_for=external/protobuf_js/",
-    "--hide_warnings_for=external/soy_jssrc/",
-    "--hide_warnings_for=bazel-out/local-fastbuild/genfiles/",
+    "--hide_warnings_for=/incremental_dom/",
 ]
 
 JS_DEPS_PROVIDERS = [
@@ -73,17 +65,12 @@ CSS_DEPS_ATTR = attr.label_list(
                "transitive_css_srcs",
                "transitive_css_labels"])
 
-SOY_DEPS_ATTR = attr.label_list(allow_files=False, providers=["proto_descriptor_sets"])
-
+SOY_DEPS_ATTR = attr.label_list(
+    allow_files=False, providers=["proto_descriptor_sets"])
 CLOSURE_LIBRARY_BASE_ATTR = attr.label(
-    default=Label("@closure_library//:closure/goog/base.js"),
-    allow_files=True,
-    single_file=True)
-
+    default=BASE_JS, allow_files=True, single_file=True)
 CLOSURE_LIBRARY_DEPS_ATTR = attr.label(
-    default=Label("@closure_library//:closure/goog/deps.js"),
-    allow_files=True,
-    single_file=True)
+    default=DEPS_JS, allow_files=True, single_file=True)
 
 def collect_transitive_js_srcs(ctx):
   srcs = set(order="compile")
@@ -148,9 +135,6 @@ def determine_js_language(ctx, normalize=False):
     language = JS_LANGUAGE_DEFAULT
   return language
 
-def is_using_closure_library(srcs):
-  return contains_file(srcs, "../closure_library/closure/goog/base.js")
-
 def long_path(ctx, f):
   """Returns short_path relative to parent directory."""
   short = f.short_path
@@ -205,12 +189,6 @@ def _mix_js_languages(ctx, current, dependent):
                  ctx.label.name, dependent, current, compatible))
     return compatible
   fail("Can not link an %s library against an %s one." % (dependent, current))
-
-def contains_file(srcs, path):
-  for src in srcs:
-    if src.short_path == path:
-      return True
-  return False
 
 def create_argfile(ctx, args):
   argfile = ctx.new_file(ctx.configuration.bin_dir,

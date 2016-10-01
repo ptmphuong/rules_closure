@@ -17,6 +17,7 @@
 """Build definitions for Closure JavaScript libraries."""
 
 load("//closure/private:defs.bzl",
+     "BASE_JS",
      "CLOSURE_LIBRARY_BASE_ATTR",
      "CLOSURE_LIBRARY_DEPS_ATTR",
      "JS_LANGUAGE_DEFAULT",
@@ -25,8 +26,7 @@ load("//closure/private:defs.bzl",
      "collect_required_css_labels",
      "collect_transitive_js_srcs",
      "create_argfile",
-     "determine_js_language",
-     "is_using_closure_library")
+     "determine_js_language")
 
 def _impl(ctx):
   tsrcs, externs, tdata = collect_transitive_js_srcs(ctx)
@@ -37,46 +37,56 @@ def _impl(ctx):
   if ctx.attr.no_closure_library:
     if not ctx.files.srcs:
       fail("no_closure_library is pointless when srcs is empty")
-    if is_using_closure_library(srcs):
-      fail("no_closure_library is pointless when the Closure Library is " +
-           "already part of the transitive closure")
+    for src in srcs:
+      if src.owner == BASE_JS:
+        fail("no_closure_library is pointless when the Closure Library is " +
+             "already part of the transitive closure")
   inputs = []
-  args = ["JsChecker",
-          "--output=%s" % ctx.outputs.provided.path,
-          "--output_errors=%s" % ctx.outputs.stderr.path,
-          "--label=%s" % ctx.label,
-          "--convention=%s" % ctx.attr.convention,
-          "--language=%s" % _determine_check_language(ctx.attr.language)]
+  args = [
+      "JsChecker",
+      "--output", ctx.outputs.provided.path,
+      "--output_errors", ctx.outputs.stderr.path,
+      "--label", ctx.label,
+      "--convention", ctx.attr.convention,
+      "--language", _determine_check_language(ctx.attr.language),
+  ]
   proto_descriptor_sets = []
   if ctx.attr.proto_descriptor_set:
     proto_descriptor_sets += [ctx.attr.proto_descriptor_set]
   if ctx.attr.testonly:
-    args += ["--testonly"]
+    args.append("--testonly")
   roots = set(order="compile")
   for direct_src in ctx.files.srcs:
-    args += ["--src=%s" % (direct_src.path)]
+    args.append("--src")
+    args.append(direct_src.path)
     inputs.append(direct_src)
     root = direct_src.root.path
     if root:
       roots += [root]
   for src_root in roots:
-    args += ["--root=%s" % src_root]
+    args.append("--root")
+    args.append(src_root)
   for direct_extern in ctx.files.externs:
-    args += ["--extern=%s" % direct_extern.path]
+    args.append("--extern")
+    args.append(direct_extern.path)
     inputs.append(direct_extern)
   for direct_dep in ctx.attr.deps:
-    args += ["--dep=%s" % direct_dep.js_provided.path]
+    args.append("--dep")
+    args.append(direct_dep.js_provided.path)
     inputs.append(direct_dep.js_provided)
     for edep in direct_dep.js_exports:
-      args += ["--dep=%s" % edep.js_provided.path]
+      args.append("--dep")
+      args.append(edep.js_provided.path)
       inputs.append(edep.js_provided)
     if hasattr(direct_dep, "proto_descriptor_sets"):
       proto_descriptor_sets += direct_dep.proto_descriptor_sets
-  args += ["--suppress=%s" % s for s in ctx.attr.suppress]
+  for s in ctx.attr.suppress:
+    args.append("--suppress")
+    args.append(s)
   if ctx.attr.internal_expect_failure:
-    args += ["--expect_failure"]
+    args.append("--expect_failure")
   if ctx.attr.internal_expect_warnings:
-    args += ["--expect_warnings"]
+    args.append("--expect_warnings")
   argfile = create_argfile(ctx, args)
   inputs.append(argfile)
   ctx.action(

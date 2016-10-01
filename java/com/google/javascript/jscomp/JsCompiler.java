@@ -19,6 +19,8 @@ package com.google.javascript.jscomp;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.PeekingIterator;
 import io.bazel.rules.closure.program.CommandLineProgram;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -81,23 +83,32 @@ public final class JsCompiler implements CommandLineProgram {
 
     // Parse flags in an ad-hoc manner.
     List<String> passThroughArgs = new ArrayList<>(args.size());
-    for (String arg : args) {
-      if (arg.startsWith("--output_errors=")) {
-        outputErrors = Paths.get(arg.substring(16));
-      } else if (arg.equals("--expect_failure")) {
-        expectFailure = true;
-      } else if (arg.equals("--expect_warnings")) {
-        expectWarnings = true;
-      } else if (arg.equals("--export_test_functions")) {
-        exportTestFunctions = true;
-      } else {
-        if (arg.startsWith("--js_output_file=")) {
-          jsOutputFile = Paths.get(arg.substring(17));
-        } else if (arg.startsWith("--create_source_map=")) {
-          createSourceMap = Paths.get(arg.substring(20));
-        }
-        passThroughArgs.add(arg);
+    PeekingIterator<String> iargs = Iterators.peekingIterator(args.iterator());
+    while (iargs.hasNext()) {
+      String arg = iargs.next();
+      switch (arg) {
+        case "--output_errors":
+          outputErrors = Paths.get(iargs.next());
+          continue;
+        case "--expect_failure":
+          expectFailure = true;
+          continue;
+        case "--expect_warnings":
+          expectWarnings = true;
+          continue;
+        case "--export_test_functions":
+          exportTestFunctions = true;
+          continue;
+        case "--js_output_file":
+          jsOutputFile = Paths.get(iargs.peek());
+          break;
+        case "--create_source_map":
+          createSourceMap = Paths.get(iargs.peek());
+          break;
+        default:
+          break;
       }
+      passThroughArgs.add(arg);
     }
 
     // Run the compiler, capturing error messages.

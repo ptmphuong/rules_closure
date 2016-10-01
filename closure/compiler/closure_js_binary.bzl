@@ -17,25 +17,40 @@
 """Rule for building JavaScript binaries with Closure Compiler."""
 
 load("//closure/private:defs.bzl",
+     "BASE_JS",
      "CLOSURE_LIBRARY_BASE_ATTR",
      "CLOSURE_LIBRARY_DEPS_ATTR",
+     "JSON_JS",
      "JS_DEPS_ATTR",
+     "JS_HIDE_WARNING_ARGS",
      "JS_LANGUAGE_DEFAULT",
      "JS_PEDANTIC_ARGS",
-     "JS_HIDE_WARNING_ARGS",
+     "SOYUTILS_USEGOOG_JS",
      "collect_required_css_labels",
      "collect_transitive_js_srcs",
      "create_argfile",
      "determine_js_language",
-     "difference",
-     "is_using_closure_library",
-     "contains_file")
+     "difference")
 
 _STRICT_LANGUAGES = set([
     "ECMASCRIPT6_TYPED",
     "ECMASCRIPT6_STRICT",
     "ECMASCRIPT5_STRICT",
 ])
+
+# TODO(jart): Properly propagate exceptions up here.
+_SUPPRESS_THINGS_JSCHECKER_ALREADY_DID = [
+    # See also: WARNINGS and ERRORS in JsChecker.java
+    "--jscomp_off=checkRegExp",
+    "--jscomp_off=deprecated",
+    "--jscomp_off=deprecatedAnnotations",
+    "--jscomp_off=extraRequire",
+    "--jscomp_off=lintChecks",
+    "--jscomp_off=misplacedTypeAnnotation",
+    "--jscomp_off=missingRequire",
+    "--jscomp_off=nonStandardJsDocs",
+    "--jscomp_off=strictMissingRequire",
+]
 
 def _impl(ctx):
   if not ctx.attr.deps:
@@ -52,74 +67,87 @@ def _impl(ctx):
   # build list of flags for closure compiler
   args = [
       "JsCompiler",
-      "--js_output_file=%s" % ctx.outputs.out.path,
-      "--create_source_map=%s" % ctx.outputs.map.path,
-      "--output_errors=%s" % ctx.outputs.stderr.path,
-      "--language_in=%s" % language_in,
-      "--language_out=%s" % language_out,
-      "--compilation_level=%s" % ctx.attr.compilation_level,
-      "--dependency_mode=%s" % ctx.attr.dependency_mode,
-      "--warning_level=%s" % ctx.attr.warning_level,
+      "--js_output_file", ctx.outputs.out.path,
+      "--create_source_map", ctx.outputs.map.path,
+      "--output_errors", ctx.outputs.stderr.path,
+      "--language_in", language_in,
+      "--language_out", language_out,
+      "--compilation_level", ctx.attr.compilation_level,
+      "--dependency_mode", ctx.attr.dependency_mode,
+      "--warning_level", ctx.attr.warning_level,
       "--generate_exports",
   ]
   if ctx.attr.internal_expect_failure:
-    args += ["--expect_failure"]
+    args.append("--expect_failure")
   if ctx.attr.internal_expect_warnings:
-    args += ["--expect_warnings"]
+    args.append("--expect_warnings")
   roots = set([ctx.outputs.out.root.path], order="compile")
   for src in srcs:
     roots += [src.root.path]
   for root in roots:
     mapping = ""
     if root:
-      args += ["--js_module_root=%s" % root]
+      args.append("--js_module_root")
+      args.append(root)
     else:
       mapping += "/"
-    args += ["--source_map_location_mapping=%s|%s" % (root, mapping)]
-  args += JS_HIDE_WARNING_ARGS
+    args.append("--source_map_location_mapping=%s|%s" % (root, mapping))
+  args.extend(JS_HIDE_WARNING_ARGS)
   if ctx.attr.formatting:
-    args += ["--formatting=" + ctx.attr.formatting]
+    args.append("--formatting")
+    args.append(ctx.attr.formatting)
   if ctx.attr.debug:
-    args += ["--debug"]
-  elif is_using_closure_library(srcs):
-    args += ["--define=goog.DEBUG=false"]
-  if is_using_closure_library(srcs) and language_out in _STRICT_LANGUAGES:
-    args += ["--define=goog.STRICT_MODE_COMPATIBLE"]
-  if contains_file(srcs, ctx.file._soyutils_usegoog.short_path):
-    args += ["--define=goog.soy.REQUIRE_STRICT_AUTOESCAPE"]
+    args.append("--debug")
   for entry_point in ctx.attr.entry_points:
     _validate_entry_point(entry_point, srcs)
-    args += ["--entry_point=" + entry_point]
+    args.append("--entry_point")
+    args.append(entry_point)
   if ctx.attr.testonly:
-    args += ["--export_test_functions"]
+    args.append("--export_test_functions")
   if ctx.attr.pedantic:
-    args += JS_PEDANTIC_ARGS
-    args += ["--use_types_for_optimization"]
-  if contains_file(srcs, "../closure_library/closure/goog/json/json.js"):
-    # TODO(hochhaus): Make unknownDefines an error for user supplied defines.
-    # https://github.com/bazelbuild/rules_closure/issues/79
-    args += ["--jscomp_off=unknownDefines",
-             "--define=goog.json.USE_NATIVE_JSON"]
+    args.extend(JS_PEDANTIC_ARGS)
+    args.append("--use_types_for_optimization")
+  args.extend(_SUPPRESS_THINGS_JSCHECKER_ALREADY_DID)
   if ctx.attr.output_wrapper:
-    args += ["--output_wrapper=%s" % ctx.attr.output_wrapper]
+    args.append("--output_wrapper")
+    args.append(ctx.attr.output_wrapper)
     if ctx.attr.output_wrapper == "(function(){%output%}).call(this);":
-      args += ["--assume_function_wrapper"]
+      args.append("--assume_function_wrapper")
   if ctx.outputs.property_renaming_report:
     report = ctx.outputs.property_renaming_report
     files += [report]
     outputs += [report]
-    args += ["--property_renaming_report=%s" % report.path]
+    args.append("--property_renaming_report")
+    args.append(report.path)
 
   # validate defs
   for flag in ctx.attr.defs:
     if not flag.startswith("--") or (" " in flag and "=" not in flag):
       fail("Please use --flag=value syntax for defs")
-  args += ctx.attr.defs
+  args.extend(ctx.attr.defs)
 
   # add gigantic list of files
-  args += ["--conformance_configs=%s" % config.path for config in ctx.files.conformance]
-  args += ["--externs=%s" % extern.path for extern in externs]
-  args += ["--js=%s" % src.path for src in srcs]
+  for config in ctx.files.conformance:
+    args.append("--conformance_configs")
+    args.append(config.path)
+  for extern in externs:
+    args.append("--externs")
+    args.append(extern.path)
+  for src in srcs:
+    args.append("--js")
+    args.append(src.path)
+    if src.owner == BASE_JS:
+      if not ctx.attr.debug:
+        args.append("--define=goog.DEBUG=false")
+      if language_out in _STRICT_LANGUAGES:
+        args.append("--define=goog.STRICT_MODE_COMPATIBLE")
+    elif src.owner == SOYUTILS_USEGOOG_JS:
+      args.append("--define=goog.soy.REQUIRE_STRICT_AUTOESCAPE")
+    elif src.owner == JSON_JS:
+      # TODO(hochhaus): Make unknownDefines an error for user supplied defines.
+      # https://github.com/bazelbuild/rules_closure/issues/79
+      args.append("--jscomp_off=unknownDefines")
+      args.append("--define=goog.json.USE_NATIVE_JSON")
 
   inputs = []
   for src in srcs:
@@ -239,9 +267,6 @@ closure_js_binary = rule(
             cfg="host"),
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_closure_library_deps": CLOSURE_LIBRARY_DEPS_ATTR,
-        "_soyutils_usegoog": attr.label(
-            default=Label("@soy_jssrc//:soyutils_usegoog.js"),
-            single_file=True, allow_files=True),
     },
     outputs={
         "out": "%{name}.js",
