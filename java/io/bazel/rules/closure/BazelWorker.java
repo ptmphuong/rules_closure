@@ -19,6 +19,7 @@ package io.bazel.rules.closure;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.Iterables;
 import com.google.devtools.build.lib.worker.WorkerProtocol.WorkRequest;
 import com.google.devtools.build.lib.worker.WorkerProtocol.WorkResponse;
@@ -27,6 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 
@@ -70,7 +72,7 @@ final class BazelWorker implements CommandLineProgram {
           }
           int exitCode = 0;
           try {
-            exitCode = delegate.run(request.getArgumentsList());
+            exitCode = delegate.run(loadArguments(request.getArgumentsList()));
           } catch (Exception e) {
             e.printStackTrace(ps);
             exitCode = 1;
@@ -95,11 +97,11 @@ final class BazelWorker implements CommandLineProgram {
 
   private static Collection<String> loadArguments(Collection<String> args) throws IOException {
     String lastArg = Iterables.getLast(args, "");
-    // When we pass the arguments list to ctx.action() the last argument is a @file.txt containing
-    // the actual list of arguments. If it's not there, then this program was probably run the
-    // normal way off the command line.
     if (lastArg.startsWith("@")) {
-      return Files.readAllLines(Paths.get(lastArg.substring(1)), UTF_8);
+      Path flagFile = Paths.get(CharMatcher.is('@').trimLeadingFrom(lastArg));
+      if (Files.exists(flagFile)) {
+        return Files.readAllLines(flagFile, UTF_8);
+      }
     }
     return args;
   }

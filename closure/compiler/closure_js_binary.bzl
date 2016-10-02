@@ -163,7 +163,7 @@ def _impl(ctx):
       inputs=inputs,
       outputs=outputs,
       executable=ctx.executable._ClosureUberAlles,
-      arguments=["@" + argfile.path],
+      arguments=["@@" + argfile.path],
       mnemonic="Closure",
       execution_requirements={"supports-workers": "1"},
       progress_message="Compiling %d JavaScript files to %s" % (
