@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -310,12 +309,12 @@ public final class JsChecker {
 
   public static final class Program implements CommandLineProgram {
     @Override
-    public int run(Collection<String> args) throws IOException {
+    public Integer apply(Iterable<String> args) {
       JsChecker checker = new JsChecker();
       CmdLineParser parser = new CmdLineParser(checker);
       parser.setUsageWidth(80);
       try {
-        parser.parseArgument(args);
+        parser.parseArgument(ImmutableList.copyOf(args));
       } catch (CmdLineException e) {
         System.err.println(e.getMessage());
         System.err.println(USAGE);
@@ -328,8 +327,11 @@ public final class JsChecker {
         parser.printUsage(System.out);
         System.out.println();
         return 0;
-      } else {
+      }
+      try {
         return checker.run() == !checker.expectFailure ? 0 : 1;
+      } catch (IOException e) {
+        throw new RuntimeException(e);
       }
     }
   }

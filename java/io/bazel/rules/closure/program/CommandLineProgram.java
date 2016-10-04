@@ -16,15 +16,14 @@
 
 package io.bazel.rules.closure.program;
 
-import java.io.IOException;
-import java.util.Collection;
+import com.google.common.base.Function;
 
 /**
  * Interface for command line programs.
  *
  * <p>This is the same thing as a main function, except not static.
  */
-public interface CommandLineProgram {
+public interface CommandLineProgram extends Function<Iterable<String>, Integer> {
 
   /**
    * Runs blocking program start to finish.
@@ -35,5 +34,6 @@ public interface CommandLineProgram {
    * @param args command line arguments
    * @return program exit code, i.e. 0 for success, non-zero for failure
    */
-  int run(Collection<String> args) throws IOException;
+  @Override
+  Integer apply(Iterable<String> args);
 }

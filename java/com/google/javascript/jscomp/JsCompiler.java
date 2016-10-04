@@ -27,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /** Closure Rules runner for Closure Compiler. */
@@ -70,7 +69,15 @@ public final class JsCompiler implements CommandLineProgram {
   }
 
   @Override
-  public int run(Collection<String> args) throws IOException {
+  public Integer apply(Iterable<String> args) {
+    try {
+      return run(args);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  private int run(Iterable<String> args) throws IOException {
     // Our flags, which we won't pass along to the compiler.
     Path outputErrors = null;
     boolean expectFailure = false;
@@ -82,7 +89,7 @@ public final class JsCompiler implements CommandLineProgram {
     Path createSourceMap = null;
 
     // Parse flags in an ad-hoc manner.
-    List<String> passThroughArgs = new ArrayList<>(args.size());
+    List<String> passThroughArgs = new ArrayList<>(1024);
     PeekingIterator<String> iargs = Iterators.peekingIterator(args.iterator());
     while (iargs.hasNext()) {
       String arg = iargs.next();

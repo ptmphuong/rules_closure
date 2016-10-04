@@ -21,33 +21,31 @@ import com.google.common.collect.Iterables;
 import com.google.javascript.jscomp.JsChecker;
 import com.google.javascript.jscomp.JsCompiler;
 import io.bazel.rules.closure.program.CommandLineProgram;
-import java.io.IOException;
-import java.util.Collection;
 
 /** Bazel worker for all Closure Tools programs, some of which are modded. */
 public final class ClosureUberAlles implements CommandLineProgram {
 
-  private ClosureUberAlles() {}
+  public static void main(String[] args) {
+    System.exit(
+        new BazelWorker(new ClosureUberAlles(), "Closure")
+            .apply(ImmutableList.copyOf(args)));
+  }
 
   @Override
-  public int run(Collection<String> args) throws IOException {
+  public Integer apply(Iterable<String> args) {
     String head = Iterables.getFirst(args, "");
-    ImmutableList<String> tail = ImmutableList.copyOf(Iterables.skip(args, 1));
+    Iterable<String> tail = Iterables.skip(args, 1);
     // TODO(jart): Include Closure Templates and Stylesheets.
     switch (head) {
       case "JsChecker":
-        return new JsChecker.Program().run(tail);
+        return new JsChecker.Program().apply(tail);
       case "JsCompiler":
-        return new JsCompiler().run(tail);
+        return new JsCompiler().apply(tail);
       default:
         System.err.println(
             "\nERROR: First flag to ClosureUberAlles should be specific compiler to run, "
                 + "e.g. JsChecker\n");
         return 1;
     }
-  }
-
-  public static void main(String[] args) throws IOException {
-    System.exit(new BazelWorker(new ClosureUberAlles()).run(ImmutableList.copyOf(args)));
   }
 }

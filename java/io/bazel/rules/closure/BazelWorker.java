@@ -20,17 +20,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Iterables;
 import com.google.devtools.build.lib.worker.WorkerProtocol.WorkRequest;
 import com.google.devtools.build.lib.worker.WorkerProtocol.WorkResponse;
 import io.bazel.rules.closure.program.CommandLineProgram;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InterruptedIOException;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 
 /**
  * Bazel worker runner.
@@ -42,67 +46,101 @@ import java.util.Collection;
 final class BazelWorker implements CommandLineProgram {
 
   private final CommandLineProgram delegate;
+  private final String mnemonic;
+  private final PrintStream log = System.err;
 
-  BazelWorker(CommandLineProgram delegate) {
+  BazelWorker(CommandLineProgram delegate, String mnemonic) {
     this.delegate = checkNotNull(delegate, "delegate");
+    this.mnemonic = checkNotNull(mnemonic, "mnemonic");
   }
 
   @Override
-  public int run(Collection<String> args) throws IOException {
-    if (args.contains("--persistent_worker")) {
+  public Integer apply(Iterable<String> args) {
+    if (Iterables.contains(args, "--persistent_worker")) {
       return runAsPersistentWorker();
     } else {
-      return delegate.run(loadArguments(args));
+      return delegate.apply(loadArguments(args, false));
     }
   }
 
   private int runAsPersistentWorker() {
-    // The goal here is to make sure nothing gets printed aside from the response proto.
-    try {
-      PrintStream originalStdOut = System.out;
-      PrintStream originalStdErr = System.err;
-      ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-      try (PrintStream ps = new PrintStream(buffer)) {
-        System.setOut(ps);
-        System.setErr(ps);
-        while (true) {
-          WorkRequest request = WorkRequest.parseDelimitedFrom(System.in);
-          if (request == null) {
+    InputStream realStdIn = System.in;
+    PrintStream realStdOut = System.out;
+    PrintStream realStdErr = System.err;
+    try (InputStream emptyIn = new ByteArrayInputStream(new byte[0]);
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(buffer)) {
+      System.setIn(emptyIn);
+      System.setOut(ps);
+      System.setErr(ps);
+      while (true) {
+        WorkRequest request = WorkRequest.parseDelimitedFrom(realStdIn);
+        if (request == null) {
+          return 0;
+        }
+        int exitCode = 0;
+        Iterable<String> args = loadArguments(request.getArgumentsList(), true);
+        try {
+          exitCode = delegate.apply(args);
+        } catch (RuntimeException e) {
+          if (wasInterrupted(e)) {
             return 0;
           }
-          int exitCode = 0;
-          try {
-            exitCode = delegate.run(loadArguments(request.getArgumentsList()));
-          } catch (Exception e) {
-            e.printStackTrace(ps);
-            exitCode = 1;
-          }
-          WorkResponse.newBuilder()
-              .setOutput(buffer.toString())
-              .setExitCode(exitCode)
-              .build()
-              .writeDelimitedTo(originalStdOut);
-          originalStdOut.flush();
-          buffer.reset();
-          System.gc();  // be a good little worker process and consume less memory when idle
+          System.err.println(
+              String.format("ERROR: Worker threw uncaught exception with args: %s",
+                  Joiner.on(' ').join(args)));
+          e.printStackTrace(System.err);
+          exitCode = 1;
         }
-      } finally {
-        System.setOut(originalStdOut);
-        System.setErr(originalStdErr);
+        WorkResponse.newBuilder()
+            .setOutput(buffer.toString())
+            .setExitCode(exitCode)
+            .build()
+            .writeDelimitedTo(realStdOut);
+        realStdOut.flush();
+        buffer.reset();
+        System.gc();  // be a good little worker process and consume less memory when idle
       }
-    } catch (IOException ignored) {
-      return 1;
+    } catch (IOException | RuntimeException e) {
+      if (wasInterrupted(e)) {
+        return 0;
+      }
+      throw Throwables.propagate(e);
+    } finally {
+      System.setIn(realStdIn);
+      System.setOut(realStdOut);
+      System.setErr(realStdErr);
     }
   }
 
-  private static Collection<String> loadArguments(Collection<String> args) throws IOException {
+  private Iterable<String> loadArguments(Iterable<String> args, boolean isWorker) {
     String lastArg = Iterables.getLast(args, "");
     if (lastArg.startsWith("@")) {
       Path flagFile = Paths.get(CharMatcher.is('@').trimLeadingFrom(lastArg));
-      if (Files.exists(flagFile)) {
-        return Files.readAllLines(flagFile, UTF_8);
+      if (isWorker && lastArg.startsWith("@@") || Files.exists(flagFile)) {
+        if (!isWorker && !mnemonic.isEmpty()) {
+          log.printf(
+              "HINT: %s will compile faster if you run: "
+                  + "echo \"build --strategy=%s=worker\" >>~/.bazelrc\n",
+              mnemonic, mnemonic);
+        }
+        try {
+          return Files.readAllLines(flagFile, UTF_8);
+        } catch (IOException e) {
+          throw new RuntimeException(e);
+        }
       }
     }
     return args;
+  }
+
+  private boolean wasInterrupted(Throwable e) {
+    Throwable cause = Throwables.getRootCause(e);
+    if (cause instanceof InterruptedException
+        || cause instanceof InterruptedIOException) {
+      log.println("Terminating worker due to interrupt signal");
+      return true;
+    }
+    return false;
   }
 }
