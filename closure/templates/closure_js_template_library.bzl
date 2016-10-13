@@ -49,7 +49,7 @@ def _impl(ctx):
     if ctx.attr.should_provide_require_soy_namespaces:
       args += ["--shouldProvideRequireSoyNamespaces"]
     if ctx.attr.should_generate_soy_msg_defs:
-      args += "--shouldGenerateGoogMsgDefs"
+      args += ["--shouldGenerateGoogMsgDefs"]
   if ctx.attr.plugin_modules:
     args += ["--pluginModules=%s" % ",".join(ctx.attr.plugin_modules)]
   args += [src.path for src in ctx.files.srcs]
