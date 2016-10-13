@@ -1,4 +1,4 @@
-# Closure Rules for Bazel (αlpha) [![Build Status](https://travis-ci.org/bazelbuild/rules_closure.svg?branch=master)](https://travis-ci.org/bazelbuild/rules_closure)
+# Closure Rules for Bazel (αlpha)
 
 JavaScript | Templating | Stylesheets | Miscellaneous
 --- | --- | --- | ---
@@ -6,6 +6,10 @@ JavaScript | Templating | Stylesheets | Miscellaneous
 [closure_js_binary] | [closure_java_template_library] | [closure_css_binary] | [phantomjs_test]
 [closure_js_deps] | [closure_py_template_library] | |
 [closure_js_test] | | |
+
+Bazel ≥0.3.1 | linux-x86_64 | ubuntu_15.10-x86_64 | darwin-x86_64
+:---: | :---: | :---: | :---:
+[![Build Status](https://travis-ci.org/bazelbuild/rules_closure.svg?branch=master)](https://travis-ci.org/bazelbuild/rules_closure) | [![Build Status](http://ci.bazel.io/buildStatus/icon?job=rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=linux-x86_64)](http://ci.bazel.io/job/rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=linux-x86_64) | [![Build Status](http://ci.bazel.io/buildStatus/icon?job=rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=ubuntu_15.10-x86_64)](http://ci.bazel.io/job/rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=ubuntu_15.10-x86_64) | [![Build Status](http://ci.bazel.io/buildStatus/icon?job=rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=darwin-x86_64)](http://ci.bazel.io/job/rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=darwin-x86_64)
 
 ## Overview
 
@@ -69,7 +73,7 @@ notes.
 
 ## Setup
 
-First you must [install][bazel-install] Bazel >=0.3.1. Then you must add the
+First you must [install][bazel-install] Bazel ≥0.3.1. Then you must add the
 following to your `WORKSPACE` file:
 
 ```python
