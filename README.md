@@ -79,9 +79,8 @@ following to your `WORKSPACE` file:
 ```python
 http_archive(
     name = "io_bazel_rules_closure",
-    sha256 = "59498e75805ad8767625729b433b9409f80d0ab985068d513f880fc1928eb39f",
-    strip_prefix = "rules_closure-0.3.0",
-    url = "http://bazel-mirror.storage.googleapis.com/github.com/bazelbuild/rules_closure/archive/0.3.0.tar.gz",
+    strip_prefix = "rules_closure-0.4.0",
+    url = "http://bazel-mirror.storage.googleapis.com/github.com/bazelbuild/rules_closure/archive/0.4.0.tar.gz",
 )
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
