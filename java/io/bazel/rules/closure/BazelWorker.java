@@ -47,9 +47,10 @@ final class BazelWorker implements CommandLineProgram {
 
   private final CommandLineProgram delegate;
   private final String mnemonic;
-  private final PrintStream log = System.err;
+  private final PrintStream output;
 
-  BazelWorker(CommandLineProgram delegate, String mnemonic) {
+  BazelWorker(PrintStream output, CommandLineProgram delegate, String mnemonic) {
+    this.output = checkNotNull(output, "output");
     this.delegate = checkNotNull(delegate, "delegate");
     this.mnemonic = checkNotNull(mnemonic, "mnemonic");
   }
@@ -119,7 +120,7 @@ final class BazelWorker implements CommandLineProgram {
       Path flagFile = Paths.get(CharMatcher.is('@').trimLeadingFrom(lastArg));
       if (isWorker && lastArg.startsWith("@@") || Files.exists(flagFile)) {
         if (!isWorker && !mnemonic.isEmpty()) {
-          log.printf(
+          output.printf(
               "HINT: %s will compile faster if you run: "
                   + "echo \"build --strategy=%s=worker\" >>~/.bazelrc\n",
               mnemonic, mnemonic);
@@ -138,7 +139,7 @@ final class BazelWorker implements CommandLineProgram {
     Throwable cause = Throwables.getRootCause(e);
     if (cause instanceof InterruptedException
         || cause instanceof InterruptedIOException) {
-      log.println("Terminating worker due to interrupt signal");
+      output.println("Terminating worker due to interrupt signal");
       return true;
     }
     return false;

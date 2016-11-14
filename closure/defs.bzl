@@ -24,3 +24,4 @@ load("//closure/templates:closure_js_template_library.bzl", "closure_js_template
 load("//closure/testing:closure_js_test.bzl", "closure_js_test")
 load("//closure/testing:phantomjs_test.bzl", "phantomjs_test")
 load("//closure:repositories.bzl", "closure_repositories")
+load("//closure:webfiles/webfiles.bzl", "webfiles")

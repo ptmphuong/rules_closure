@@ -21,7 +21,9 @@ load("//closure:defs.bzl", "closure_js_proto_library")
 
 java_library(
     name = "templates",
-    exports = ["//third_party/java/soy"],
+    exports = [
+        "//third_party/java/soy",
+    ],
 )
 
 closure_js_proto_library(

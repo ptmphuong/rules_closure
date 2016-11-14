@@ -195,13 +195,13 @@ def determine_js_language(ctx, deps, normalize=False):
     language = JS_LANGUAGE_DEFAULT
   return language
 
-def long_path(ctx, f):
+def long_path(ctx, file_):
   """Returns short_path relative to parent directory."""
-  short = f.short_path
-  if short.startswith("../"):
-    return short[3:]
-  else:
-    return ctx.workspace_name + "/" + short
+  if file_.short_path.startswith("../"):
+    return file_.short_path[3:]
+  if file_.owner and file_.owner.workspace_root:
+    return file_.owner.workspace_root + "/" + file_.short_path
+  return ctx.workspace_name + "/" + file_.short_path
 
 # Maps (current, dependent) -> (compatible, is_decay)
 _JS_LANGUAGE_COMBINATIONS = {

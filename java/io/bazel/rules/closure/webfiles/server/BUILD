@@ -12,41 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//closure/private:java_proto_library.bzl", "java_proto_library")
+load("//closure/templates:closure_java_template_library.bzl", "closure_java_template_library")
 
 licenses(["notice"])  # Apache 2.0
 
 java_binary(
-    name = "ClosureUberAlles",
+    name = "server",
+    testonly = 1,
     srcs = [
-        "BazelWorker.java",
-        "ClosureUberAlles.java",
+        "MimeTypes.java",
+        "NetworkUtils.java",
+        "WebfilesServer.java",
     ],
-    main_class = "io.bazel.rules.closure.ClosureUberAlles",
+    main_class = "io.bazel.rules.closure.webfiles.server.WebfilesServer",
+    resources = ["invisible_college.ansi"],
     visibility = ["//visibility:public"],
     deps = [
-        ":worker_protocol_java_proto",
+        ":listing",
+        "//closure/templates",
         "//java/com/google/common:guava",
-        "//java/com/google/javascript/jscomp",
-        "//java/io/bazel/rules/closure/program",
         "//java/io/bazel/rules/closure/webfiles",
+        "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
+        "//third_party/java/jetty/v6_1_22",
+        "//third_party/protobuf:protobuf-java",
+        "@jsr305//jar",
+        "@servlet_api//jar",
     ],
 )
 
-java_library(
-    name = "tarjan",
-    srcs = ["Tarjan.java"],
-    visibility = ["//visibility:public"],
-    deps = ["//java/com/google/common:guava"],
-)
-
-java_proto_library(
-    name = "build_info_java_proto",
-    src = "build_info.proto",
-    visibility = ["//visibility:public"],
-)
-
-java_proto_library(
-    name = "worker_protocol_java_proto",
-    src = "worker_protocol.proto",
+closure_java_template_library(
+    name = "listing",
+    testonly = 1,
+    srcs = ["listing.soy"],
 )

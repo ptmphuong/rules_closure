@@ -16,37 +16,28 @@ load("//closure/private:java_proto_library.bzl", "java_proto_library")
 
 licenses(["notice"])  # Apache 2.0
 
-java_binary(
-    name = "ClosureUberAlles",
-    srcs = [
-        "BazelWorker.java",
-        "ClosureUberAlles.java",
-    ],
-    main_class = "io.bazel.rules.closure.ClosureUberAlles",
-    visibility = ["//visibility:public"],
-    deps = [
-        ":worker_protocol_java_proto",
-        "//java/com/google/common:guava",
-        "//java/com/google/javascript/jscomp",
-        "//java/io/bazel/rules/closure/program",
-        "//java/io/bazel/rules/closure/webfiles",
-    ],
-)
-
 java_library(
-    name = "tarjan",
-    srcs = ["Tarjan.java"],
-    visibility = ["//visibility:public"],
-    deps = ["//java/com/google/common:guava"],
+    name = "webfiles",
+    srcs = [
+        "WebfilesValidator.java",
+        "WebfilesValidatorProgram.java",
+        "Webpath.java",
+    ],
+    visibility = [
+        "//java/io/bazel/rules/closure:__subpackages__",
+        "//javatests/io/bazel/rules/closure/webfiles:__pkg__",
+    ],
+    deps = [
+        ":build_info_java_proto",
+        "//java/com/google/common:guava",
+        "//java/io/bazel/rules/closure:tarjan",
+        "//java/io/bazel/rules/closure/program",
+        "//third_party/protobuf:protobuf-java",
+    ],
 )
 
 java_proto_library(
     name = "build_info_java_proto",
     src = "build_info.proto",
     visibility = ["//visibility:public"],
-)
-
-java_proto_library(
-    name = "worker_protocol_java_proto",
-    src = "worker_protocol.proto",
 )

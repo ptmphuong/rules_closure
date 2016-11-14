@@ -12,6 +12,13 @@ maven_jar(
 )
 
 maven_jar(
+    name = "jimfs",
+    artifact = "com.google.jimfs:jimfs:1.1",
+    server = "closure_maven_server",
+    sha1 = "8fbd0579dc68aba6186935cc1bee21d2f3e7ec1c",
+)
+
+maven_jar(
     name = "junit",
     artifact = "junit:junit:4.11",
     server = "closure_maven_server",
@@ -30,6 +37,13 @@ maven_jar(
     artifact = "org.hamcrest:hamcrest-library:1.3",
     server = "closure_maven_server",
     sha1 = "4785a3c21320980282f9f33d0d1264a69040538f",
+)
+
+maven_jar(
+    name = "mockito",
+    artifact = "org.mockito:mockito-all:1.10.19",
+    server = "closure_maven_server",
+    sha1 = "539df70269cc254a58cccc5d8e43286b4a73bf30",
 )
 
 maven_jar(

@@ -21,14 +21,38 @@ import com.google.common.collect.Iterables;
 import com.google.javascript.jscomp.JsChecker;
 import com.google.javascript.jscomp.JsCompiler;
 import io.bazel.rules.closure.program.CommandLineProgram;
+import io.bazel.rules.closure.webfiles.WebfilesValidator;
+import io.bazel.rules.closure.webfiles.WebfilesValidatorProgram;
+import java.io.PrintStream;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 
 /** Bazel worker for all Closure Tools programs, some of which are modded. */
 public final class ClosureUberAlles implements CommandLineProgram {
 
   public static void main(String[] args) {
+    // Please note that dependency injection is being done by hand.
+    PrintStream output = System.err;
+    FileSystem fs = FileSystems.getDefault();
     System.exit(
-        new BazelWorker(new ClosureUberAlles(), "Closure")
+        new BazelWorker(
+                output,
+                new ClosureUberAlles(
+                    output,
+                    new WebfilesValidatorProgram(
+                        output, fs, new WebfilesValidator(fs))),
+                "Closure")
             .apply(ImmutableList.copyOf(args)));
+  }
+
+  private final PrintStream output;
+  private final WebfilesValidatorProgram webfilesValidatorProgram;
+
+  private ClosureUberAlles(
+      PrintStream output,
+      WebfilesValidatorProgram webfilesValidatorProgram) {
+    this.output = output;
+    this.webfilesValidatorProgram = webfilesValidatorProgram;
   }
 
   @Override
@@ -41,8 +65,10 @@ public final class ClosureUberAlles implements CommandLineProgram {
         return new JsChecker.Program().apply(tail);
       case "JsCompiler":
         return new JsCompiler().apply(tail);
+      case "WebfilesValidator":
+        return webfilesValidatorProgram.apply(tail);
       default:
-        System.err.println(
+        output.println(
             "\nERROR: First flag to ClosureUberAlles should be specific compiler to run, "
                 + "e.g. JsChecker\n");
         return 1;
