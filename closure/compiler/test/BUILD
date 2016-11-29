@@ -24,12 +24,10 @@ load("//closure:defs.bzl", "closure_js_library")
 closure_js_library(
     name = "hello_lib",
     srcs = ["hello.js"],
-    language = "ECMASCRIPT6_STRICT",
 )
 
 closure_js_binary(
     name = "hello_bin",
-    language = "ECMASCRIPT3",
     deps = [":hello_lib"],
 )
 
@@ -93,39 +91,8 @@ file_test(
 )
 
 closure_js_library(
-    name = "unstrict_lib",
-    srcs = ["empty.js"],
-    language = "ECMASCRIPT3",
-)
-
-closure_js_library(
-    name = "hello_decay_lib",
-    srcs = ["hello.js"],
-    language = "ECMASCRIPT6_STRICT",
-    deps = [":unstrict_lib"],
-)
-
-rule_test(
-    name = "hello_decay_lib_test",
-    provides = {"closure_js_library.language": "^\"ECMASCRIPT6\"$"},
-    rule = ":hello_decay_lib",
-)
-
-closure_js_binary(
-    name = "hello_decay_bin",
-    deps = [":hello_decay_lib"],
-)
-
-file_test(
-    name = "es6strictWithEs3Dep_isAllowed",
-    content = "console.log(\"hello world\");\n",
-    file = "hello_decay_bin.js",
-)
-
-closure_js_library(
     name = "es6const_lib",
     srcs = ["es6const.js"],
-    language = "ECMASCRIPT6_STRICT",
     no_closure_library = True,
 )
 
@@ -145,7 +112,6 @@ file_test(
 closure_js_library(
     name = "es6arrow_lib",
     srcs = ["es6arrow.js"],
-    language = "ECMASCRIPT6_STRICT",
     no_closure_library = True,
 )
 
@@ -178,7 +144,6 @@ file_test(
 closure_js_library(
     name = "empty_lib_indirectly_hidden",
     srcs = ["empty.js"],
-    language = "ECMASCRIPT6_STRICT",
     visibility = ["//visibility:private"],
 )
 
@@ -190,7 +155,6 @@ closure_js_library(
 
 closure_js_binary(
     name = "hello_output_wrapper_dash_dash_space_bin",
-    language = "ECMASCRIPT3",
     output_wrapper = "-- %output%",
     deps = [":hello_lib"],
 )
@@ -207,7 +171,6 @@ file_test(
 closure_js_library(
     name = "extern_lib",
     srcs = ["extern.js"],
-    language = "ECMASCRIPT6_STRICT",
 )
 
 closure_js_library(

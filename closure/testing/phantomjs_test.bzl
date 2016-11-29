@@ -24,15 +24,7 @@ load("//closure/private:defs.bzl",
      "long_path",
      "unfurl")
 
-_INCOMPATIBLE_LANGUAGES = set([
-    "ECMASCRIPT6",
-    "ECMASCRIPT6_STRICT",
-    "ECMASCRIPT6_TYPED",
-])
-
 def _impl(ctx):
-  _check_language(ctx.attr.harness.label,
-                  ctx.attr.harness.closure_js_binary.language)
   if not ctx.attr.deps:
     fail("phantomjs_rule needs at least one dep")
   files = [ctx.outputs.executable]
@@ -41,10 +33,8 @@ def _impl(ctx):
   deps.append(ctx.attr.runner)
   for dep in deps:
     if hasattr(dep, 'closure_js_binary'):
-      _check_language(dep.label, dep.closure_js_binary.language)
       srcs += [dep.closure_js_binary.bin]
     else:
-      _check_language(dep.label, dep.closure_js_library.language)
       srcs += dep.closure_js_library.srcs
   args = ["#!/bin/sh\nexec " + ctx.executable._phantomjs.short_path,
           ctx.attr.harness.closure_js_binary.bin.short_path,
@@ -63,11 +53,6 @@ def _impl(ctx):
                             collect_runfiles([ctx.attr._phantomjs,
                                               ctx.attr.runner,
                                               ctx.attr.harness]))))
-
-def _check_language(label, language):
-  if language in _INCOMPATIBLE_LANGUAGES:
-    fail("%s is an %s library which is incompatible with PhantomJS" % (
-        label, language))
 
 _phantomjs_test = rule(
     test=True,

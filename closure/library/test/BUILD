@@ -21,7 +21,6 @@ load("//closure:defs.bzl", "closure_js_test")
 closure_js_test(
     name = "dom_test",
     srcs = ["dom_test.js"],
-    language = "ECMASCRIPT5_STRICT",
     deps = [
         "//closure/library",
         "//closure/library:testing",

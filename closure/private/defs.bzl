@@ -25,14 +25,14 @@ JS_LANGUAGE_DEFAULT = "ECMASCRIPT5_STRICT"
 JS_TEST_FILE_TYPE = FileType(["_test.js"])
 SOY_FILE_TYPE = FileType([".soy"])
 
+JS_LANGUAGE_IN = "ECMASCRIPT6_STRICT"
+JS_LANGUAGE_OUT_DEFAULT = "ECMASCRIPT5"
 JS_LANGUAGES = set([
-    "ANY",
     "ECMASCRIPT3",
     "ECMASCRIPT5",
     "ECMASCRIPT5_STRICT",
     "ECMASCRIPT6",
     "ECMASCRIPT6_STRICT",
-    "ECMASCRIPT6_TYPED",
 ])
 
 CLOSURE_LIBRARY_BASE_ATTR = attr.label(
@@ -189,21 +189,6 @@ def make_jschecker_progress_message(srcs, label):
 def difference(a, b):
   return [i for i in a if i not in b]
 
-def determine_js_language(ctx, deps, normalize=False):
-  language = "ANY"
-  if hasattr(ctx.attr, "language"):
-    # Don't do the language mixing check for closure_js_binary()
-    if not hasattr(ctx.attr, "entry_points"):
-      language = _check_js_language(ctx.attr.language)
-  for dep in deps:
-    if not hasattr(dep, "closure_js_library"):
-      continue
-    language = _mix_js_languages(
-        ctx, language, getattr(dep.closure_js_library, "language", "ANY"))
-  if normalize and language == "ANY":
-    language = JS_LANGUAGE_DEFAULT
-  return language
-
 def long_path(ctx, file_):
   """Returns short_path relative to parent directory."""
   if file_.short_path.startswith("../"):
@@ -211,53 +196,6 @@ def long_path(ctx, file_):
   if file_.owner and file_.owner.workspace_root:
     return file_.owner.workspace_root + "/" + file_.short_path
   return ctx.workspace_name + "/" + file_.short_path
-
-# Maps (current, dependent) -> (compatible, is_decay)
-_JS_LANGUAGE_COMBINATIONS = {
-    ("ECMASCRIPT3", "ECMASCRIPT5"): ("ECMASCRIPT5", False),
-    ("ECMASCRIPT3", "ECMASCRIPT5_STRICT"): ("ECMASCRIPT5", False),
-    ("ECMASCRIPT3", "ECMASCRIPT6_STRICT"): ("ECMASCRIPT6", False),
-    ("ECMASCRIPT5", "ECMASCRIPT3"): ("ECMASCRIPT5", False),
-    ("ECMASCRIPT5", "ECMASCRIPT5_STRICT"): ("ECMASCRIPT5", False),
-    ("ECMASCRIPT5", "ECMASCRIPT6_STRICT"): ("ECMASCRIPT6", False),
-    ("ECMASCRIPT6", "ECMASCRIPT3"): ("ECMASCRIPT6", False),
-    ("ECMASCRIPT6", "ECMASCRIPT5"): ("ECMASCRIPT6", False),
-    ("ECMASCRIPT6", "ECMASCRIPT5_STRICT"): ("ECMASCRIPT6", False),
-    ("ECMASCRIPT6", "ECMASCRIPT6_STRICT"): ("ECMASCRIPT6", False),
-    ("ECMASCRIPT5_STRICT", "ECMASCRIPT3"): ("ECMASCRIPT5", True),
-    ("ECMASCRIPT5_STRICT", "ECMASCRIPT5"): ("ECMASCRIPT5", True),
-    ("ECMASCRIPT5_STRICT", "ECMASCRIPT6_STRICT"): ("ECMASCRIPT6_STRICT", False),
-    ("ECMASCRIPT5_STRICT", "ECMASCRIPT6_TYPED"): ("ECMASCRIPT6_TYPED", False),
-    ("ECMASCRIPT6_STRICT", "ECMASCRIPT3"): ("ECMASCRIPT6", True),
-    ("ECMASCRIPT6_STRICT", "ECMASCRIPT5"): ("ECMASCRIPT6", True),
-    ("ECMASCRIPT6_STRICT", "ECMASCRIPT6"): ("ECMASCRIPT6", True),
-    ("ECMASCRIPT6_STRICT", "ECMASCRIPT5_STRICT"): ("ECMASCRIPT6_STRICT", False),
-    ("ECMASCRIPT6_STRICT", "ECMASCRIPT6_TYPED"): ("ECMASCRIPT6_TYPED", False),
-    ("ECMASCRIPT6_TYPED", "ECMASCRIPT5_STRICT"): ("ECMASCRIPT6_TYPED", False),
-    ("ECMASCRIPT6_TYPED", "ECMASCRIPT6_STRICT"): ("ECMASCRIPT6_TYPED", False),
-}
-
-def _check_js_language(language):
-  if language not in JS_LANGUAGES:
-    fail("Invalid JS language '%s', expected one of %s" % (
-        language, ", ".join(list(JS_LANGUAGES))))
-  return language
-
-def _mix_js_languages(ctx, current, dependent):
-  if current == dependent:
-    return current
-  if current == "ANY":
-    return dependent
-  if dependent == "ANY":
-    return current
-  if (current, dependent) in _JS_LANGUAGE_COMBINATIONS:
-    compatible, is_decay = _JS_LANGUAGE_COMBINATIONS[(current, dependent)]
-    if is_decay:
-      print(("%s dependency on %s library caused JS language strictness to " +
-             "decay from %s to %s") % (
-                 ctx.label.name, dependent, current, compatible))
-    return compatible
-  fail("Can not link an %s library against an %s one." % (dependent, current))
 
 def create_argfile(ctx, args):
   argfile = ctx.new_file(ctx.configuration.bin_dir,

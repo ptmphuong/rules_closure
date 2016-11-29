@@ -17,13 +17,12 @@
 load("//closure/private:defs.bzl",
      "CLOSURE_LIBRARY_BASE_ATTR",
      "CLOSURE_LIBRARY_DEPS_ATTR",
-     "JS_LANGUAGE_DEFAULT",
      "JS_FILE_TYPE",
+     "JS_LANGUAGE_IN",
      "collect_js",
      "collect_runfiles",
      "convert_path_to_es6_module_name",
      "create_argfile",
-     "determine_js_language",
      "find_roots",
      "make_jschecker_progress_message",
      "sort_roots",
@@ -34,6 +33,9 @@ def _impl(ctx):
     fail("Either 'srcs' or 'exports' must be specified")
   if not ctx.files.srcs and ctx.attr.deps:
     fail("'srcs' must be set when using 'deps', otherwise consider 'exports'")
+  if ctx.attr.language:
+    print("The closure_js_library 'language' attribute is now removed and " +
+          "is always set to " + JS_LANGUAGE_IN)
 
   # Create a list of the sources defined by this specific rule.
   srcs = ctx.files.srcs
@@ -74,7 +76,6 @@ def _impl(ctx):
       "--output", ctx.outputs.info.path,
       "--output_errors", ctx.outputs.stderr.path,
       "--convention", ctx.attr.convention,
-      "--language", _determine_check_language(ctx.attr.language),
   ]
 
   # Because JsChecker is an edge in the build graph, we need to declare all of
@@ -175,7 +176,6 @@ def _impl(ctx):
           modules=js.modules + modules,
           descriptors=js.descriptors + ctx.files.internal_descriptors,
           stylesheets=js.stylesheets + stylesheets,
-          language=determine_js_language(ctx, deps),
           has_closure_library=js.has_closure_library),
       runfiles=ctx.runfiles(
           files=srcs + ctx.files.data,
@@ -184,11 +184,6 @@ def _impl(ctx):
                                       ctx.file._closure_library_deps]) |
                             collect_runfiles(deps) |
                             collect_runfiles(ctx.attr.data))))
-
-def _determine_check_language(language):
-  if language == "ANY":
-    return "ECMASCRIPT3"
-  return language
 
 closure_js_library = rule(
     implementation=_impl,
@@ -200,13 +195,13 @@ closure_js_library = rule(
         "exports": attr.label_list(
             providers=["closure_js_library"]),
         "includes": attr.string_list(),
-        "language": attr.string(default=JS_LANGUAGE_DEFAULT),
         "no_closure_library": attr.bool(),
         "srcs": attr.label_list(allow_files=JS_FILE_TYPE),
         "suppress": attr.string_list(),
 
         # deprecated
         "externs": attr.label_list(allow_files=JS_FILE_TYPE),
+        "language": attr.string(),
 
         # internal only
         "internal_descriptors": attr.label_list(allow_files=True),

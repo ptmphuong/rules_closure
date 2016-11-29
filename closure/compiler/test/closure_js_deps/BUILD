@@ -39,7 +39,6 @@ load("//closure:defs.bzl", "closure_js_library")
 closure_js_library(
     name = "external_library",
     srcs = ["external_library.js"],
-    language = "ECMASCRIPT6_STRICT",
 )
 
 closure_js_library(

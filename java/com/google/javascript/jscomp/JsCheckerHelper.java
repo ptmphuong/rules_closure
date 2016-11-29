@@ -20,7 +20,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.Optional;
-import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
 import com.google.protobuf.TextFormat;
 import io.bazel.rules.closure.BuildInfo.ClosureJsLibrary;
 import java.io.IOException;
@@ -28,11 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 final class JsCheckerHelper {
-
-  static boolean isEs6OrHigher(LanguageMode language) {
-    return language == LanguageMode.ECMASCRIPT6_STRICT
-        || language == LanguageMode.ECMASCRIPT6_TYPED;
-  }
 
   static boolean isGeneratedPath(String path) {
     return path.startsWith("blaze-out/")

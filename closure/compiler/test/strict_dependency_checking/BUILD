@@ -52,37 +52,25 @@ closure_js_library(
 
 rule_test(
     name = "a_rule_test",
-    provides = {
-        "closure_js_library.language": "^\"ECMASCRIPT5_STRICT\"$",
-        "closure_js_library.srcs": "/a.js\\]",
-    },
+    provides = {"closure_js_library.srcs": "/a.js\\]"},
     rule = ":a",
 )
 
 rule_test(
     name = "b_rule_test",
-    provides = {
-        "closure_js_library.language": "^\"ECMASCRIPT5_STRICT\"$",
-        "closure_js_library.srcs": "/a\\.js.*/b\\.js\\]",
-    },
+    provides = {"closure_js_library.srcs": "/a\\.js.*/b\\.js\\]"},
     rule = ":b",
 )
 
 rule_test(
     name = "c_rule_test",
-    provides = {
-        "closure_js_library.language": "^\"ECMASCRIPT5_STRICT\"$",
-        "closure_js_library.srcs": "/a\\.js.*/b\\.js.*/c\\.js\\]",
-    },
+    provides = {"closure_js_library.srcs": "/a\\.js.*/b\\.js.*/c\\.js\\]"},
     rule = ":c",
 )
 
 rule_test(
     name = "t_rule_test",
-    provides = {
-        "closure_js_library.language": "^\"ECMASCRIPT5_STRICT\"$",
-        "closure_js_library.srcs": "/t\\.js\\]",
-    },
+    provides = {"closure_js_library.srcs": "/t\\.js\\]"},
     rule = ":t",
 )
 
@@ -199,20 +187,17 @@ file_test(
 closure_js_library(
     name = "es6_a",
     srcs = ["es6_a.js"],
-    language = "ECMASCRIPT6_STRICT",
 )
 
 closure_js_library(
     name = "es6_b",
     srcs = ["es6_b.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = [":es6_a"],
 )
 
 closure_js_library(
     name = "es6_c",
     srcs = ["es6_c.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = [
         ":es6_a",
         ":es6_b",
@@ -229,7 +214,6 @@ closure_js_library(
     name = "es6_didNotSpecifyTransitiveDep",
     srcs = ["es6_c.js"],
     internal_expect_failure = True,
-    language = "ECMASCRIPT6_STRICT",
     tags = ["manual"],
     deps = [":es6_b"],  # oops I forgot :es6_a, it doesn't matter if :es6_b depends on :es6_a
 )
@@ -243,7 +227,6 @@ file_test(
 closure_js_library(
     name = "es6_requireWithinSameLibrary_works",
     srcs = ["es6_c.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = [":es6_b"],
 )
 
@@ -253,7 +236,6 @@ closure_js_library(
         "a.js",
         "es6_a.js",
     ],
-    language = "ECMASCRIPT6_STRICT",
 )
 
 file_test(
@@ -272,7 +254,6 @@ genrule(
 closure_js_library(
     name = "es6_g",
     srcs = ["es6_g.js"],
-    language = "ECMASCRIPT6_STRICT",
 )
 
 file_test(
@@ -291,7 +272,6 @@ genrule(
 closure_js_library(
     name = "es6_g2",
     srcs = ["es6_g2.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = ["es6_g"],
 )
 

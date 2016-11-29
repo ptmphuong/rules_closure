@@ -116,10 +116,6 @@ final class Diagnostics {
           "visibility",
           "with");
 
-  /** Compiler checks that {@link JsChecker} should ignore for ECMASCRIPT6 sources. */
-  // TODO(jart): Should we put the stuff back we had here before?
-  static final ImmutableSet<DiagnosticType> DISABLE_FOR_ES6 = ImmutableSet.of();
-
   /** Checks to suppress if closure_js_library convention is not GOOGLE. */
   static final ImmutableSet<DiagnosticType> GOOGLE_LINTER_CHECKS =
       ImmutableSet.of(

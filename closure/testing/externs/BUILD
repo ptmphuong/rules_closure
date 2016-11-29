@@ -21,6 +21,5 @@ load("//closure:defs.bzl", "closure_js_library")
 closure_js_library(
     name = "phantomjs",
     srcs = ["phantom.js"],
-    language = "ECMASCRIPT6_STRICT",
     no_closure_library = True,
 )

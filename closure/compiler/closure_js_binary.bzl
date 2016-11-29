@@ -18,21 +18,16 @@ load("//closure/private:defs.bzl",
      "BASE_JS",
      "CLOSURE_LIBRARY_BASE_ATTR",
      "CLOSURE_LIBRARY_DEPS_ATTR",
-     "JS_LANGUAGE_DEFAULT",
+     "JS_LANGUAGES",
+     "JS_LANGUAGE_IN",
+     "JS_LANGUAGE_OUT_DEFAULT",
      "collect_js",
      "collect_runfiles",
      "create_argfile",
-     "determine_js_language",
      "difference",
      "find_roots",
      "sort_roots",
      "unfurl")
-
-_STRICT_LANGUAGES = set([
-    "ECMASCRIPT6_TYPED",
-    "ECMASCRIPT6_STRICT",
-    "ECMASCRIPT5_STRICT",
-])
 
 def _impl(ctx):
   if not ctx.attr.deps:
@@ -40,6 +35,9 @@ def _impl(ctx):
   for flag in ctx.attr.defs:
     if not flag.startswith("--") or (" " in flag and "=" not in flag):
       fail("Please use --flag=value syntax for defs")
+  if ctx.attr.language not in JS_LANGUAGES:
+    fail("Unknown language %s try one of these: %s" % (
+        ctx.attr.language, ", ".join(JS_LANGUAGES)))
 
   deps = unfurl(ctx.attr.deps)
   js = collect_js(ctx, deps, css=ctx.attr.css)
@@ -47,9 +45,6 @@ def _impl(ctx):
     fail("There are no JS source files in the transitive closure")
 
   _validate_css_graph(ctx, js)
-
-  language_in = determine_js_language(ctx, deps, normalize=True)
-  language_out = ctx.attr.language
 
   # This is the list of files we'll be generating.
   outputs = [ctx.outputs.bin, ctx.outputs.map, ctx.outputs.stderr]
@@ -67,8 +62,8 @@ def _impl(ctx):
       "--js_output_file", ctx.outputs.bin.path,
       "--create_source_map", ctx.outputs.map.path,
       "--output_errors", ctx.outputs.stderr.path,
-      "--language_in", language_in,
-      "--language_out", language_out,
+      "--language_in", JS_LANGUAGE_IN,
+      "--language_out", ctx.attr.language,
       "--compilation_level", ctx.attr.compilation_level,
       "--dependency_mode", ctx.attr.dependency_mode,
       "--warning_level", ctx.attr.warning_level,
@@ -81,8 +76,6 @@ def _impl(ctx):
 
   if not ctx.attr.debug:
     args.append("--define=goog.DEBUG=false")
-  if language_out in _STRICT_LANGUAGES:
-    args.append("--define=goog.STRICT_MODE_COMPATIBLE")
 
   # These ClosureJsLibrary protocol buffers contain information about which
   # errors should be suppressed in which files.
@@ -226,7 +219,7 @@ def _impl(ctx):
       closure_js_binary=struct(
           bin=ctx.outputs.bin,
           map=ctx.outputs.map,
-          language=language_out),
+          language=ctx.attr.language),
       runfiles=ctx.runfiles(
           files=files + ctx.files.data,
           transitive_files=(collect_runfiles(deps) |
@@ -258,7 +251,7 @@ closure_js_binary = rule(
             providers=["closure_js_library"]),
         "entry_points": attr.string_list(),
         "formatting": attr.string(),
-        "language": attr.string(default="ECMASCRIPT3"),
+        "language": attr.string(default=JS_LANGUAGE_OUT_DEFAULT),
         "nodefs": attr.string_list(),
         "output_wrapper": attr.string(),
         "property_renaming_report": attr.output(),

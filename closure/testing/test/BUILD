@@ -59,13 +59,11 @@ closure_js_test(
 closure_js_library(
     name = "arithmetic_es6module_lib",
     srcs = ["arithmetic_es6module.js"],
-    language = "ECMASCRIPT6_STRICT",
 )
 
 closure_js_test(
     name = "arithmetic_es6module_test",
     srcs = ["arithmetic_es6module_test.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = [
         ":arithmetic_es6module_lib",
         "//closure/library:testing",

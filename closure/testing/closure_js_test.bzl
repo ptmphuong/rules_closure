@@ -34,6 +34,8 @@ def closure_js_test(name,
                     **kwargs):
   if not srcs:
     fail("closure_js_test rules can not have an empty 'srcs' list")
+  if language:
+    print("closure_js_test 'language' is removed and now always ES6 strict")
   for src in srcs:
     if not src.endswith('_test.js'):
       fail("closure_js_test srcs must be files ending with _test.js")
@@ -48,7 +50,6 @@ def closure_js_test(name,
         srcs = sauce,
         data = data,
         deps = deps,
-        language = language,
         suppress = suppress,
         visibility = visibility,
         testonly = True,

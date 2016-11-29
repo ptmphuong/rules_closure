@@ -139,8 +139,8 @@ Please see the test directories within this project for concrete examples of usa
 
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
-closure_js_library(name, srcs, data, deps, language, exports, suppress,
-                   convention, no_closure_library)
+closure_js_library(name, srcs, data, deps, exports, suppress, convention,
+                   no_closure_library)
 ```
 
 Defines a set of JavaScript sources.
@@ -195,39 +195,6 @@ This rule can be referenced as though it were the following:
   This rule also checks CSS dependencies at compile-time. The build will fail if
   the class names referenced in sources using `goog.getCssName()` are not
   provided by the [closure_css_library] listed in `deps`.
-
-- **language:** (String; optional; default is `"ECMASCRIPT5_STRICT"`) Variant of
-  JavaScript in which `srcs` are written. The following are valid options:
-
-  - `ECMASCRIPT6_STRICT`: Nitpicky, shiny new JavaScript.
-  - `ECMASCRIPT5_STRICT`: Nitpicky, traditional JavaScript.
-  - `ECMASCRIPT6`: Shiny new JavaScript.
-  - `ECMASCRIPT5`: Traditional JavaScript.
-  - `ECMASCRIPT3`: 90's JavaScript.
-  - `ANY`: Indicates sources are compatible with any variant of JavaScript.
-
-  Maintaining this attribute for your library rules is important because
-  [closure_js_binary] checks the `language` attribute of dependencies to
-  determine if it's a legal combination that's safe to compile.
-
-  ![ECMAScript Language Combinations Diagram](https://i.imgur.com/xNZ9FAr.png)
-
-  Combinations that traverse a red line cause strictness to decay and a warning
-  will be emitted. For example, if just one library is unstrict, then strictness
-  will be removed for your entire binary.  Therefore we *strongly* recommend
-  that you use strict variants.
-
-  **ProTip:** You are not required to put `"use strict"` at the tops of your
-  files. The Closure Compiler generates that in the output for you.
-
-  The default language is `ECMASCRIPT5_STRICT` for three reasons. First, we want
-  to make the most conservative recommendation possible. Some ES6 features have
-  not yet been implemented in the Closure Compiler. We're working on
-  that. Secondly, it upgrades easily into `ECMASCRIPT6_STRICT`, should you
-  choose to use it later. Thirdly, PhantomJS only supports `ECMASCRIPT5_STRICT`,
-  so your unit tests will be able to run lightning fast in raw sources mode if
-  you write your code exclusively in that language. (XXX: Unfortunately a
-  [bug][phantomjs-bug] in PhantomJS is blocking this at the moment.)
 
 - **exports:** (List of [labels]; optional) Listing dependencies here will cause
   them to become *direct* dependencies in parent rules. This functions similarly
@@ -315,9 +282,9 @@ This rule can be referenced as though it were the following:
 - [filegroup]: `srcs` will be the .js and .js.map output files and `data` will
   contain those files in addition to all transitive JS sources and data.
 
-- [closure_js_library]: `srcs` will be the .js output file, `language` will be
-  the output language, `deps` will be empty, `data` will contain all transitive
-  data, and `no_closure_library` will be `True`.
+- [closure_js_library]: `srcs` will be the .js output file, `deps` will be
+  empty, `data` will contain all transitive data, and `no_closure_library` will
+  be `True`.
 
 ### Arguments
 
@@ -356,10 +323,9 @@ This rule can be referenced as though it were the following:
   mode. Assert statements will not be stripped. Dependency directives will be
   removed.
 
-- **language:** (String; optional; default is `"ECMASCRIPT3"`) Output language
-  variant to which library sources are transpiled. The default is ES3 because it
-  works in all browsers. The input language is calculated automatically based on
-  the `language` attribute of [closure_js_library] dependencies.
+- **language:** (String; optional; default is `"ECMASCRIPT5"`) Output language
+  variant to which library sources are transpiled. Users wishing to support IE8
+  should set this to `"ECMASCRIPT3"`.
 
 - **entry_points:** (List of String; optional; default is `[]`) List of
   unreferenced namespaces that should *not* be pruned by the compiler. This
@@ -451,7 +417,7 @@ closure_js_binary(
 
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_test")
-closure_js_test(name, srcs, data, deps, css, html, language, pedantic, suppress,
+closure_js_test(name, srcs, data, deps, css, html, pedantic, suppress,
                 compilation_level, entry_points, defs)
 ```
 
@@ -506,8 +472,6 @@ This rule can be referenced as though it were the following:
 - **css:** Passed to [closure_js_binary].
 
 - **html:** Passed to [phantomjs_test].
-
-- **language:** Passed to [closure_js_binary].
 
 - **compilation_level:** Passed to [closure_js_binary]. Setting this to
   `"WHITESPACE_ONLY"` will cause tests to run significantly faster (at the
@@ -662,9 +626,8 @@ This rule can be referenced as though it were the following:
   contain all transitive JS sources and data.
 
 - [closure_js_library]: `srcs` will be the generated JS output files, `data`
-  will contain the transitive data, `language` will be `ECMASCRIPT5_STRICT`,
-  `deps` will contain necessary libraries, and `no_closure_library` will be
-  `False`.
+  will contain the transitive data, `deps` will contain necessary libraries, and
+  `no_closure_library` will be `False`.
 
 ### Arguments
 
@@ -814,9 +777,9 @@ This rule can be referenced as though it were the following:
   contain all transitive CSS/GSS sources and data.
 
 - [closure_js_library]: `srcs` is empty, `data` is the transitive CSS sources
-  and data, `language` is `ANY`, and `no_closure_library` is `True`. However the
-  closure\_css\_library rule does pass special information along when used as a
-  dep in closure\_js\_library. See its documentation to learn more.
+  and data, and `no_closure_library` is `True`. However the
+  [closure_css_library] rule does pass special information along when used as a
+  dep in [closure_js_library]. See its documentation to learn more.
 
 ### Arguments
 
@@ -993,8 +956,7 @@ This rule can be referenced as though it were the following:
   sources and data.
 
 - [closure_js_library]: `srcs` will be the generated JS output files, `data`
-  will contain the transitive data, `language` will be `ECMASCRIPT5_STRICT`, and
-  `deps` will contain necessary libraries.
+  will contain the transitive data, and `deps` will contain necessary libraries.
 
 ### Arguments
 

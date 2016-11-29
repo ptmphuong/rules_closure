@@ -65,7 +65,6 @@ closure_js_library(
 closure_js_library(
     name = "greeter_idom_lib",
     srcs = ["greeter_idom.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = [
         ":greeter_idom_soy",
         "//closure/library",
@@ -86,7 +85,6 @@ closure_js_library(
 closure_js_library(
     name = "greeter_idom_proto_lib",
     srcs = ["greeter_idom_proto.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = [
         ":greeter_idom_proto_soy",
         ":person_proto",
@@ -108,7 +106,6 @@ closure_js_test(
 closure_js_test(
     name = "greeter_idom_test",
     srcs = ["greeter_idom_test.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = [
         ":greeter_idom_lib",
         "//closure/library",
@@ -129,7 +126,6 @@ closure_js_test(
 closure_js_test(
     name = "greeter_idom_proto_test",
     srcs = ["greeter_idom_proto_test.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = [
         ":greeter_idom_proto_lib",
         "//closure/library",
@@ -156,7 +152,6 @@ file_test(
 closure_js_library(
     name = "greeter_idom_fail_lib",
     srcs = ["greeter_idom_fail.js"],
-    language = "ECMASCRIPT6_STRICT",
     deps = [
         ":greeter_idom_soy",
         "//closure/library",

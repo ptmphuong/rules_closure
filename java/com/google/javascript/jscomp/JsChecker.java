@@ -101,11 +101,6 @@ public final class JsChecker {
   private JsCheckerConvention convention = JsCheckerConvention.CLOSURE;
 
   @Option(
-      name = "--language",
-      usage = "Language spec of input sources.")
-  private LanguageMode language = LanguageMode.ECMASCRIPT5_STRICT;
-
-  @Option(
       name = "--suppress",
       usage = "Diagnostic types to not show as errors or warnings.")
   private List<String> suppress = new ArrayList<>();
@@ -153,10 +148,7 @@ public final class JsChecker {
       for (String module : convertPathToModuleName(source, state.roots).asSet()) {
         modules.add(module);
         labels.put(module, label);
-        // if we're using ES6 then the sources themselves count as provides
-        if (JsCheckerHelper.isEs6OrHigher(language)) {
-          state.provides.add(module);
-        }
+        state.provides.add(module);
       }
     }
 
@@ -165,16 +157,14 @@ public final class JsChecker {
         checkArgument(!module.startsWith("blaze-out/"),
             "oh no: %s", state.roots);
         modules.add(module);
-        if (JsCheckerHelper.isEs6OrHigher(language)) {
-          state.provided.add(module);
-        }
+        state.provided.add(module);
       }
     }
 
     // configure compiler
     Compiler compiler = new Compiler();
     CompilerOptions options = new CompilerOptions();
-    options.setLanguage(language);
+    options.setLanguage(LanguageMode.ECMASCRIPT6_STRICT);
     options.setCodingConvention(convention.convention);
     options.setSkipTranspilationAndCrash(true);
     options.setChecksOnly(true);
@@ -205,9 +195,6 @@ public final class JsChecker {
         return false;
       }
       suppressions.addAll(types);
-    }
-    if (JsCheckerHelper.isEs6OrHigher(language)) {
-      suppressions.addAll(Diagnostics.DISABLE_FOR_ES6);
     }
 
     options.addWarningsGuard(
