@@ -19,8 +19,8 @@ load("//closure/private:defs.bzl",
      "CLOSURE_LIBRARY_DEPS_ATTR",
      "JS_LANGUAGE_DEFAULT",
      "JS_FILE_TYPE",
-     "collect_data",
      "collect_js",
+     "collect_runfiles",
      "convert_path_to_es6_module_name",
      "create_argfile",
      "determine_js_language",
@@ -48,7 +48,6 @@ def _impl(ctx):
   # Collect all the transitive stuff the child rules have propagated. Bazel has
   # a special nested set data structure that makes this efficient.
   js = collect_js(ctx, deps, bool(srcs), ctx.attr.no_closure_library)
-  data = collect_data(deps)
 
   # If closure_js_library depends on closure_css_library, that means
   # goog.getCssName() is being used in srcs to reference CSS names in the
@@ -165,7 +164,6 @@ def _impl(ctx):
   return struct(
       files=set(),
       exports=unfurl(ctx.attr.exports),
-      closure_data=data + ctx.files.data,
       # This struct contains information about the JS transitive closure. Any
       # rule that also exports this provider will be considered polymorphically
       # compatible with this rule and able to be listed as a dependency.
@@ -179,11 +177,13 @@ def _impl(ctx):
           stylesheets=js.stylesheets + stylesheets,
           language=determine_js_language(ctx, deps),
           has_closure_library=js.has_closure_library),
-      # This is the set of files that will be made available to any test or
-      # program that transitively depends on this rule.
       runfiles=ctx.runfiles(
           files=srcs + ctx.files.data,
-          transitive_files=js.srcs + data))
+          transitive_files=(set([] if ctx.attr.no_closure_library
+                                else [ctx.file._closure_library_base,
+                                      ctx.file._closure_library_deps]) |
+                            collect_runfiles(deps) |
+                            collect_runfiles(ctx.attr.data))))
 
 def _determine_check_language(language):
   if language == "ANY":

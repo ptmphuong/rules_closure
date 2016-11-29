@@ -57,6 +57,8 @@ final class JsCompilerWarnings extends WarningsGuard {
 
   @Override
   public CheckLevel level(JSError error) {
+    CheckLevel level = CheckLevel.ERROR;
+
     // Closure Rules will always ignore these checks no matter what.
     if (Diagnostics.IGNORE_ALWAYS.contains(error.getType())) {
       return CheckLevel.OFF;
@@ -91,12 +93,10 @@ final class JsCompilerWarnings extends WarningsGuard {
           return CheckLevel.OFF;
         }
         // Otherwise downgrade to a warning, since it's not easily actionable.
-        return CheckLevel.WARNING;
-      }
-
-      // If a closure_js_library() defined this source file, then check if that library rule defined
-      // a suppress code to make this error go away.
-      if (suppressions.containsEntry(module, error.getType())) {
+        level = CheckLevel.WARNING;
+      } else if (suppressions.containsEntry(module, error.getType())) {
+        // If a closure_js_library() defined this source file, then check if that library rule
+        // defined a suppress code to make this error go away.
         return CheckLevel.OFF;
       }
     }
@@ -108,6 +108,6 @@ final class JsCompilerWarnings extends WarningsGuard {
     }
 
     // Otherwise we'll be cautious and just assume it's bad.
-    return CheckLevel.ERROR;
+    return level;
   }
 }

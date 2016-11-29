@@ -20,6 +20,7 @@
 load("//closure/private:defs.bzl",
      "HTML_FILE_TYPE",
      "JS_FILE_TYPE",
+     "collect_runfiles",
      "long_path",
      "unfurl")
 
@@ -34,23 +35,17 @@ def _impl(ctx):
                   ctx.attr.harness.closure_js_binary.language)
   if not ctx.attr.deps:
     fail("phantomjs_rule needs at least one dep")
-  runfiles = set([ctx.file.html])
-  runfiles += ctx.attr._phantomjs.data_runfiles.files
-  runfiles += [ctx.attr.harness.closure_js_binary.bin]
-  runfiles += getattr(ctx.attr.harness, 'closure_data', [])
+  files = [ctx.outputs.executable]
   srcs = set()
   deps = unfurl(ctx.attr.deps)
   deps.append(ctx.attr.runner)
   for dep in deps:
-    if hasattr(dep, 'closure_data'):
-      runfiles += dep.closure_data
     if hasattr(dep, 'closure_js_binary'):
       _check_language(dep.label, dep.closure_js_binary.language)
       srcs += [dep.closure_js_binary.bin]
     else:
       _check_language(dep.label, dep.closure_js_library.language)
       srcs += dep.closure_js_library.srcs
-  runfiles += srcs
   args = ["#!/bin/sh\nexec " + ctx.executable._phantomjs.short_path,
           ctx.attr.harness.closure_js_binary.bin.short_path,
           ctx.file.html.short_path]
@@ -60,11 +55,14 @@ def _impl(ctx):
       output=ctx.outputs.executable,
       content=" \\\n  ".join(args))
   return struct(
-      files=set([ctx.outputs.executable]),
+      files=set(files),
       runfiles=ctx.runfiles(
-          transitive_files=runfiles,
-          collect_data=True,
-          collect_default=True))
+          files=files + ctx.attr.data + [ctx.file.html],
+          transitive_files=(collect_runfiles(deps) |
+                            collect_runfiles(ctx.attr.data) |
+                            collect_runfiles([ctx.attr._phantomjs,
+                                              ctx.attr.runner,
+                                              ctx.attr.harness]))))
 
 def _check_language(label, language):
   if language in _INCOMPATIBLE_LANGUAGES:

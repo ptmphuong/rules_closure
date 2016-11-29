@@ -302,9 +302,11 @@ This rule must be used in conjunction with [closure_js_library].
 
 - *name*.js: A minified JavaScript file containing all transitive sources.
 
-- *name*.js.map: Sourcemap file mapping compiled sources to their raw
-  sources. This file can be loaded into browsers such as Chrome and Firefox to
-  view a stacktrace when an error is thrown by compiled sources.
+- *name*.js.map: Sourcemap file containing which contains all the raw source
+  code to your app. This file can be loaded into browsers such as Chrome and
+  Firefox to view a stacktrace when an error is thrown by compiled sources.
+  **Warning:** This file should be ACL'd on the web server to prevent the public
+  from reading confidential source code.
 
 #### Rule Polymorphism
 

@@ -17,19 +17,19 @@
 
 load("//closure/private:defs.bzl",
      "collect_css",
-     "collect_data",
+     "collect_runfiles",
      "unfurl")
 
-def _impl(ctx):
+def _closure_css_binary(ctx):
   if not ctx.attr.deps:
     fail("closure_css_binary rules can not have an empty 'deps' list")
   deps = unfurl(ctx.attr.deps)
   css = collect_css(deps)
-  data = collect_data(deps)
   if not css.srcs:
     fail("There are no CSS source files in the transitive closure")
   inputs = []
-  outputs = [ctx.outputs.bin, ctx.outputs.map]
+  files = [ctx.outputs.bin, ctx.outputs.map]
+  outputs = files[:]
   args = ["--output-file", ctx.outputs.bin.path,
           "--output-source-map", ctx.outputs.map.path,
           "--input-orientation", css.orientation,
@@ -62,8 +62,7 @@ def _impl(ctx):
       progress_message="Compiling %d stylesheets to %s" % (
           len(css.srcs), ctx.outputs.bin.short_path))
   return struct(
-      files=set(outputs),
-      closure_data=data + ctx.files.data,
+      files=set(files),
       closure_css_binary=struct(
           bin=ctx.outputs.bin,
           map=ctx.outputs.map,
@@ -75,11 +74,12 @@ def _impl(ctx):
                        if ctx.attr.orientation == "NOCHANGE" else
                        ctx.attr.orientation)),
       runfiles=ctx.runfiles(
-          files=outputs + ctx.files.data,
-          transitive_files=css.srcs + data))
+          files=files + ctx.files.data,
+          transitive_files=(collect_runfiles(deps) |
+                            collect_runfiles(ctx.attr.data))))
 
 closure_css_binary = rule(
-    implementation=_impl,
+    implementation=_closure_css_binary,
     attrs={
         "debug": attr.bool(),
         "defs": attr.string_list(),

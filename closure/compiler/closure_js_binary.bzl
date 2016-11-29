@@ -19,8 +19,8 @@ load("//closure/private:defs.bzl",
      "CLOSURE_LIBRARY_BASE_ATTR",
      "CLOSURE_LIBRARY_DEPS_ATTR",
      "JS_LANGUAGE_DEFAULT",
-     "collect_data",
      "collect_js",
+     "collect_runfiles",
      "create_argfile",
      "determine_js_language",
      "difference",
@@ -43,7 +43,6 @@ def _impl(ctx):
 
   deps = unfurl(ctx.attr.deps)
   js = collect_js(ctx, deps, css=ctx.attr.css)
-  data = collect_data(deps)
   if not js.srcs:
     fail("There are no JS source files in the transitive closure")
 
@@ -117,16 +116,24 @@ def _impl(ctx):
   args.append("--source_map_location_mapping")
   args.append("%s|%s" % (ctx.outputs.bin.path, ctx.outputs.bin.basename))
 
-  # However the raw sources we want to reference on the web server using
-  # absolute paths, tucked away beneath a single ACL'd prefix where prying eyes
-  # shall not see them.
-  for root in all_roots:
-    args.append("--js_module_root")
-    args.append(root)
-    args.append("--source_map_location_mapping")
-    args.append("%s|/_/runfiles" % root)
+  # By default we're going to include the raw sources in the .js.map file. This
+  # can be disabled with the nodefs attribute.
+  args.append("--source_map_include_sources_content")
+
+  # We still need to map the source files to paths on the web server. We're
+  # going to use absolute paths relative to the root of the repository. For
+  # example if the label is //foo/bar:lol.js then it will be /foo/bar/lol.js on
+  # the web server, even if lol.js is generated. If the label is @a//b:c.js
+  # then that will be /b/c.js on the web server. The only exception is when the
+  # includes attribute has been used, in which case, directory prefixes may be
+  # cut off.
   args.append("--source_map_location_mapping")
-  args.append("|/_/runfiles/")
+  args.append(" [synthetic:| [synthetic:")
+  for root in all_roots:
+    args.append("--source_map_location_mapping")
+    args.append("%s/|/" % (root))
+  args.append("--source_map_location_mapping")
+  args.append("|/")
 
   # Some flags we're merely pass along as-is from our attributes.
   if ctx.attr.formatting:
@@ -214,8 +221,7 @@ def _impl(ctx):
   # are free to ignore the binary in favor of the raw sauces propagated by the
   # closure_js_library provider, in which case, no compilation is performed.
   return struct(
-      files=set([ctx.outputs.bin, ctx.outputs.map]),
-      closure_data=data + ctx.files.data,
+      files=set(files),
       closure_js_library=js,
       closure_js_binary=struct(
           bin=ctx.outputs.bin,
@@ -223,7 +229,9 @@ def _impl(ctx):
           language=language_out),
       runfiles=ctx.runfiles(
           files=files + ctx.files.data,
-          transitive_files=js.srcs + data))
+          transitive_files=(collect_runfiles(deps) |
+                            collect_runfiles([ctx.attr.css]) |
+                            collect_runfiles(ctx.attr.data))))
 
 def _validate_css_graph(ctx, js):
   if ctx.attr.css:

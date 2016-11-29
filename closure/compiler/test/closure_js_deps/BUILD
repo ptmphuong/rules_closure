@@ -129,45 +129,6 @@ file_test(
 )
 
 ################################################################################
-# data referencing closure_js_library() ingests non-externs sources transitively
-
-sh_test(
-    name = "dataAttributeReferencingJsLibrary_getsJsSourcesAndDataTransitively",
-    srcs = ["hyperion2_lib_runfiles_test.sh"],
-    data = [":hyperion2_lib"],
-)
-
-################################################################################
-# filegroup(data) referencing closure_js_library() ingests sources transitively
-
-filegroup(
-    name = "hyperion2_lib_runfiles",
-    data = [":hyperion2_lib"],
-)
-
-sh_test(
-    name = "filegroupReferencingJsLibrary_getsJsSourcesAndDataTransitively",
-    srcs = ["hyperion2_lib_runfiles_test.sh"],
-    data = [":hyperion2_lib_runfiles"],
-)
-
-################################################################################
-# closure_js_binary() includes raw sources in runfiles which .js.map references
-
-closure_js_binary(
-    name = "hyperion2_bin",
-    data = ["data3.txt"],
-    entry_points = ["goog:hyperion2"],
-    deps = [":hyperion2_lib"],
-)
-
-sh_test(
-    name = "dataAttributeReferencingJsBinary_onlyGetsCompiledJsAndMap",
-    srcs = ["hyperion2_bin_runfiles_test.sh"],
-    data = [":hyperion2_bin"],
-)
-
-################################################################################
 # data referencing closure_js_deps() gives you the deps file AND the sauce
 
 sh_test(
@@ -178,6 +139,13 @@ sh_test(
 
 ################################################################################
 # srcs referencing closure_js_binary() gives only the binary
+
+closure_js_binary(
+    name = "hyperion2_bin",
+    data = ["data3.txt"],
+    entry_points = ["goog:hyperion2"],
+    deps = [":hyperion2_lib"],
+)
 
 genrule(
     name = "hyperion2_bin_srcs",

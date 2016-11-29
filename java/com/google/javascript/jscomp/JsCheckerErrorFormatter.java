@@ -19,6 +19,7 @@ package com.google.javascript.jscomp;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.google.javascript.jscomp.JsCheckerHelper.convertPathToModuleName;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Ordering;
 import com.google.debugging.sourcemap.proto.Mapping.OriginalMapping;
 import com.google.javascript.jscomp.SourceExcerptProvider.ExcerptFormatter;
@@ -123,7 +124,24 @@ final class JsCheckerErrorFormatter extends AbstractMessageFormatter {
     // Help the user know how to suppress this warning.
     String module = convertPathToModuleName(nullToEmpty(error.sourceName), roots).or("");
     String label = labels.get(module);
-    if (label != null) {
+    if (label == null) {
+      if (colorize) {
+        b.append("\033[1;34m");
+      }
+      b.append("  Codes: ");
+      if (colorize) {
+        b.append("\033[0m");
+      }
+      b.append(error.getType().key);
+      for (String groupName : getGroupSuppressCodes(error)) {
+        if (groupName.startsWith("old")) {
+          continue;
+        }
+        b.append(", ");
+        b.append(groupName);
+      }
+      b.append('\n');
+    } else {
       b.append("  ");
       if (colorize) {
         b.append("\033[1;34m");
@@ -134,8 +152,7 @@ final class JsCheckerErrorFormatter extends AbstractMessageFormatter {
       }
       b.append(" \"");
       b.append(error.getType().key);
-      for (String groupName
-          : Ordering.natural().sortedCopy(Diagnostics.DIAGNOSTIC_GROUPS.get(error.getType()))) {
+      for (String groupName : getGroupSuppressCodes(error)) {
         if (groupName.startsWith("old")) {
           continue;
         }
@@ -154,6 +171,11 @@ final class JsCheckerErrorFormatter extends AbstractMessageFormatter {
     }
 
     return b.toString();
+  }
+
+  private static ImmutableList<String> getGroupSuppressCodes(JSError error) {
+    return Ordering.natural()
+        .immutableSortedCopy(Diagnostics.DIAGNOSTIC_GROUPS.get(error.getType()));
   }
 
   private static String formatPosition(String sourceName, int lineNumber) {

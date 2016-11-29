@@ -111,11 +111,20 @@ def collect_css(deps, orientation=None):
       labels=labels,
       orientation=orientation)
 
-def collect_data(deps):
-  """Aggregates transitive data files from unfurled deps."""
+def collect_runfiles(targets):
+  """Aggregates data runfiles from targets."""
   data = set()
-  for dep in deps:
-    data += getattr(dep, "closure_data", [])
+  for target in targets:
+    if hasattr(target, "closure_legacy_js_runfiles"):
+      data += target.closure_legacy_js_runfiles
+      continue
+    if hasattr(target, "runfiles"):
+      data += target.runfiles.files
+      continue
+    if hasattr(target, "data_runfiles"):
+      data += target.data_runfiles.files
+    if hasattr(target, "default_runfiles"):
+      data += target.default_runfiles.files
   return data
 
 def find_roots(ctx, srcs):

@@ -16,8 +16,8 @@
 
 load("//closure/private:defs.bzl",
      "CLOSURE_LIBRARY_BASE_ATTR",
-     "collect_data",
      "collect_js",
+     "collect_runfiles",
      "long_path",
      "unfurl")
 
@@ -26,14 +26,13 @@ _DEPSWRITER = "@closure_library//:depswriter"
 def _impl(ctx):
   deps = unfurl(ctx.attr.deps)
   js = collect_js(ctx, deps)
-  data = collect_data(deps)
   closure_root = _dirname(long_path(ctx, ctx.file._closure_library_base))
   closure_rel = '/'.join(['..' for _ in range(len(closure_root.split('/')))])
-  files = [ctx.outputs.out]
+  outputs = [ctx.outputs.out]
   # XXX: Other files in same directory will get schlepped in w/o sandboxing.
   ctx.action(
       inputs=list(js.srcs),
-      outputs=files,
+      outputs=outputs,
       arguments=(["--output_file=%s" % ctx.outputs.out.path] +
                  ["--root_with_prefix=%s %s" % (
                      r, _make_prefix(p, closure_root, closure_rel))
@@ -44,11 +43,12 @@ def _impl(ctx):
       progress_message="Calculating %d JavaScript deps to %s" % (
           len(js.srcs), ctx.outputs.out.short_path))
   return struct(
-      files=set(files),
-      closure_data=data + ctx.files.data,
+      files=set(outputs),
       runfiles=ctx.runfiles(
-          files=files + ctx.files.data,
-          transitive_files=js.srcs + data))
+          files=outputs + ctx.files.data,
+          transitive_files=(set([ctx.file._closure_library_base]) |
+                            collect_runfiles(deps) |
+                            collect_runfiles(ctx.attr.data))))
 
 def _dirname(path):
   return path[:path.rindex('/')]

@@ -17,17 +17,15 @@
 load("//closure/private:defs.bzl",
      "CSS_FILE_TYPE",
      "collect_css",
-     "collect_data",
+     "collect_runfiles",
      "unfurl")
 
-def _impl(ctx):
+def _closure_css_library(ctx):
   deps = unfurl(ctx.attr.deps)
   css = collect_css(deps, ctx.attr.orientation)
-  data = collect_data(deps)
   return struct(
       files=set(),
       exports=unfurl(ctx.attr.exports),
-      closure_data=data + ctx.files.data,
       closure_js_library=struct(),
       closure_css_library=struct(
           srcs=css.srcs + ctx.files.srcs,
@@ -35,10 +33,11 @@ def _impl(ctx):
           orientation=ctx.attr.orientation),
       runfiles=ctx.runfiles(
           files=ctx.files.srcs + ctx.files.data,
-          transitive_files=css.srcs + data))
+          transitive_files=(collect_runfiles(deps) |
+                            collect_runfiles(ctx.attr.data))))
 
 closure_css_library = rule(
-    implementation=_impl,
+    implementation=_closure_css_library,
     attrs={
         "srcs": attr.label_list(allow_files=CSS_FILE_TYPE),
         "data": attr.label_list(cfg="data", allow_files=True),
