@@ -24,7 +24,7 @@ load("//closure/private:defs.bzl",
 _DEPSWRITER = "@closure_library//:depswriter"
 
 def _impl(ctx):
-  deps = unfurl(ctx.attr.deps)
+  deps = unfurl(ctx.attr.deps, provider="closure_js_library")
   js = collect_js(ctx, deps)
   closure_root = _dirname(long_path(ctx, ctx.file._closure_library_base))
   closure_rel = '/'.join(['..' for _ in range(len(closure_root.split('/')))])

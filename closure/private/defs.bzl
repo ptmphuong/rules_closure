@@ -40,13 +40,16 @@ CLOSURE_LIBRARY_BASE_ATTR = attr.label(
 CLOSURE_LIBRARY_DEPS_ATTR = attr.label(
     default=DEPS_JS, allow_files=True, single_file=True)
 
-def unfurl(*depss):
+def unfurl(deps, provider=""):
   """Returns deps as well as deps exported by parent rules."""
   res = []
-  for deps in depss:
-    for dep in deps:
+  for dep in deps:
+    if not provider or hasattr(dep, provider):
       res.append(dep)
-      res += getattr(dep, "exports", [])
+    if hasattr(dep, "exports"):
+      for edep in dep.exports:
+        if not provider or hasattr(edep, provider):
+          res.append(edep)
   return res
 
 def collect_js(ctx, deps,
@@ -55,19 +58,19 @@ def collect_js(ctx, deps,
                css=None):
   """Aggregates transitive JavaScript source files from unfurled deps."""
   srcs = set()
-  roots = set()
   infos = set()
   modules = set()
   descriptors = set()
   stylesheets = set()
+  js_module_roots = set()
   has_closure_library = False
   for dep in deps:
     srcs += getattr(dep.closure_js_library, "srcs", [])
-    roots += getattr(dep.closure_js_library, "roots", [])
     infos += getattr(dep.closure_js_library, "infos", [])
     modules += getattr(dep.closure_js_library, "modules", [])
     descriptors += getattr(dep.closure_js_library, "descriptors", [])
     stylesheets += getattr(dep.closure_js_library, "stylesheets", [])
+    js_module_roots += getattr(dep.closure_js_library, "js_module_roots", [])
     has_closure_library = (
         has_closure_library or
         getattr(dep.closure_js_library, "has_closure_library", False))
@@ -88,7 +91,7 @@ def collect_js(ctx, deps,
     srcs = tmp
   return struct(
       srcs=srcs,
-      roots=roots,
+      js_module_roots=js_module_roots,
       infos=infos,
       modules=modules,
       descriptors=descriptors,
@@ -127,7 +130,7 @@ def collect_runfiles(targets):
       data += target.default_runfiles.files
   return data
 
-def find_roots(ctx, srcs):
+def find_js_module_roots(ctx, srcs):
   """Finds roots of JavaScript sources.
 
   This discovers --js_module_root paths for direct srcs that deviate from the

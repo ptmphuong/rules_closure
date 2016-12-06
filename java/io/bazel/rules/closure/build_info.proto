@@ -40,9 +40,9 @@ message ClosureJsLibrary {
   // e.g. goog:goog.dom, or it can be an ES6 module namespace,
   // e.g. some/es6/module/path. ES6 module names are created by stripping off
   // the longest root prefix and extension suffix from the Bazel path. How
-  // roots are determined is documented by the find_roots() function. If a
-  // source file contains a goog.provide() or goog.module() statement, then
-  // it's not included in this list as an ES6 module name.
+  // roots are determined is documented by the find_js_module_roots() function.
+  // If a source file contains a goog.provide() or goog.module() statement,
+  // then it's not included in this list as an ES6 module name.
   repeated string namespace = 3;
 
   // DiagnosticType keys that JsChecker wants to propagate up to JsCompiler.

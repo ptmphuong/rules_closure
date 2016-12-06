@@ -30,7 +30,7 @@ def _webfiles(ctx):
     fail("webpath must not have //")
 
   # process what came before
-  deps = unfurl(ctx.attr.deps)
+  deps = unfurl(ctx.attr.deps, provider="webfiles")
   webpaths = set()
   manifests = set(order="link")
   for dep in deps:
@@ -132,7 +132,7 @@ webfiles = rule(
         "path": attr.string(mandatory=True),
         "srcs": attr.label_list(allow_files=True, mandatory=True),
         "deps": attr.label_list(providers=["webfiles"]),
-        "exports": attr.label_list(providers=["webfiles"]),
+        "exports": attr.label_list(),
         "data": attr.label_list(cfg="data", allow_files=True),
         "_ClosureUberAlles": attr.label(
             default=Label("//java/io/bazel/rules/closure:ClosureUberAlles"),

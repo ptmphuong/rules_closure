@@ -21,7 +21,7 @@ load("//closure/private:defs.bzl",
      "unfurl")
 
 def _closure_css_library(ctx):
-  deps = unfurl(ctx.attr.deps)
+  deps = unfurl(ctx.attr.deps, provider="closure_css_library")
   css = collect_css(deps, ctx.attr.orientation)
   return struct(
       files=set(),
@@ -42,6 +42,6 @@ closure_css_library = rule(
         "srcs": attr.label_list(allow_files=CSS_FILE_TYPE),
         "data": attr.label_list(cfg="data", allow_files=True),
         "deps": attr.label_list(providers=["closure_css_library"]),
-        "exports": attr.label_list(providers=["closure_css_library"]),
+        "exports": attr.label_list(),
         "orientation": attr.string(default="LTR"),
     })

@@ -29,7 +29,7 @@ def _impl(ctx):
     fail("phantomjs_rule needs at least one dep")
   files = [ctx.outputs.executable]
   srcs = set()
-  deps = unfurl(ctx.attr.deps)
+  deps = unfurl(ctx.attr.deps, provider="closure_js_library")
   deps.append(ctx.attr.runner)
   for dep in deps:
     if hasattr(dep, 'closure_js_binary'):

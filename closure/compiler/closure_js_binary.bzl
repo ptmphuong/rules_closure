@@ -25,7 +25,7 @@ load("//closure/private:defs.bzl",
      "collect_runfiles",
      "create_argfile",
      "difference",
-     "find_roots",
+     "find_js_module_roots",
      "sort_roots",
      "unfurl")
 
@@ -39,7 +39,7 @@ def _impl(ctx):
     fail("Unknown language %s try one of these: %s" % (
         ctx.attr.language, ", ".join(JS_LANGUAGES)))
 
-  deps = unfurl(ctx.attr.deps)
+  deps = unfurl(ctx.attr.deps, provider="closure_js_library")
   js = collect_js(ctx, deps, css=ctx.attr.css)
   if not js.srcs:
     fail("There are no JS source files in the transitive closure")
@@ -97,9 +97,9 @@ def _impl(ctx):
   # should be cut off. These are basically the same thing as C++ include dirs,
   # except unlike C++ there's no I/O operation penalty to using them since all
   # source paths that exist are being passed as flags.
-  roots = find_roots(ctx, [ctx.outputs.bin])
-  all_roots = sort_roots(js.roots + roots)
-  for root in all_roots:
+  js_module_roots = sort_roots(find_js_module_roots(ctx, [ctx.outputs.bin]) +
+                               js.js_module_roots)
+  for root in js_module_roots:
     args.append("--js_module_root")
     args.append(root)
 
@@ -122,7 +122,7 @@ def _impl(ctx):
   # cut off.
   args.append("--source_map_location_mapping")
   args.append(" [synthetic:| [synthetic:")
-  for root in all_roots:
+  for root in js_module_roots:
     args.append("--source_map_location_mapping")
     args.append("%s/|/" % (root))
   args.append("--source_map_location_mapping")

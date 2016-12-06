@@ -23,7 +23,7 @@ load("//closure/private:defs.bzl",
 def _closure_css_binary(ctx):
   if not ctx.attr.deps:
     fail("closure_css_binary rules can not have an empty 'deps' list")
-  deps = unfurl(ctx.attr.deps)
+  deps = unfurl(ctx.attr.deps, provider="closure_css_library")
   css = collect_css(deps)
   if not css.srcs:
     fail("There are no CSS source files in the transitive closure")

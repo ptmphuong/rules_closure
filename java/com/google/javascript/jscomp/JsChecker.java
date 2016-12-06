@@ -89,7 +89,7 @@ public final class JsChecker {
   private List<String> deps = new ArrayList<>();
 
   @Option(
-      name = "--root",
+      name = "--js_module_root",
       usage = "Prefixes to disregard in module namespaces, e.g. "
           + "bazel-out/local-fastbuild/genfiles. These values must be reverse sorted by the number "
           + "of path components.")

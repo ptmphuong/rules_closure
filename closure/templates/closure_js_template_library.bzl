@@ -56,7 +56,7 @@ def _impl(ctx):
   if ctx.file.globals:
     args += ["--compileTimeGlobalsFile=%s" % ctx.file.globals.path]
     inputs.append(ctx.file.globals)
-  for dep in unfurl(ctx.attr.deps):
+  for dep in unfurl(ctx.attr.deps, provider="closure_js_library"):
     for f in dep.closure_js_library.descriptors:
       args += ["--protoFileDescriptors=%s" % f.path]
       inputs.append(f)
