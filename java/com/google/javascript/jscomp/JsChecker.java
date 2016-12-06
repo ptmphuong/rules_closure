@@ -187,7 +187,7 @@ public final class JsChecker {
         options.setWarningLevel(Diagnostics.GROUPS.forName(error), CheckLevel.ERROR);
       }
     }
-    Set<DiagnosticType> suppressions = Sets.newHashSetWithExpectedSize(256);
+    final Set<DiagnosticType> suppressions = Sets.newHashSetWithExpectedSize(256);
     for (String code : suppress) {
       ImmutableSet<DiagnosticType> types = Diagnostics.getDiagnosticTypesForSuppressCode(code);
       if (types.isEmpty()) {
