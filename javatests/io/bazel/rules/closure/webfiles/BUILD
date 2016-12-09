@@ -12,13 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-package(default_visibility = ["//visibility:public"])
+licenses(["notice"])  # Apache 2.0
 
-licenses(["notice"])  # Apache License 2.0
-
-java_library(
-    name = "truth",
-    testonly = 1,
-    exports = ["@truth//jar"],
-    runtime_deps = ["@guava//jar"],
+java_test(
+    name = "WebfilesTestSuite",
+    srcs = glob(["*.java"]),
+    deps = [
+        "//java/com/google/common:guava",
+        "//java/com/google/common:guava_testlib",
+        "//java/io/bazel/rules/closure/webfiles",
+        "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
+        "@jimfs",
+        "@junit",
+        "@mockito",
+        "@truth",
+    ],
 )

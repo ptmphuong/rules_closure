@@ -21,7 +21,7 @@ java_library(
         "//javatests:__subpackages__",
     ],
     exports = [
-        "@guava//jar",
+        "@guava",
     ],
 )
 
@@ -30,6 +30,6 @@ java_library(
     testonly = 1,
     visibility = ["//javatests:__subpackages__"],
     exports = [
-        "@guava_testlib//jar",
+        "@guava_testlib",
     ],
 )

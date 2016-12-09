@@ -22,7 +22,7 @@ load("//closure:defs.bzl", "closure_js_proto_library")
 java_library(
     name = "templates",
     exports = [
-        "//third_party/java/soy",
+        "@soy",
     ],
 )
 
@@ -57,10 +57,6 @@ closure_js_library(
 java_library(
     name = "safe_html_types",
     exports = [
-        "@safe_html_types//jar",
-    ],
-    runtime_deps = [
-        "@guava//jar",
-        "@protobuf_java//jar",
+        "@safe_html_types",
     ],
 )

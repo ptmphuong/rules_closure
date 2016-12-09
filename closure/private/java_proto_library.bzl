@@ -69,7 +69,7 @@ def java_proto_library(name, src, testonly=None, visibility=None, **kwargs):
   native.java_library(
       name = name,
       srcs = [":%s_srcjar" % name],
-      deps = ["@protobuf_java//jar"],
+      deps = ["@protobuf_java"],
       javacopts = ["-Xlint:-rawtypes"],
       testonly = testonly,
       visibility = visibility,

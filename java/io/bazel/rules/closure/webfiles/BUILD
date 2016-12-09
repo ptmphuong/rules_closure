@@ -32,7 +32,7 @@ java_library(
         "//java/com/google/common:guava",
         "//java/io/bazel/rules/closure:tarjan",
         "//java/io/bazel/rules/closure/program",
-        "//third_party/protobuf:protobuf-java",
+        "@protobuf_java",
     ],
 )
 

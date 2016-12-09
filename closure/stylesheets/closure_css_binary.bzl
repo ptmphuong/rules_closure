@@ -90,7 +90,7 @@ closure_css_binary = rule(
         "data": attr.label_list(cfg="data", allow_files=True),
         "_compiler": attr.label(
             default=Label(
-                "//third_party/java/csscomp:ClosureCommandLineCompiler"),
+                "@closure_stylesheets//:ClosureCommandLineCompiler"),
             executable=True,
             cfg="host"),
     },

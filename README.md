@@ -7,7 +7,7 @@ JavaScript | Templating | Stylesheets | Miscellaneous
 [closure_js_deps] | [closure_py_template_library] | |
 [closure_js_test] | | |
 
-Bazel ≥0.3.2 | linux-x86_64 | ubuntu_15.10-x86_64 | darwin-x86_64
+Bazel ≥0.4.2 | linux-x86_64 | ubuntu_15.10-x86_64 | darwin-x86_64
 :---: | :---: | :---: | :---:
 [![Build Status](https://travis-ci.org/bazelbuild/rules_closure.svg?branch=master)](https://travis-ci.org/bazelbuild/rules_closure) | [![Build Status](http://ci.bazel.io/buildStatus/icon?job=rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=linux-x86_64)](http://ci.bazel.io/job/rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=linux-x86_64) | [![Build Status](http://ci.bazel.io/buildStatus/icon?job=rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=ubuntu_15.10-x86_64)](http://ci.bazel.io/job/rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=ubuntu_15.10-x86_64) | [![Build Status](http://ci.bazel.io/buildStatus/icon?job=rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=darwin-x86_64)](http://ci.bazel.io/job/rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=darwin-x86_64)
 
@@ -922,7 +922,7 @@ This rule can be referenced as though it were the following:
 
 - **defs:** (List of strings; optional) Specifies additional flags to be passed
   to the Closure Stylesheets compiler. To see what flags are available, run:
-  `bazel run @io_bazel_rules_closure//third_party/java/csscomp:ClosureCommandLineCompiler`
+  `bazel run @io_bazel_rules_closure@closure_stylesheets//:ClosureCommandLineCompiler`
 
 
 ## closure\_js\_proto\_library

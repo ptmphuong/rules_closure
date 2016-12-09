@@ -18,9 +18,9 @@
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:defs.bzl", "SOY_FILE_TYPE", "unfurl")
 
-_SOYTOJSSRCCOMPILER = '//third_party/java/soy:SoyToJsSrcCompiler'
+_SOYTOJSSRCCOMPILER = '@soy//:SoyToJsSrcCompiler'
 
-_SOYTOINCREMENTALDOMSRCCOMPILER = '//third_party/java/soy:SoyToIncrementalDomSrcCompiler'
+_SOYTOINCREMENTALDOMSRCCOMPILER = '@soy//:SoyToIncrementalDomSrcCompiler'
 
 def _impl(ctx):
   if ctx.attr.incremental_dom:

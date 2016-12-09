@@ -11,9 +11,7 @@ os:
   - osx
 
 env:
-  - V=HEAD
-  - V=0.4.0
-  - V=0.3.2
+  - V=0.4.2
 
 before_install:
   - |

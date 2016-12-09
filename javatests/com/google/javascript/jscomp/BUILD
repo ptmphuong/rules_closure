@@ -20,8 +20,8 @@ java_test(
     deps = [
         "//java/com/google/common:guava",
         "//java/com/google/javascript/jscomp",
-        "//third_party/java/junit",
-        "//third_party/java/truth",
+        "@junit",
+        "@truth",
     ],
 )
 
@@ -31,7 +31,7 @@ java_test(
     deps = [
         "//java/com/google/common:guava_testlib",
         "//java/com/google/javascript/jscomp",
-        "//third_party/java/junit",
+        "@junit",
     ],
 )
 
@@ -41,6 +41,6 @@ java_test(
     deps = [
         "//java/com/google/common:guava_testlib",
         "//java/com/google/javascript/jscomp",
-        "//third_party/java/junit",
+        "@junit",
     ],
 )

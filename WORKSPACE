@@ -1,54 +1,86 @@
 workspace(name = "io_bazel_rules_closure")
 
+load("//closure/private:java_import_external.bzl", "java_import_external")
 load("//closure:repositories.bzl", "closure_repositories")
 
 closure_repositories()
 
-maven_jar(
+java_import_external(
     name = "guava_testlib",
-    artifact = "com.google.guava:guava-testlib:19.0",
-    server = "closure_maven_server",
-    sha1 = "ce5b880b206de3f76d364988a6308c68c726f74a",
+    jar_sha256 = "a9f52f328ac024e420c8995a107ea0dbef3fc169ddf97b3426e634f28d6b3663",
+    jar_urls = [
+        "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/guava/guava-testlib/20.0/guava-testlib-20.0.jar",
+        "http://repo1.maven.org/maven2/com/google/guava/guava-testlib/20.0/guava-testlib-20.0.jar",
+        "http://maven.ibiblio.org/maven2/com/google/guava/guava-testlib/20.0/guava-testlib-20.0.jar",
+    ],
+    licenses = ["notice"],  # Apache 2.0
+    testonly_ = 1,
+    deps = ["@guava"],
 )
 
-maven_jar(
+java_import_external(
     name = "jimfs",
-    artifact = "com.google.jimfs:jimfs:1.1",
-    server = "closure_maven_server",
-    sha1 = "8fbd0579dc68aba6186935cc1bee21d2f3e7ec1c",
+    jar_sha256 = "c4828e28d7c0a930af9387510b3bada7daa5c04d7c25a75c7b8b081f1c257ddd",
+    jar_urls = [
+        "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/jimfs/jimfs/1.1/jimfs-1.1.jar",
+        "http://repo1.maven.org/maven2/com/google/jimfs/jimfs/1.1/jimfs-1.1.jar",
+        "http://maven.ibiblio.org/maven2/com/google/jimfs/jimfs/1.1/jimfs-1.1.jar",
+    ],
+    licenses = ["notice"],  # Apache 2.0
+    testonly_ = 1,
+    deps = ["@guava"],
 )
 
-maven_jar(
+java_import_external(
     name = "junit",
-    artifact = "junit:junit:4.11",
-    server = "closure_maven_server",
-    sha1 = "4e031bb61df09069aeb2bffb4019e7a5034a4ee0",
+    jar_sha256 = "90a8e1603eeca48e7e879f3afbc9560715322985f39a274f6f6070b43f9d06fe",
+    jar_urls = [
+        "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/junit/junit/4.11/junit-4.11.jar",
+        "http://repo1.maven.org/maven2/junit/junit/4.11/junit-4.11.jar",
+        "http://maven.ibiblio.org/maven2/junit/junit/4.11/junit-4.11.jar",
+    ],
+    licenses = ["reciprocal"],  # Common Public License 1.0
+    testonly_ = 1,
+    deps = ["@hamcrest_core"],
 )
 
-maven_jar(
+java_import_external(
     name = "hamcrest_core",
-    artifact = "org.hamcrest:hamcrest-core:1.3",
-    server = "closure_maven_server",
-    sha1 = "42a25dc3219429f0e5d060061f71acb49bf010a0",
+    jar_sha256 = "66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9",
+    jar_urls = [
+        "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar",
+        "http://repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar",
+        "http://maven.ibiblio.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar",
+    ],
+    licenses = ["notice"],  # BSD
+    testonly_ = 1,
 )
 
-maven_jar(
-    name = "hamcrest_library",
-    artifact = "org.hamcrest:hamcrest-library:1.3",
-    server = "closure_maven_server",
-    sha1 = "4785a3c21320980282f9f33d0d1264a69040538f",
-)
-
-maven_jar(
+java_import_external(
     name = "mockito",
-    artifact = "org.mockito:mockito-all:1.10.19",
-    server = "closure_maven_server",
-    sha1 = "539df70269cc254a58cccc5d8e43286b4a73bf30",
+    jar_sha256 = "d1a7a7ef14b3db5c0fc3e0a63a81b374b510afe85add9f7984b97911f4c70605",
+    jar_urls = [
+        "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/org/mockito/mockito-all/1.10.19/mockito-all-1.10.19.jar",
+        "http://repo1.maven.org/maven2/org/mockito/mockito-all/1.10.19/mockito-all-1.10.19.jar",
+        "http://maven.ibiblio.org/maven2/org/mockito/mockito-all/1.10.19/mockito-all-1.10.19.jar",
+    ],
+    licenses = ["notice"],  # MIT
+    testonly_ = 1,
+    deps = [
+        "@hamcrest_core",
+        "@junit",
+    ],
 )
 
-maven_jar(
+java_import_external(
     name = "truth",
-    artifact = "com.google.truth:truth:0.28",
-    server = "closure_maven_server",
-    sha1 = "0a388c7877c845ff4b8e19689dda5ac9d34622c4",
+    jar_sha256 = "1037ded3a681c74ce020e306f136b24a51c09c95667d8eda9ffc8f8136294f71",
+    jar_urls = [
+        "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/truth/truth/0.28/truth-0.28.jar",
+        "http://repo1.maven.org/maven2/com/google/truth/truth/0.28/truth-0.28.jar",
+        "http://maven.ibiblio.org/maven2/com/google/truth/truth/0.28/truth-0.28.jar",
+    ],
+    licenses = ["notice"],  # Apache 2.0
+    testonly_ = 1,
+    deps = ["@guava"],
 )

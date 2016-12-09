@@ -33,10 +33,10 @@ java_binary(
         "//java/com/google/common:guava",
         "//java/io/bazel/rules/closure/webfiles",
         "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
-        "//third_party/java/jetty/v6_1_22",
-        "//third_party/protobuf:protobuf-java",
-        "@jsr305//jar",
-        "@servlet_api//jar",
+        "@jetty",
+        "@jsr305",
+        "@protobuf_java",
+        "@servlet_api",
     ],
 )
 
