@@ -29,6 +29,7 @@ def closure_repositories(
     omit_closure_compiler=False,
     omit_closure_library=False,
     omit_closure_stylesheets=False,
+    omit_error_prone_annotations=False,
     omit_fonts_noto_hinted_deb=False,
     omit_fonts_noto_mono_deb=False,
     omit_gson=False,
@@ -80,6 +81,8 @@ def closure_repositories(
     closure_library()
   if not omit_closure_stylesheets:
     closure_stylesheets()
+  if not omit_error_prone_annotations:
+    error_prone_annotations()
   if not omit_fonts_noto_hinted_deb:
     fonts_noto_hinted_deb()
   if not omit_fonts_noto_mono_deb:
@@ -375,6 +378,18 @@ def closure_stylesheets():
               ")\n",
   )
 
+def error_prone_annotations():
+  java_import_external(
+      name = "error_prone_annotations",
+      licenses = ["notice"],  # Apache 2.0
+      jar_sha256 = "e7749ffdf03fb8ebe08a727ea205acb301c8791da837fee211b99b04f9d79c46",
+      jar_urls = [
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.0.15/error_prone_annotations-2.0.15.jar",
+          "http://maven.ibiblio.org/maven2/com/google/errorprone/error_prone_annotations/2.0.15/error_prone_annotations-2.0.15.jar",
+          "http://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.0.15/error_prone_annotations-2.0.15.jar",
+      ],
+  )
+
 def fonts_noto_hinted_deb():
   native.http_file(
       name = "fonts_noto_hinted_deb",
@@ -418,7 +433,10 @@ def guava():
           "http://maven.ibiblio.org/maven2/com/google/guava/guava/20.0/guava-20.0.jar",
       ],
       jar_sha256 = "36a666e3b71ae7f0f0dca23654b67e086e6c93d192f60ba5dfd5519db6c288c8",
-      deps = ["@jsr305"],
+      deps = [
+          "@error_prone_annotations",
+          "@jsr305"
+      ],
   )
 
 def guice():

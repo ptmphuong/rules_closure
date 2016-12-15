@@ -23,6 +23,7 @@ java_library(
     exports = [
         "@guava",
     ],
+    runtime_deps = ["@error_prone_annotations"],
 )
 
 java_library(
