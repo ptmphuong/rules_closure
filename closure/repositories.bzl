@@ -189,7 +189,7 @@ def _parse_bazel_version(bazel_version):
 #      bzmirror() {
 #        local url="${1:?url}"
 #        if [[ "${url}" =~ ^([^:]+):([^:]+):([^:]+)$ ]]; then
-#          url="http://repo1.maven.org/maven2/${BASH_REMATCH[1]//.//}/${BASH_REMATCH[2]}/${BASH_REMATCH[3]}/${BASH_REMATCH[2]}-${BASH_REMATCH[3]}.jar"
+#          url="https://repo1.maven.org/maven2/${BASH_REMATCH[1]//.//}/${BASH_REMATCH[2]}/${BASH_REMATCH[3]}/${BASH_REMATCH[2]}-${BASH_REMATCH[3]}.jar"
 #        fi
 #        local dest="gs://bazel-mirror/${url#http*//}"
 #        local desturl="http://bazel-mirror.storage.googleapis.com/${url#http*//}"
@@ -197,10 +197,12 @@ def _parse_bazel_version(bazel_version):
 #        wget -O "/tmp/${name}" "${url}" || return 1
 #        gsutil cp -a public-read "/tmp/${name}" "${dest}" || return 1
 #        gsutil setmeta -h 'Cache-Control:public, max-age=31536000' "${dest}" || return 1
-#        rm "/tmp/${name}" || return 1
 #        curl -I "${desturl}"
 #        echo
+#        sha1sum "/tmp/${name}"
+#        sha256sum "/tmp/${name}"
 #        echo "${desturl}"
+#        rm "/tmp/${name}" || return 1
 #      }
 
 def aopalliance():
