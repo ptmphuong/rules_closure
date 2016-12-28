@@ -80,4 +80,5 @@ _phantomjs_test = rule(
 # is fixed.
 def phantomjs_test(**kwargs):
   tags = kwargs.pop("tags", [])
-  _phantomjs_test(tags = ["local"] + tags, **kwargs)
+  tags = ["local"] + tags
+  _phantomjs_test(tags=tags, **kwargs)
