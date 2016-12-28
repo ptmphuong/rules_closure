@@ -65,6 +65,7 @@ def closure_js_proto_library(
           "analyzerChecks",
           "missingProperties",
           "reportUnknownTypes",
+          "unusedLocalVariables",
       ],
       **kwargs
   )
