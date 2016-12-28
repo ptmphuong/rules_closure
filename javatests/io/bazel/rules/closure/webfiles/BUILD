@@ -18,13 +18,12 @@ java_test(
     name = "WebfilesTestSuite",
     srcs = glob(["*.java"]),
     deps = [
-        "//java/com/google/common:guava",
-        "//java/com/google/common:guava_testlib",
         "//java/io/bazel/rules/closure/webfiles",
         "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
-        "@jimfs",
-        "@junit",
-        "@mockito",
-        "@truth",
+        "@com_google_guava",
+        "@com_google_guava_testlib",
+        "@com_google_jimfs",
+        "@com_google_truth",
+        "@org_mockito_all",
     ],
 )

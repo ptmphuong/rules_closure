@@ -20,7 +20,7 @@ load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 
 closure_js_library(
     name = "jspb",
-    srcs = ["@protobuf_js//:proto_js_library_files"],
+    srcs = ["@com_google_protobuf_js//:proto_js_library_files"],
     suppress = [
         "JSC_EXTRA_REQUIRE_WARNING",
         "JSC_IMPLICITLY_NULLABLE_JSDOC",

@@ -26,10 +26,10 @@ java_binary(
     visibility = ["//visibility:public"],
     deps = [
         ":worker_protocol_java_proto",
-        "//java/com/google/common:guava",
         "//java/com/google/javascript/jscomp",
         "//java/io/bazel/rules/closure/program",
         "//java/io/bazel/rules/closure/webfiles",
+        "@com_google_guava",
     ],
 )
 
@@ -37,7 +37,7 @@ java_library(
     name = "tarjan",
     srcs = ["Tarjan.java"],
     visibility = ["//visibility:public"],
-    deps = ["//java/com/google/common:guava"],
+    deps = ["@com_google_guava"],
 )
 
 java_proto_library(

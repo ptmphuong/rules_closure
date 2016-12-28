@@ -38,10 +38,10 @@ java_library(
     ],
     deps = [
         "//closure/compiler",
-        "//java/com/google/common:guava",
         "//java/io/bazel/rules/closure:build_info_java_proto",
         "//java/io/bazel/rules/closure/program",
         "@args4j",
-        "@protobuf_java",
+        "@com_google_guava",
+        "@com_google_protobuf_java",
     ],
 )

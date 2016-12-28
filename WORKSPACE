@@ -6,7 +6,7 @@ load("//closure:repositories.bzl", "closure_repositories")
 closure_repositories()
 
 java_import_external(
-    name = "guava_testlib",
+    name = "com_google_guava_testlib",
     jar_sha256 = "a9f52f328ac024e420c8995a107ea0dbef3fc169ddf97b3426e634f28d6b3663",
     jar_urls = [
         "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/guava/guava-testlib/20.0/guava-testlib-20.0.jar",
@@ -15,11 +15,11 @@ java_import_external(
     ],
     licenses = ["notice"],  # Apache 2.0
     testonly_ = 1,
-    deps = ["@guava"],
+    deps = ["@com_google_guava"],
 )
 
 java_import_external(
-    name = "jimfs",
+    name = "com_google_jimfs",
     jar_sha256 = "c4828e28d7c0a930af9387510b3bada7daa5c04d7c25a75c7b8b081f1c257ddd",
     jar_urls = [
         "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/jimfs/jimfs/1.1/jimfs-1.1.jar",
@@ -28,7 +28,7 @@ java_import_external(
     ],
     licenses = ["notice"],  # Apache 2.0
     testonly_ = 1,
-    deps = ["@guava"],
+    deps = ["@com_google_guava"],
 )
 
 java_import_external(
@@ -41,11 +41,11 @@ java_import_external(
     ],
     licenses = ["reciprocal"],  # Common Public License 1.0
     testonly_ = 1,
-    deps = ["@hamcrest_core"],
+    deps = ["@org_hamcrest_core"],
 )
 
 java_import_external(
-    name = "hamcrest_core",
+    name = "org_hamcrest_core",
     jar_sha256 = "66fdef91e9739348df7a096aa384a5685f4e875584cce89386a7a47251c4d8e9",
     jar_urls = [
         "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar",
@@ -57,7 +57,7 @@ java_import_external(
 )
 
 java_import_external(
-    name = "mockito",
+    name = "org_mockito_all",
     jar_sha256 = "d1a7a7ef14b3db5c0fc3e0a63a81b374b510afe85add9f7984b97911f4c70605",
     jar_urls = [
         "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/org/mockito/mockito-all/1.10.19/mockito-all-1.10.19.jar",
@@ -67,13 +67,13 @@ java_import_external(
     licenses = ["notice"],  # MIT
     testonly_ = 1,
     deps = [
-        "@hamcrest_core",
         "@junit",
+        "@org_hamcrest_core",
     ],
 )
 
 java_import_external(
-    name = "truth",
+    name = "com_google_truth",
     jar_sha256 = "1037ded3a681c74ce020e306f136b24a51c09c95667d8eda9ffc8f8136294f71",
     jar_urls = [
         "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/truth/truth/0.28/truth-0.28.jar",
@@ -82,5 +82,5 @@ java_import_external(
     ],
     licenses = ["notice"],  # Apache 2.0
     testonly_ = 1,
-    deps = ["@guava"],
+    deps = ["@com_google_guava"],
 )

@@ -18,7 +18,5 @@ licenses(["notice"])  # Apache 2.0
 
 java_library(
     name = "compiler",
-    exports = [
-        "@closure_compiler",
-    ],
+    exports = ["@com_google_javascript_closure_compiler"],
 )

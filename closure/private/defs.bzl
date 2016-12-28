@@ -15,9 +15,6 @@
 """Common build definitions for Closure Compiler build definitions.
 """
 
-BASE_JS = Label("@closure_library//:closure/goog/base.js")
-DEPS_JS = Label("@closure_library//:closure/goog/deps.js")
-
 CSS_FILE_TYPE = FileType([".css", ".gss"])
 HTML_FILE_TYPE = FileType([".html"])
 JS_FILE_TYPE = FileType([".js"])
@@ -36,9 +33,14 @@ JS_LANGUAGES = set([
 ])
 
 CLOSURE_LIBRARY_BASE_ATTR = attr.label(
-    default=BASE_JS, allow_files=True, single_file=True)
+    default=Label("@com_google_javascript_closure_library//:closure/goog/base.js"),
+    allow_files=True,
+    single_file=True)
+
 CLOSURE_LIBRARY_DEPS_ATTR = attr.label(
-    default=DEPS_JS, allow_files=True, single_file=True)
+    default=Label("@com_google_javascript_closure_library//:closure/goog/deps.js"),
+    allow_files=True,
+    single_file=True)
 
 def unfurl(deps, provider=""):
   """Returns deps as well as deps exported by parent rules."""

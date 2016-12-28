@@ -15,9 +15,8 @@
 """Utilities for compiling Closure Templates to Java.
 """
 
-_SOY_COMPILER_BIN = '@soy//:SoyParseInfoGenerator'
-
-_SOY_LIBRARY = '@soy//:soy'
+_SOY_COMPILER_BIN = "@com_google_template_soy//:SoyParseInfoGenerator"
+_SOY_LIBRARY = "@com_google_template_soy//:com_google_template_soy"
 
 
 # Generates a java_library with the SoyFileInfo and SoyTemplateInfo
@@ -82,7 +81,7 @@ def closure_java_template_library(
       srcs = java_srcs or None,
       exports = [str(Label(_SOY_LIBRARY))],
       deps = [
-          '@guava',
+          "@com_google_guava",
           str(Label(_SOY_LIBRARY)),
       ] if java_srcs else None,  # b/13630760
       resources = srcs + extra_srcs,

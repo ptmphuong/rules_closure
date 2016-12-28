@@ -18,10 +18,9 @@ java_test(
     name = "DiagnosticsTest",
     srcs = ["DiagnosticsTest.java"],
     deps = [
-        "//java/com/google/common:guava",
         "//java/com/google/javascript/jscomp",
+        "@com_google_truth",
         "@junit",
-        "@truth",
     ],
 )
 
@@ -29,8 +28,8 @@ java_test(
     name = "JsCheckerTest",
     srcs = ["JsCheckerTest.java"],
     deps = [
-        "//java/com/google/common:guava_testlib",
         "//java/com/google/javascript/jscomp",
+        "@com_google_guava_testlib",
         "@junit",
     ],
 )
@@ -39,8 +38,8 @@ java_test(
     name = "JsCompilerTest",
     srcs = ["JsCompilerTest.java"],
     deps = [
-        "//java/com/google/common:guava_testlib",
         "//java/com/google/javascript/jscomp",
+        "@com_google_guava_testlib",
         "@junit",
     ],
 )

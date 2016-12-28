@@ -22,7 +22,7 @@ set -ex
 [[ -e closure/compiler/test/closure_js_deps/hyperion2_deps.js ]]
 
 # all transitive sources
-[[ -e external/closure_library/closure/goog/base.js ]]
+[[ -e external/com_google_javascript_closure_library/closure/goog/base.js ]]
 [[ -e closure/compiler/test/closure_js_deps/hyperion.js ]]
 [[ -e closure/compiler/test/closure_js_deps/hyperion2.js ]]
 

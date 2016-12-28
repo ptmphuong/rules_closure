@@ -21,22 +21,20 @@ load("//closure:defs.bzl", "closure_js_proto_library")
 
 java_library(
     name = "templates",
-    exports = [
-        "@soy",
-    ],
+    exports = ["@com_google_template_soy"],
 )
 
 closure_js_proto_library(
     name = "soy_html_proto",
-    srcs = ["@safe_html_types_html_proto//file"],
+    srcs = ["@com_google_common_html_types_html_proto//file"],
 )
 
 closure_js_library(
     name = "soy_jssrc",
     srcs = [
-        "@soy_jssrc//:jspbconversions.js",
-        "@soy_jssrc//:soydata_converters.js",
-        "@soy_jssrc//:soyutils_usegoog.js",
+        "@com_google_template_soy_jssrc//:jspbconversions.js",
+        "@com_google_template_soy_jssrc//:soydata_converters.js",
+        "@com_google_template_soy_jssrc//:soyutils_usegoog.js",
     ],
     suppress = [
         "JSC_IMPLICITLY_NULLABLE_JSDOC",
@@ -56,7 +54,5 @@ closure_js_library(
 
 java_library(
     name = "safe_html_types",
-    exports = [
-        "@safe_html_types",
-    ],
+    exports = ["@com_google_common_html_types"],
 )

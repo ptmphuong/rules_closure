@@ -982,15 +982,15 @@ py_binary(
 # Instructions:
 # 1. Uncomment the lines from "FILESET_MARKER_COMMAND" below.
 # 2. From the rules_closure project root directory, run
-#    "bazel build @closure_library//:js_library_files_maker" and
-#    "bazel build @closure_library//:js_testing_files_maker"
+#    "bazel build @com_google_javascript_closure_library//:js_library_files_maker" and
+#    "bazel build @com_google_javascript_closure_library//:js_testing_files_maker"
 # 3. Copy the list of files in
-#    bazel-genfiles/external/closure_library/js_library_files_maker.txt and
-#    bazel-genfiles/external/closure_library/js_testing_files_maker.txt
+#    bazel-genfiles/external/com_google_javascript_closure_library/js_library_files_maker.txt and
+#    bazel-genfiles/external/com_google_javascript_closure_library/js_testing_files_maker.txt
 #    to the corresponding filegroup above.
 # 4. Run "bazel test //closure/... --test_output=errors" to verify.
 
-# FILESET_MAKER_COMMAND = "#/bin/bash\n{ for s in $(SRCS); do echo \\\"$${s#external/closure_library/}\\\",; done; } | sort >$@"
+# FILESET_MAKER_COMMAND = "#/bin/bash\n{ for s in $(SRCS); do echo \\\"$${s#external/com_google_javascript_closure_library/}\\\",; done; } | sort >$@"
 
 # genrule(
 #     name = "js_library_files_maker",

@@ -21,8 +21,6 @@ load("//closure/private:defs.bzl",
      "long_path",
      "unfurl")
 
-_DEPSWRITER = "@closure_library//:depswriter"
-
 def _impl(ctx):
   deps = unfurl(ctx.attr.deps, provider="closure_js_library")
   js = collect_js(ctx, deps)
@@ -84,7 +82,7 @@ closure_js_deps = rule(
         "data": attr.label_list(cfg="data", allow_files=True),
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_depswriter": attr.label(
-            default=Label(_DEPSWRITER),
+            default=Label("@com_google_javascript_closure_library//:depswriter"),
             executable=True,
             cfg="host"),
     },

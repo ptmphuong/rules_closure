@@ -21,7 +21,7 @@ load("//closure:defs.bzl", "closure_css_library")
 
 closure_js_library(
     name = "library",
-    srcs = ["@closure_library//:js_library_files"],
+    srcs = ["@com_google_javascript_closure_library//:js_library_files"],
     suppress = [
         "JSC_ARRAY_PASSED_TO_GOOG_OBJECT",
         "JSC_DEPRECATED_CLASS_REASON",
@@ -72,7 +72,7 @@ closure_js_library(
 closure_js_library(
     name = "testing",
     testonly = True,
-    srcs = ["@closure_library//:js_testing_files"],
+    srcs = ["@com_google_javascript_closure_library//:js_testing_files"],
     suppress = [
         "JSC_DEPRECATED_CLASS_REASON",
         "JSC_DEPRECATED_PROP_REASON",
@@ -97,6 +97,6 @@ closure_js_library(
 closure_css_library(
     name = "css",
     srcs = [
-        "@closure_library//:css_files",
+        "@com_google_javascript_closure_library//:css_files",
     ],
 )

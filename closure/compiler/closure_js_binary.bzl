@@ -15,7 +15,6 @@
 """Rule for building JavaScript binaries with Closure Compiler."""
 
 load("//closure/private:defs.bzl",
-     "BASE_JS",
      "CLOSURE_LIBRARY_BASE_ATTR",
      "CLOSURE_LIBRARY_DEPS_ATTR",
      "JS_LANGUAGES",

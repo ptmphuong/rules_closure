@@ -34,7 +34,7 @@ closure_js_library(
 
 genrule(
     name = "extract",
-    srcs = ["@incremental_dom//file"],
+    srcs = ["@com_google_javascript_incremental_dom//file"],
     outs = ["incremental-dom-closure.js"],
     cmd = " && ".join([
         "IN=$$(pwd)/$(SRCS)",

@@ -29,10 +29,10 @@ java_library(
     ],
     deps = [
         ":build_info_java_proto",
-        "//java/com/google/common:guava",
         "//java/io/bazel/rules/closure:tarjan",
         "//java/io/bazel/rules/closure/program",
-        "@protobuf_java",
+        "@com_google_guava",
+        "@com_google_protobuf_java",
     ],
 )
 

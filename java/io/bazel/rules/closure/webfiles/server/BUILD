@@ -30,13 +30,13 @@ java_binary(
     deps = [
         ":listing",
         "//closure/templates",
-        "//java/com/google/common:guava",
         "//java/io/bazel/rules/closure/webfiles",
         "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
-        "@jetty",
-        "@jsr305",
-        "@protobuf_java",
-        "@servlet_api",
+        "@com_google_code_findbugs_jsr305",
+        "@com_google_guava",
+        "@com_google_protobuf_java",
+        "@org_apache_tomcat_servlet_api",
+        "@org_mortbay_jetty",
     ],
 )
 
