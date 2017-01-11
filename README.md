@@ -1086,3 +1086,4 @@ This rule can be referenced as though it were the following:
 [repositories.bzl]: https://github.com/bazelbuild/rules_closure/tree/master/closure/repositories.bzl
 [rules_webtesting]: https://github.com/bazelbuild/rules_webtesting
 [verbose]: https://github.com/google/closure-library/blob/master/closure/goog/html/safehtml.js
+[webfiles]: #webfiles
