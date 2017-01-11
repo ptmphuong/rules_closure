@@ -15,16 +15,12 @@
 licenses(["notice"])  # Apache 2.0
 
 java_test(
-    name = "WebfilesTestSuite",
-    srcs = glob(["*.java"]),
+    name = "TarjanTest",
+    srcs = ["TarjanTest.java"],
     deps = [
-        "//java/io/bazel/rules/closure/webfiles",
-        "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
+        "//java/io/bazel/rules/closure:tarjan",
         "@com_google_guava",
-        "@com_google_guava_testlib",
-        "@com_google_jimfs",
         "@com_google_truth",
         "@junit",
-        "@org_mockito_all",
     ],
 )
