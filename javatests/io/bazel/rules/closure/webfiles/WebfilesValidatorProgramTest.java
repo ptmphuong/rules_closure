@@ -17,15 +17,18 @@ package io.bazel.rules.closure.webfiles;
 import static com.google.common.truth.Truth.assertThat;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.contains;
+import static org.mockito.Matchers.matches;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.google.common.base.Supplier;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.jimfs.Jimfs;
 import io.bazel.rules.closure.webfiles.BuildInfo.Webfiles;
 import java.io.IOException;
@@ -67,7 +70,7 @@ public class WebfilesValidatorProgramTest {
             any(Webfiles.class),
             Mockito.<Iterable<Webfiles>>any(),
             Mockito.<Supplier<Iterable<Webfiles>>>any()))
-        .thenReturn(ImmutableList.<String>of());
+        .thenReturn(ArrayListMultimap.<String, String>create());
     assertThat(program.apply(ImmutableList.of("--target", "/a.pbtxt"))).isEqualTo(0);
     verify(validator).validate(
         eq(Webfiles.newBuilder().setLabel("@oh//my:goth").build()),
@@ -76,19 +79,41 @@ public class WebfilesValidatorProgramTest {
   }
 
   @Test
-  public void validatorReturnsError_getsPrintedAndReturnsNonZero() throws Exception {
+  public void validatorReturnsError_getsPrintedAndReturnsNonZeroWithProTip() throws Exception {
     save(fs.getPath("/a.pbtxt"), "label: \"@oh//my:goth\"\n");
     when(validator.validate(
             any(Webfiles.class),
             Mockito.<Iterable<Webfiles>>any(),
             Mockito.<Supplier<Iterable<Webfiles>>>any()))
-        .thenReturn(ImmutableList.of("hey listen"));
+        .thenReturn(ArrayListMultimap.create(ImmutableMultimap.of("navi", "hey listen")));
     assertThat(program.apply(ImmutableList.of("--target", "/a.pbtxt"))).isEqualTo(1);
     verify(validator).validate(
         eq(Webfiles.newBuilder().setLabel("@oh//my:goth").build()),
         eq(ImmutableList.<Webfiles>of()),
         Mockito.<Supplier<Iterable<Webfiles>>>any());
-    verify(output).println(contains("hey listen"));
+    verify(output).println(matches(".*ERROR.*hey listen"));
+    verify(output).printf(matches(".*suppress.*"), matches(".*NOTE.*"), eq("navi"));
+  }
+
+  @Test
+  public void suppressCategory_errorBecomesWarningAndReturnsZeroWithoutProTip() throws Exception {
+    save(fs.getPath("/a.pbtxt"), "label: \"@oh//my:goth\"\n");
+    when(validator.validate(
+            any(Webfiles.class),
+            Mockito.<Iterable<Webfiles>>any(),
+            Mockito.<Supplier<Iterable<Webfiles>>>any()))
+        .thenReturn(ArrayListMultimap.create(ImmutableMultimap.of("navi", "hey listen")));
+    assertThat(
+            program.apply(
+                ImmutableList.of(
+                    "--target", "/a.pbtxt",
+                    "--suppress", "navi")))
+        .isEqualTo(0);
+    verify(validator).validate(
+        eq(Webfiles.newBuilder().setLabel("@oh//my:goth").build()),
+        eq(ImmutableList.<Webfiles>of()),
+        Mockito.<Supplier<Iterable<Webfiles>>>any());
+    verify(output).println(matches(".*WARNING.*hey listen"));
   }
 
   private void save(Path path, String contents) throws IOException {

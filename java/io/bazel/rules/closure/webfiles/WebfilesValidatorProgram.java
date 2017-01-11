@@ -18,8 +18,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Suppliers.memoize;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Ordering;
+import com.google.common.collect.Sets;
 import com.google.protobuf.TextFormat;
 import io.bazel.rules.closure.program.CommandLineProgram;
 import io.bazel.rules.closure.webfiles.BuildInfo.Webfiles;
@@ -29,16 +34,29 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /** CLI for {@link WebfilesValidator}. */
 public final class WebfilesValidatorProgram implements CommandLineProgram {
 
+  // Changing these values will break any build code that references them.
+  private static final String SUPPRESS_EVERYTHING = "*";
+  private static final String SUPERFLUOUS_SUPPRESS_ERROR = "superfluousSuppress";
+
+  private static final ImmutableSet<String> NEVER_SUPERFLUOUS =
+      ImmutableSet.of(SUPPRESS_EVERYTHING, SUPERFLUOUS_SUPPRESS_ERROR);
+
   private static final String RESET = "\u001b[0m";
   private static final String BOLD = "\u001b[1m";
   private static final String RED = "\u001b[31m";
+  private static final String BLUE = "\u001b[34m";
+  private static final String MAGENTA = "\u001b[35m";
   private static final String ERROR_PREFIX = String.format("%s%sERROR:%s ", BOLD, RED, RESET);
+  private static final String WARNING_PREFIX = String.format("%sWARNING:%s ", MAGENTA, RESET);
+  private static final String NOTE_PREFIX = String.format("%s%sNOTE:%s ", BOLD, BLUE, RESET);
 
   private final PrintStream output;
   private final FileSystem fs;
@@ -67,6 +85,7 @@ public final class WebfilesValidatorProgram implements CommandLineProgram {
     List<Webfiles> directDeps = new ArrayList<>();
     final List<Path> transitiveDeps = new ArrayList<>();
     Iterator<String> flags = args.iterator();
+    Set<String> suppress = new HashSet<>();
     while (flags.hasNext()) {
       String flag = flags.next();
       switch (flag) {
@@ -82,6 +101,9 @@ public final class WebfilesValidatorProgram implements CommandLineProgram {
         case "--transitive_dep":
           transitiveDeps.add(fs.getPath(flags.next()));
           break;
+        case "--suppress":
+          suppress.add(flags.next());
+          break;
         default:
           throw new RuntimeException("Unexpected flag: " + flag);
       }
@@ -90,7 +112,7 @@ public final class WebfilesValidatorProgram implements CommandLineProgram {
       output.println(ERROR_PREFIX + "Missing --target flag");
       return 1;
     }
-    ImmutableList<String> errors =
+    Multimap<String, String> errors =
         validator.validate(
             target,
             directDeps,
@@ -109,13 +131,34 @@ public final class WebfilesValidatorProgram implements CommandLineProgram {
                     return builder.build();
                   }
                 }));
-    if (errors.isEmpty()) {
-      return 0;
+    Set<String> superfluous =
+        Sets.difference(suppress, Sets.union(errors.keySet(), NEVER_SUPERFLUOUS));
+    if (!superfluous.isEmpty()) {
+      errors.put(
+          SUPERFLUOUS_SUPPRESS_ERROR, "Superfluous suppress codes: " + joinWords(superfluous));
     }
-    for (String error : errors) {
-      output.println(ERROR_PREFIX + error);
+    return displayErrors(suppress, errors);
+  }
+
+  private int displayErrors(Set<String> suppress, Multimap<String, String> errors) {
+    int exitCode = 0;
+    for (String category : errors.keySet()) {
+      boolean ignored = suppress.contains(category) || suppress.contains(SUPPRESS_EVERYTHING);
+      String prefix = ignored ? WARNING_PREFIX : ERROR_PREFIX;
+      for (String error : errors.get(category)) {
+        output.println(prefix + error);
+      }
+      if (!ignored) {
+        exitCode = 1;
+        output.printf(
+            "%sUse suppress=[\"%s\"] to make the errors above warnings%n", NOTE_PREFIX, category);
+      }
     }
-    return 1;
+    return exitCode;
+  }
+
+  private static String joinWords(Iterable<String> words) {
+    return Joiner.on(", ").join(Ordering.natural().immutableSortedCopy(words));
   }
 
   private static Webfiles loadWebfilesPbtxt(Path path) throws IOException {

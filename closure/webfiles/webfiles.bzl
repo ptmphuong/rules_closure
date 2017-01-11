@@ -21,13 +21,19 @@ load("//closure/private:defs.bzl",
      "unfurl")
 
 def _webfiles(ctx):
-  # additional preconditions
+  if not ctx.attr.srcs:
+    if ctx.attr.deps:
+      fail("deps can not be set when srcs is not")
+    if not ctx.attr.exports:
+      fail("exports must be set if srcs is not")
   if not ctx.attr.path.startswith("/"):
     fail("webpath must start with /")
   if ctx.attr.path != "/" and ctx.attr.path.endswith("/"):
     fail("webpath must not end with / unless it is /")
   if "//" in ctx.attr.path:
     fail("webpath must not have //")
+  if "*" in ctx.attr.suppress and len(ctx.attr.suppress) != 1:
+    fail("when \"*\" is suppressed no other items should be present")
 
   # process what came before
   deps = unfurl(ctx.attr.deps, provider="webfiles")
@@ -72,6 +78,9 @@ def _webfiles(ctx):
   args = ["WebfilesValidator",
           "--dummy", ctx.outputs.dummy.path,
           "--target", manifest.path]
+  for category in ctx.attr.suppress:
+    args.append("--suppress")
+    args.append(category)
   inputs.extend(ctx.files.srcs)
   for dep in deps:
     inputs.append(dep.webfiles.dummy)
@@ -94,7 +103,7 @@ def _webfiles(ctx):
       arguments=["@@" + argfile.path],
       mnemonic="Closure",
       execution_requirements={"supports-workers": "1"},
-      progress_message="Checking %d web files" % len(ctx.files.srcs))
+      progress_message="Checking webfiles in %s" % ctx.label)
 
   # define development web server that only applies to this transitive closure
   args = ["#!/bin/sh\nexec " + ctx.executable._WebfilesServer.short_path]
@@ -130,10 +139,11 @@ webfiles = rule(
     executable=True,
     attrs={
         "path": attr.string(mandatory=True),
-        "srcs": attr.label_list(allow_files=True, mandatory=True),
+        "srcs": attr.label_list(allow_files=True),
         "deps": attr.label_list(providers=["webfiles"]),
         "exports": attr.label_list(),
         "data": attr.label_list(cfg="data", allow_files=True),
+        "suppress": attr.string_list(),
         "_ClosureUberAlles": attr.label(
             default=Label("//java/io/bazel/rules/closure:ClosureUberAlles"),
             executable=True,

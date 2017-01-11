@@ -26,6 +26,7 @@ import io.bazel.rules.closure.webfiles.WebfilesValidatorProgram;
 import java.io.PrintStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import javax.inject.Provider;
 
 /** Bazel worker for all Closure Tools programs, some of which are modded. */
 public final class ClosureUberAlles implements CommandLineProgram {
@@ -33,24 +34,29 @@ public final class ClosureUberAlles implements CommandLineProgram {
   public static void main(String[] args) {
     // Please note that dependency injection is being done by hand.
     PrintStream output = System.err;
-    FileSystem fs = FileSystems.getDefault();
+    final FileSystem fs = FileSystems.getDefault();
+    final WebfilesValidator webfilesValidator = new WebfilesValidator(fs);
+    Provider<WebfilesValidatorProgram> webfilesValidatorProgram =
+        new Provider<WebfilesValidatorProgram>() {
+          @Override
+          public WebfilesValidatorProgram get() {
+            return new WebfilesValidatorProgram(System.err, fs, webfilesValidator);
+          }
+        };
     System.exit(
         new BazelWorker(
                 output,
-                new ClosureUberAlles(
-                    output,
-                    new WebfilesValidatorProgram(
-                        output, fs, new WebfilesValidator(fs))),
+                new ClosureUberAlles(output, webfilesValidatorProgram),
                 "Closure")
             .apply(ImmutableList.copyOf(args)));
   }
 
   private final PrintStream output;
-  private final WebfilesValidatorProgram webfilesValidatorProgram;
+  private final Provider<WebfilesValidatorProgram> webfilesValidatorProgram;
 
   private ClosureUberAlles(
       PrintStream output,
-      WebfilesValidatorProgram webfilesValidatorProgram) {
+      Provider<WebfilesValidatorProgram> webfilesValidatorProgram) {
     this.output = output;
     this.webfilesValidatorProgram = webfilesValidatorProgram;
   }
@@ -66,7 +72,7 @@ public final class ClosureUberAlles implements CommandLineProgram {
       case "JsCompiler":
         return new JsCompiler().apply(tail);
       case "WebfilesValidator":
-        return webfilesValidatorProgram.apply(tail);
+        return webfilesValidatorProgram.get().apply(tail);
       default:
         output.println(
             "\nERROR: First flag to ClosureUberAlles should be specific compiler to run, "

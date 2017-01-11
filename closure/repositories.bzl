@@ -50,6 +50,7 @@ def closure_repositories(
     omit_libpng_amd64_deb=False,
     omit_org_apache_tomcat_servlet_api=False,
     omit_org_json=False,
+    omit_org_jsoup=False,
     omit_org_mortbay_jetty=False,
     omit_org_mortbay_jetty_util=False,
     omit_org_ow2_asm=False,
@@ -124,6 +125,8 @@ def closure_repositories(
     org_apache_tomcat_servlet_api()
   if not omit_org_json:
     org_json()
+  if not omit_org_jsoup:
+    org_jsoup()
   if not omit_org_mortbay_jetty:
     org_mortbay_jetty()
   if not omit_org_mortbay_jetty_util:
@@ -666,6 +669,17 @@ def org_json():
           "http://maven.ibiblio.org/maven2/org/json/json/20160212/json-20160212.jar",
       ],
       jar_sha256 = "0aaf0e7e286ece88fb60b9ba14dd45c05a48e55618876efb7d1b6f19c25e7a29",
+  )
+
+def org_jsoup():
+  java_import_external(
+      name = "org_jsoup",
+      licenses = ["notice"],  # The MIT License
+      jar_urls = [
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/org/jsoup/jsoup/1.10.2/jsoup-1.10.2.jar",
+          "http://repo1.maven.org/maven2/org/jsoup/jsoup/1.10.2/jsoup-1.10.2.jar",
+      ],
+      jar_sha256 = "6ebe6abd7775c10a49407ae22db45c840cd2cdaf715866a5b0b5af70941c3f4a",
   )
 
 def org_mortbay_jetty():

@@ -30,6 +30,7 @@ java_binary(
         "//java/io/bazel/rules/closure/program",
         "//java/io/bazel/rules/closure/webfiles",
         "@com_google_guava",
+        "@javax_inject",
     ],
 )
 

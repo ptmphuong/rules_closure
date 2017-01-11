@@ -19,6 +19,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Multimap;
 import com.google.common.jimfs.Jimfs;
 import io.bazel.rules.closure.webfiles.BuildInfo.Webfiles;
 import io.bazel.rules.closure.webfiles.BuildInfo.WebfilesSource;
@@ -95,7 +96,8 @@ public class WebfilesValidatorTest {
                     .build(),
                 ImmutableList.<Webfiles>of(),
                 Suppliers.ofInstance(ImmutableList.<Webfiles>of())))
-        .containsExactly(
+        .containsEntry(
+            WebfilesValidator.STRICT_DEPENDENCIES_ERROR,
             "/fs/path/index.html: Referenced hello.jpg (/web/path/hello.jpg)"
                 + " without depending on a webfiles() rule providing it");
   }
@@ -122,7 +124,8 @@ public class WebfilesValidatorTest {
                                 .setWebpath("/web/path/hello.jpg")
                                 .build())
                             .build()))))
-        .containsExactly(
+        .containsEntry(
+            WebfilesValidator.STRICT_DEPENDENCIES_ERROR,
             "/fs/path/index.html: Referenced hello.jpg (/web/path/hello.jpg)"
                 + " without depending on @foo//bar");
   }
@@ -140,7 +143,8 @@ public class WebfilesValidatorTest {
                     .build(),
                 ImmutableList.<Webfiles>of(),
                 Suppliers.ofInstance(ImmutableList.<Webfiles>of())))
-        .containsExactly(
+        .containsEntry(
+            WebfilesValidator.ABSOLUTE_PATH_ERROR,
             "/fs/path/index.html: Please use relative path for asset: /a/b/c");
   }
 
@@ -259,7 +263,8 @@ public class WebfilesValidatorTest {
                     .build(),
                 ImmutableList.<Webfiles>of(),
                 Suppliers.ofInstance(ImmutableList.<Webfiles>of())))
-        .containsExactly(
+        .containsEntry(
+            WebfilesValidator.CYCLES_ERROR,
             "These webpaths are strongly connected; please make your html acyclic\n\n"
                 + "  - /web/path/index.css\n"
                 + "  - /web/path/index.html\n");
@@ -288,11 +293,49 @@ public class WebfilesValidatorTest {
                     .build(),
                 ImmutableList.<Webfiles>of(),
                 Suppliers.ofInstance(ImmutableList.<Webfiles>of())))
-        .containsExactly(
+        .containsEntry(
+            WebfilesValidator.CYCLES_ERROR,
             "These webpaths are strongly connected; please make your html acyclic\n\n"
                 + "  - /web/path/a.html\n"
                 + "  - /web/path/b.html\n"
                 + "  - /web/path/c.html\n");
+  }
+
+  @Test
+  public void invalidHtml_printsError() throws Exception {
+    save(fs.getPath("/fs/path/index.html"), "< ");
+    assertThat(
+            validator.validate(
+                Webfiles.newBuilder()
+                    .addSrc(WebfilesSource.newBuilder()
+                        .setPath("/fs/path/index.html")
+                        .setWebpath("/web/path/index.html")
+                        .build())
+                    .build(),
+                ImmutableList.<Webfiles>of(),
+                Suppliers.ofInstance(ImmutableList.<Webfiles>of())))
+        .containsEntry(
+            WebfilesValidator.HTML_SYNTAX_ERROR,
+            "/fs/path/index.html (offset 1): Unexpected character ' ' in input state [TagOpen]");
+  }
+
+  @Test
+  public void invalidCss_printsError() throws Exception {
+    save(fs.getPath("/fs/path/index.css"), ".{}");
+    Multimap<String, String> errors =
+        validator.validate(
+            Webfiles.newBuilder()
+                .addSrc(WebfilesSource.newBuilder()
+                    .setPath("/fs/path/index.css")
+                    .setWebpath("/web/path/index.css")
+                    .build())
+                .build(),
+            ImmutableList.<Webfiles>of(),
+            Suppliers.ofInstance(ImmutableList.<Webfiles>of()));
+    assertThat(errors).hasSize(1);
+    assertThat(errors).containsKey(WebfilesValidator.CSS_SYNTAX_ERROR);
+    assertThat(errors.get(WebfilesValidator.CSS_SYNTAX_ERROR).iterator().next())
+        .startsWith("Parse error in /fs/path/index.css at line 1 column 2:");
   }
 
   private void save(Path path, String contents) throws IOException {

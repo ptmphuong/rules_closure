@@ -18,7 +18,6 @@ licenses(["notice"])  # Apache 2.0
 
 java_binary(
     name = "server",
-    testonly = 1,
     srcs = [
         "MimeTypes.java",
         "NetworkUtils.java",
@@ -42,6 +41,5 @@ java_binary(
 
 closure_java_template_library(
     name = "listing",
-    testonly = 1,
     srcs = ["listing.soy"],
 )
