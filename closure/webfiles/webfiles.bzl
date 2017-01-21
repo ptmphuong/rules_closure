@@ -46,25 +46,21 @@ def _webfiles(ctx):
   # process what comes now
   new_webpaths = []
   manifest_srcs = []
-  for src in ctx.attr.srcs:
-    sname = "/" + src.label.name
-    for srcfile in src.files:
-      if srcfile.path.endswith(sname) or srcfile.path == src.label.name:
-        name = src.label.name
-      else:
-        name = srcfile.basename
-      webpath = "%s/%s" % ("" if ctx.attr.path == "/" else ctx.attr.path, name)
-      if webpath in new_webpaths:
-        fail("name collision in srcs: " + name)
-      if webpath in webpaths:
-        fail("webpath already defined by child rules: " + webpath)
-      new_webpaths.append(webpath)
-      manifest_srcs.append(struct(
-          path=srcfile.path,
-          longpath=long_path(ctx, srcfile),
-          webpath=webpath))
+  for src in ctx.files.srcs:
+    webpath = "%s/%s" % ("" if ctx.attr.path == "/" else ctx.attr.path,
+                         get_path_relative_to_package(src))
+    if webpath in new_webpaths:
+      fail("name collision in srcs: " + webpath)
+    if webpath in webpaths:
+      fail("webpath already defined by child rules: " + webpath)
+    new_webpaths.append(webpath)
+    manifest_srcs.append(struct(
+        path=src.path,
+        longpath=long_path(ctx, src),
+        webpath=webpath))
   webpaths += new_webpaths
-  manifest = ctx.new_file(ctx.configuration.bin_dir, "%s.pbtxt" % ctx.label.name)
+  manifest = ctx.new_file(ctx.configuration.bin_dir,
+                          "%s.pbtxt" % ctx.label.name)
   ctx.file_action(
       output=manifest,
       content=struct(
@@ -133,6 +129,17 @@ def _webfiles(ctx):
                                                    ctx.outputs.dummy],
           transitive_files=ctx.attr._WebfilesServer.data_runfiles.files,
           collect_data=True))
+
+def get_path_relative_to_package(artifact):
+  """Returns file path relative to the package that declared it."""
+  path = artifact.path
+  root = artifact.root.path + "/"
+  if path.startswith(root):
+    path = path[len(root):]
+  package = artifact.owner.package + "/"
+  if not path.startswith(package):
+    fail("Path %s doesn't start with %s" % (path, package))
+  return path[len(package):]
 
 webfiles = rule(
     implementation=_webfiles,
