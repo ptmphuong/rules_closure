@@ -2,12 +2,12 @@
 
 JavaScript | Templating | Stylesheets | Miscellaneous
 --- | --- | --- | ---
-[closure_js_library] | [closure_js_template_library] | [closure_css_library] | [webfiles]
-[closure_js_binary] | [closure_java_template_library] | [closure_css_binary] | [closure_js_proto_library]
+[closure_js_library] | [closure_js_template_library] | [closure_css_library] | [closure_js_proto_library]
+[closure_js_binary] | [closure_java_template_library] | [closure_css_binary] | [phantomjs_test]
 [closure_js_deps] | [closure_py_template_library] | |
 [closure_js_test] | | |
 
-Bazel ≥0.4.2 | linux-x86_64 | ubuntu_15.10-x86_64 | darwin-x86_64
+Bazel ≥0.3.1 | linux-x86_64 | ubuntu_15.10-x86_64 | darwin-x86_64
 :---: | :---: | :---: | :---:
 [![Build Status](https://travis-ci.org/bazelbuild/rules_closure.svg?branch=master)](https://travis-ci.org/bazelbuild/rules_closure) | [![Build Status](http://ci.bazel.io/buildStatus/icon?job=rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=linux-x86_64)](http://ci.bazel.io/job/rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=linux-x86_64) | [![Build Status](http://ci.bazel.io/buildStatus/icon?job=rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=ubuntu_15.10-x86_64)](http://ci.bazel.io/job/rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=ubuntu_15.10-x86_64) | [![Build Status](http://ci.bazel.io/buildStatus/icon?job=rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=darwin-x86_64)](http://ci.bazel.io/job/rules_closure/BAZEL_VERSION=latest,PLATFORM_NAME=darwin-x86_64)
 
@@ -79,9 +79,12 @@ following to your `WORKSPACE` file:
 ```python
 http_archive(
     name = "io_bazel_rules_closure",
-    sha256 = "b8c6dfea8ad3e691037b7eeecf5ab18ae39b74a51ff74c377d4f5eff97c894f4",
     strip_prefix = "rules_closure-0.4.0",
-    url = "http://bazel-mirror.storage.googleapis.com/github.com/bazelbuild/rules_closure/archive/0.4.0.tar.gz",
+    sha256 = "b8c6dfea8ad3e691037b7eeecf5ab18ae39b74a51ff74c377d4f5eff97c894f4",
+    urls = [
+        "http://bazel-mirror.storage.googleapis.com/github.com/bazelbuild/rules_closure/archive/0.4.0.tar.gz",
+        "https://github.com/bazelbuild/rules_closure/archive/0.4.0.tar.gz",
+    ],
 )
 
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_repositories")
@@ -139,8 +142,8 @@ Please see the test directories within this project for concrete examples of usa
 
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_library")
-closure_js_library(name, srcs, data, deps, exports, suppress, convention,
-                   no_closure_library)
+closure_js_library(name, srcs, data, deps, language, exports, suppress,
+                   convention, no_closure_library)
 ```
 
 Defines a set of JavaScript sources.
@@ -184,17 +187,38 @@ This rule can be referenced as though it were the following:
   point to [closure_js_library], [closure_js_template_library],
   [closure_css_library] and [closure_js_proto_library] rules.
 
-  This rule performs strict dependency checking. Your dependency graph must form
-  an [acyclic][acyclic] transitive closure, otherwise a build error is
-  raised. Google discovered the hard way that these properties are essential for
-  ensuring the maintainability of large codebases. What it means is explained in
-  the following diagram:
+- **language:** (String; optional; default is `"ECMASCRIPT5_STRICT"`) Variant of
+  JavaScript in which `srcs` are written. The following are valid options:
 
-  ![Strict Dependency Checking Diagram](https://i.imgur.com/sN30nmC.png)
+  - `ECMASCRIPT6_STRICT`: Nitpicky, shiny new JavaScript.
+  - `ECMASCRIPT5_STRICT`: Nitpicky, traditional JavaScript.
+  - `ECMASCRIPT6`: Shiny new JavaScript.
+  - `ECMASCRIPT5`: Traditional JavaScript.
+  - `ECMASCRIPT3`: 90's JavaScript.
+  - `ANY`: Indicates sources are compatible with any variant of JavaScript.
 
-  This rule also checks CSS dependencies at compile-time. The build will fail if
-  the class names referenced in sources using `goog.getCssName()` are not
-  provided by the [closure_css_library] listed in `deps`.
+  Maintaining this attribute for your library rules is important because
+  [closure_js_binary] checks the `language` attribute of dependencies to
+  determine if it's a legal combination that's safe to compile.
+
+  ![ECMAScript Language Combinations Diagram](https://i.imgur.com/xNZ9FAr.png)
+
+  Combinations that traverse a red line cause strictness to decay and a warning
+  will be emitted. For example, if just one library is unstrict, then strictness
+  will be removed for your entire binary.  Therefore we *strongly* recommend
+  that you use strict variants.
+
+  **ProTip:** You are not required to put `"use strict"` at the tops of your
+  files. The Closure Compiler generates that in the output for you.
+
+  The default language is `ECMASCRIPT5_STRICT` for three reasons. First, we want
+  to make the most conservative recommendation possible. Some ES6 features have
+  not yet been implemented in the Closure Compiler. We're working on
+  that. Secondly, it upgrades easily into `ECMASCRIPT6_STRICT`, should you
+  choose to use it later. Thirdly, PhantomJS only supports `ECMASCRIPT5_STRICT`,
+  so your unit tests will be able to run lightning fast in raw sources mode if
+  you write your code exclusively in that language. (XXX: Unfortunately a
+  [bug][phantomjs-bug] in PhantomJS is blocking this at the moment.)
 
 - **exports:** (List of [labels]; optional) Listing dependencies here will cause
   them to become *direct* dependencies in parent rules. This functions similarly
@@ -203,7 +227,7 @@ This rule can be referenced as though it were the following:
   the package. Another use is to roll up a bunch of fine-grained libraries into
   a single big one.
 
-- **suppress:** (List of String; optional; default is `[]`) List of codes the
+- **suppress** (List of String; optional; default is `[]`) List of codes the
   linter should ignore. Warning and error messages that are allowed to be
   suppressed, will display the codes for disabling it. For example, if the
   linter says:
@@ -219,7 +243,7 @@ This rule can be referenced as though it were the following:
   If a code is used that isn't necessary, an error is raised. Therefore the use
   of fine-grained suppression codes is maintainable.
 
-- **convention:** (String; optional; default is `"CLOSURE"`) Specifies the coding
+- **convention** (String; optional; default is `"CLOSURE"`) Specifies the coding
   convention which affects how the linter operates. This can be the following
   values:
 
@@ -230,10 +254,7 @@ This rule can be referenced as though it were the following:
     linting. See the [Google JavaScript Style Guide] for more information.
   - `JQUERY`: Take [jQuery coding conventions] into consideration when linting.
 
-  Changing this value will also disable compiler checks that are deemed
-  convention specific.
-
-- **no_closure_library:** (Boolean; optional; default is `False`) Do not link
+- **no_closure_library** (Boolean; optional; default is `False`) Do not link
   Closure Library [base.js]. If this flag is used, an error will be raised if
   any `deps` do not also specify this flag.
 
@@ -269,11 +290,9 @@ This rule must be used in conjunction with [closure_js_library].
 
 - *name*.js: A minified JavaScript file containing all transitive sources.
 
-- *name*.js.map: Sourcemap file containing which contains all the raw source
-  code to your app. This file can be loaded into browsers such as Chrome and
-  Firefox to view a stacktrace when an error is thrown by compiled sources.
-  **Warning:** This file should be ACL'd on the web server to prevent the public
-  from reading confidential source code.
+- *name*.js.map: Sourcemap file mapping compiled sources to their raw
+  sources. This file can be loaded into browsers such as Chrome and Firefox to
+  view a stacktrace when an error is thrown by compiled sources.
 
 #### Rule Polymorphism
 
@@ -282,9 +301,9 @@ This rule can be referenced as though it were the following:
 - [filegroup]: `srcs` will be the .js and .js.map output files and `data` will
   contain those files in addition to all transitive JS sources and data.
 
-- [closure_js_library]: `srcs` will be the .js output file, `deps` will be
-  empty, `data` will contain all transitive data, and `no_closure_library` will
-  be `True`.
+- [closure_js_library]: `srcs` will be the .js output file, `language` will be
+  the output language, `deps` will be empty, `data` will contain all transitive
+  data, and `no_closure_library` will be `True`.
 
 ### Arguments
 
@@ -323,9 +342,10 @@ This rule can be referenced as though it were the following:
   mode. Assert statements will not be stripped. Dependency directives will be
   removed.
 
-- **language:** (String; optional; default is `"ECMASCRIPT5"`) Output language
-  variant to which library sources are transpiled. Users wishing to support IE8
-  should set this to `"ECMASCRIPT3"`.
+- **language:** (String; optional; default is `"ECMASCRIPT3"`) Output language
+  variant to which library sources are transpiled. The default is ES3 because it
+  works in all browsers. The input language is calculated automatically based on
+  the `language` attribute of [closure_js_library] dependencies.
 
 - **entry_points:** (List of String; optional; default is `[]`) List of
   unreferenced namespaces that should *not* be pruned by the compiler. This
@@ -379,23 +399,10 @@ This rule can be referenced as though it were the following:
   has some fringe use cases, such as minifying JSON messages. However it's
   recommended that you use protobuf instead.
 
-- **suppress_on_all_sources_in_transitive_closure:** (List of String; optional;
-  default is `[]`) When suppressing warnings, it is better to put a suppress
-  code on the [closure_js_library] rule that defined the source responsible for
-  an error. This attribute provides an escape hatch for situations in which that
-  is unfeasible or burdensome.
-
 - **defs:** (List of strings; optional) Specifies additional flags to be passed
   to the Closure Compiler, e.g. `"--hide_warnings_for=some/path/"`. To see what
   flags are available, run:
   `bazel run @io_bazel_rules_closure//third_party/java/jscomp:main -- --help`
-
-- **nodefs:** (List of strings; optional) Specifies arguments that should be
-  removed from the argument list that would otherwise be passed to the Closure
-  Compiler. This provides an escape hatch for some of the "sane defaults"
-  decided upon by Closure Rules. For example, users wishing to support IE7 might
-  set this value to `nodefs = ["--define=goog.json.USE_NATIVE_JSON"]` which will
-  permit the Closure Library's JSON implementation to bloat the output binary.
 
 ### Support for AngularJS
 
@@ -417,7 +424,7 @@ closure_js_binary(
 
 ```python
 load("@io_bazel_rules_closure//closure:defs.bzl", "closure_js_test")
-closure_js_test(name, srcs, data, deps, css, html, pedantic, suppress,
+closure_js_test(name, srcs, data, deps, css, html, language, pedantic, suppress,
                 compilation_level, entry_points, defs)
 ```
 
@@ -447,7 +454,7 @@ Your test will run within a hermetically sealed environment. You are not allowed
 to send HTTP requests to any external servers. It is expected that you'll use
 Closure Library mocks for things like XHR. However a local HTTP server is
 started up on a random port that allows to request runfiles under the
-`/_/runfiles/WORKSPACE_NAME/` path.
+`/filez/WORKSPACE_NAME/` path.
 
 #### Rule Polymorphism
 
@@ -473,6 +480,8 @@ This rule can be referenced as though it were the following:
 
 - **html:** Passed to [phantomjs_test].
 
+- **language:** Passed to [closure_js_binary].
+
 - **compilation_level:** Passed to [closure_js_binary]. Setting this to
   `"WHITESPACE_ONLY"` will cause tests to run significantly faster (at the
   expense of type checking.)
@@ -495,8 +504,7 @@ phantomjs_test(name, data, deps, html, harness, runner)
 
 Runs PhantomJS (QtWebKit) for unit testing purposes.
 
-This is a low level rule. Please use the [closure_js_test] macro. This rule is
-going to be removed soon in favor of [rules_webtesting].
+This is a low level rule. Please use the [closure_js_test] macro if possible.
 
 #### Rule Polymorphism
 
@@ -516,15 +524,7 @@ This rule can be referenced as though it were the following:
 
 - **deps:** (List of [labels]; required) Labels of Skylark rules exporting
   `transitive_js_srcs`. Each source will be inserted into the webpage in its own
-  `<script>` tag based on depth-first post-ordering. **Warning:** PhantomJS
-  freezes if there's a lot of resources to load. So it's better to depend on
-  [closure_js_binary] rather than [closure_js_library].
-
-- **runner:** (Label; optional) Special JS dependency that is guaranteed to be
-  loaded last inside the web page. This should run whatever tests got loaded by
-  `deps` and then invoke `callPhantom` to report the result to the `harness`.
-  The [closure_js_test] macro sets this to
-  `"@io_bazel_rules_closure//closure/testing:phantomjs_jsunit_runner"`.
+  `<script>` tag based on a depth-first preordering.
 
 - **html:** (Label; optional; default is
   `"@io_bazel_rules_closure//closure/testing:empty.html"`) HTML file containing
@@ -535,6 +535,12 @@ This rule can be referenced as though it were the following:
   `"@io_bazel_rules_closure//closure/testing:phantomjs_harness"`) JS binary or
   library exporting a single source file, to be used as the PhantomJS outer
   script.
+
+- **runner:** (Label; optional; default is
+  `"@io_bazel_rules_closure//closure/testing:phantomjs_jsunit_runner"`) Same as
+  `deps` but guaranteed to be loaded inside the virtual web page last. This
+  should run whatever tests got loaded by `deps` and then invoke `callPhantom`
+  to report the result to the `harness`.
 
 
 ## closure\_js\_deps
@@ -551,12 +557,11 @@ mode, because it tells the Closure Library how to load namespaces from the web
 server that are requested by `goog.require()`.
 
 For example, if you've made your source runfiles available under a protected
-admin-only path named `/_/runfiles/`, then raw source mode could be used as
-follows:
+admin-only path named `/filez/`, then raw source mode could be used as follows:
 
 ```html
-<script src="/_/runfiles/closure_library/closure/goog/base.js"></script>
-<script src="/_/runfiles/__main__/myapp/deps.js"></script>
+<script src="/filez/external/closure_library/closure/goog/base.js"></script>
+<script src="/filez/myapp/deps.js"></script>
 <script>goog.require('myapp.main');</script>
 <script>myapp.main();</script>
 ```
@@ -626,8 +631,9 @@ This rule can be referenced as though it were the following:
   contain all transitive JS sources and data.
 
 - [closure_js_library]: `srcs` will be the generated JS output files, `data`
-  will contain the transitive data, `deps` will contain necessary libraries, and
-  `no_closure_library` will be `False`.
+  will contain the transitive data, `language` will be `ECMASCRIPT5_STRICT`,
+  `deps` will contain necessary libraries, and `no_closure_library` will be
+  `False`.
 
 ### Arguments
 
@@ -777,9 +783,9 @@ This rule can be referenced as though it were the following:
   contain all transitive CSS/GSS sources and data.
 
 - [closure_js_library]: `srcs` is empty, `data` is the transitive CSS sources
-  and data, and `no_closure_library` is `True`. However the
-  [closure_css_library] rule does pass special information along when used as a
-  dep in [closure_js_library]. See its documentation to learn more.
+  and data, `language` is `ANY`, and `no_closure_library` is `True`. However the
+  closure\_css\_library rule does pass special information along when used as a
+  dep in closure\_js\_library. See its documentation to learn more.
 
 ### Arguments
 
@@ -956,7 +962,8 @@ This rule can be referenced as though it were the following:
   sources and data.
 
 - [closure_js_library]: `srcs` will be the generated JS output files, `data`
-  will contain the transitive data, and `deps` will contain necessary libraries.
+  will contain the transitive data, `language` will be `ECMASCRIPT5_STRICT`, and
+  `deps` will contain necessary libraries.
 
 ### Arguments
 
@@ -980,59 +987,6 @@ This rule can be referenced as though it were the following:
   - `IMPORT_COMMONJS`   // require()
   - `IMPORT_BROWSER`    // no import statements
   - `IMPORT_ES6`        // import { member } from ''
-
-
-## webfiles
-
-```python
-load("@io_bazel_rules_closure//closure:defs.bzl", "webfiles")
-webfiles(name, path, srcs, deps, data)
-```
-
-Defines set of public web server files.
-
-This rule is used to map files in the source tree to public web server paths.
-It is particularly suitable for web components, e.g. Polymer. Each component can
-depend on other components, which together form a directed acyclic graph. This
-graph can then be used for website validation and compilation.
-
-The dependency graph is validated by inspecting the relationships between files.
-Relative paths must be used when referencing other files. If a link, import, or
-image points to a file that isn't a direct dependency, then a build error
-occurs. This rule also enforces that sources are acyclic. The only exception is
-when referencing directories, URLs with a hostname, or data URIs.
-
-This rule is executable. When invoked with `bazel run` it creates a development
-web server that serves all static assets in the transitive closure of a
-particular rule. This includes both runfiles and webfiles. Runfiles are long
-canonical confidential Bazel paths that are available under a special prefix,
-e.g. `/_/runfiles/org_tensorflow/tensorflow/tensorboard/components/foo/foo.html`.
-Webfiles are a subset of runfiles which are public and mapped to hard-coded
-paths on the web server, e.g. `/foo/foo.html`. These paths are symbolic links
-which allow live source editing. The 404 page displays a listing of webfiles
-beginning with the path prefix in a convenient reverse topological order.
-
-#### Rule Polymorphism
-
-This rule can be referenced as though it were the following:
-
-- [filegroup]: `srcs` will be the `srcs` of this rule, `data` will contain all
-  transitive sources, data, and other runfiles.
-
-### Arguments
-
-- **name:** ([Name]; required) Unique name for this rule.
-
-- **path:** (String; required) Web server path under which `srcs` are prefixed.
-  Must begin with / and must not end with /.
-
-- **deps:** (List of [labels]; required) Labels of other webfiles rules
-  providing sources referenced by the `srcs` in this rule.
-
-- **data:** (List of [labels]; optional) Additional runfiles for the local HTTP
-  server to serve, under the `/_/runfiles/` + repository path. This attribute is
-  sometimes necessary for confidential files, e.g. raw uncompiled sources, that
-  need to be served in development but never made available in production.
 
 
 [Bazel]: http://bazel.io/
@@ -1084,6 +1038,4 @@ This rule can be referenced as though it were the following:
 [protobuf-generator]: https://github.com/google/protobuf/blob/master/src/google/protobuf/compiler/js/js_generator.h
 [protobuf-js]: https://github.com/google/protobuf/tree/master/js
 [repositories.bzl]: https://github.com/bazelbuild/rules_closure/tree/master/closure/repositories.bzl
-[rules_webtesting]: https://github.com/bazelbuild/rules_webtesting
 [verbose]: https://github.com/google/closure-library/blob/master/closure/goog/html/safehtml.js
-[webfiles]: #webfiles
