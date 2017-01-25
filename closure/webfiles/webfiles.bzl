@@ -50,9 +50,11 @@ def _webfiles(ctx):
     webpath = "%s/%s" % ("" if ctx.attr.path == "/" else ctx.attr.path,
                          get_path_relative_to_package(src))
     if webpath in new_webpaths:
-      fail("name collision in srcs: " + webpath)
+      _fail(ctx, "multiple srcs within %s define the webpath %s " % (
+          ctx.label, webpath))
     if webpath in webpaths:
-      fail("webpath already defined by child rules: " + webpath)
+      _fail(ctx, "webpath %s was defined by %s when already defined by deps" % (
+          webpath, ctx.label))
     new_webpaths.append(webpath)
     manifest_srcs.append(struct(
         path=src.path,
@@ -129,6 +131,12 @@ def _webfiles(ctx):
                                                    ctx.outputs.dummy],
           transitive_files=ctx.attr._WebfilesServer.data_runfiles.files,
           collect_data=True))
+
+def _fail(ctx, message):
+  if ctx.attr.suppress == ["*"]:
+    print(message)
+  else:
+    fail(message)
 
 def get_path_relative_to_package(artifact):
   """Returns file path relative to the package that declared it."""
