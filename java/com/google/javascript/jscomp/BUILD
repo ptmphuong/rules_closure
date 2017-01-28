@@ -37,11 +37,11 @@ java_library(
         "//javatests/com/google/javascript/jscomp:__pkg__",
     ],
     deps = [
-        "//closure/compiler",
         "//java/io/bazel/rules/closure:build_info_java_proto",
         "//java/io/bazel/rules/closure/program",
         "@args4j",
         "@com_google_guava",
+        "@com_google_javascript_closure_compiler",
         "@com_google_protobuf_java",
     ],
 )

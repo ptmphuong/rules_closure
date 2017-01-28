@@ -26,6 +26,9 @@ def closure_repositories(
     omit_com_google_code_gson=False,
     omit_com_google_common_html_types=False,
     omit_com_google_common_html_types_html_proto=False,
+    omit_com_google_dagger=False,
+    omit_com_google_dagger_compiler=False,
+    omit_com_google_dagger_producers=False,
     omit_com_google_errorprone_error_prone_annotations=False,
     omit_com_google_guava=False,
     omit_com_google_inject_extensions_guice_assistedinject=False,
@@ -77,6 +80,12 @@ def closure_repositories(
     com_google_common_html_types()
   if not omit_com_google_common_html_types_html_proto:
     com_google_common_html_types_html_proto()
+  if not omit_com_google_dagger:
+    com_google_dagger()
+  if not omit_com_google_dagger_compiler:
+    com_google_dagger_compiler()
+  if not omit_com_google_dagger_producers:
+    com_google_dagger_producers()
   if not omit_com_google_errorprone_error_prone_annotations:
     com_google_errorprone_error_prone_annotations()
   if not omit_com_google_guava:
@@ -323,6 +332,88 @@ def com_google_common_html_types_html_proto():
           "http://bazel-mirror.storage.googleapis.com/raw.githubusercontent.com/google/safe-html-types/release-1.0.5/proto/src/main/protobuf/webutil/html/types/proto/html.proto",
           "https://raw.githubusercontent.com/google/safe-html-types/release-1.0.5/proto/src/main/protobuf/webutil/html/types/proto/html.proto",
       ],
+  )
+
+def com_google_dagger():
+  java_import_external(
+      name = "com_google_dagger",
+      jar_sha256 = "5070e1dff5c551a4908ba7b93125c0243de2a688aed3d2f475357d86d9d7c0ad",
+      jar_urls = [
+          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger/2.8/dagger-2.8.jar",
+          "http://repo1.maven.org/maven2/com/google/dagger/dagger/2.8/dagger-2.8.jar",
+          "http://maven.ibiblio.org/maven2/com/google/dagger/dagger/2.8/dagger-2.8.jar",
+      ],
+      licenses = ["notice"],  # Apache 2.0
+      deps = ["@javax_inject"],
+      generated_rule_name = "runtime",
+      extra_build_file_content = "\n".join([
+          "java_library(",
+          "    name = \"com_google_dagger\",",
+          "    exported_plugins = [\"@com_google_dagger_compiler//:ComponentProcessor\"],",
+          "    exports = [",
+          "        \":runtime\",",
+          "        \"@javax_inject\",",
+          "    ],",
+          ")",
+      ]),
+  )
+
+def com_google_dagger_compiler():
+  java_import_external(
+      name = "com_google_dagger_compiler",
+      jar_sha256 = "7b2686f94907868c5364e9965601ffe2f020ba4af1849ad9b57dad5fe3fa6242",
+      jar_urls = [
+          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.8/dagger-compiler-2.8.jar",
+          "http://maven.ibiblio.org/maven2/com/google/dagger/dagger-compiler/2.8/dagger-compiler-2.8.jar",
+          "http://repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.8/dagger-compiler-2.8.jar",
+      ],
+      licenses = ["notice"],  # Apache 2.0
+      deps = [
+          "@com_google_code_findbugs_jsr305",
+          "@com_google_dagger//:runtime",
+          "@com_google_dagger_producers//:runtime",
+          "@com_google_guava",
+      ],
+      extra_build_file_content = "\n".join([
+          "java_plugin(",
+          "    name = \"ComponentProcessor\",",
+          # TODO(jart): https://github.com/bazelbuild/bazel/issues/2286
+          # "    output_licenses = [\"unencumbered\"],",
+          "    processor_class = \"dagger.internal.codegen.ComponentProcessor\",",
+          "    tags = [",
+          "        \"annotation=dagger.Component;genclass=${package}.Dagger${outerclasses}${classname}\",",
+          "        \"annotation=dagger.producers.ProductionComponent;genclass=${package}.Dagger${outerclasses}${classname}\",",
+          "    ],",
+          "    deps = [\":com_google_dagger_compiler\"],",
+          ")",
+      ]),
+  )
+
+def com_google_dagger_producers():
+  java_import_external(
+      name = "com_google_dagger_producers",
+      jar_sha256 = "1e4043e85f67de381d19e22c7932aaf7ff1611091be7e1aaae93f2c37f331cf2",
+      jar_urls = [
+          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.8/dagger-producers-2.8.jar",
+          "http://maven.ibiblio.org/maven2/com/google/dagger/dagger-producers/2.8/dagger-producers-2.8.jar",
+          "http://repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.8/dagger-producers-2.8.jar",
+      ],
+      licenses = ["notice"],  # Apache 2.0
+      deps = [
+          "@com_google_dagger//:runtime",
+          "@com_google_guava",
+      ],
+      generated_rule_name = "runtime",
+      extra_build_file_content = "\n".join([
+          "java_library(",
+          "    name = \"com_google_dagger\",",
+          "    exported_plugins = [\"@com_google_dagger_compiler//:ComponentProcessor\"],",
+          "    exports = [",
+          "        \":runtime\",",
+          "        \"@javax_inject\",",
+          "    ],",
+          ")",
+      ]),
   )
 
 def com_google_errorprone_error_prone_annotations():

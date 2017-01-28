@@ -32,6 +32,7 @@ java_library(
         "//java/io/bazel/rules/closure:tarjan",
         "//java/io/bazel/rules/closure/program",
         "@com_google_closure_stylesheets",
+        "@com_google_dagger",
         "@com_google_guava",
         "@com_google_protobuf_java",
         "@org_jsoup",

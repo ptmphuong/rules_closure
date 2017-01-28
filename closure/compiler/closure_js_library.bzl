@@ -62,7 +62,7 @@ def _closure_js_library(ctx):
     if hasattr(dep, 'closure_css_library'):
       stylesheets.append(dep.label)
 
-  # JsChecker is a program that's run via the ClosureUberAlles persistent Bazel
+  # JsChecker is a program that's run via the ClosureWorker persistent Bazel
   # worker. This program is a modded version of the Closure Compiler. It does
   # syntax checking and linting on the srcs files specified by this target, and
   # only this target. It does not output a JS file, but it does output a
@@ -156,7 +156,7 @@ def _closure_js_library(ctx):
   ctx.action(
       inputs=inputs,
       outputs=[ctx.outputs.info, ctx.outputs.stderr],
-      executable=ctx.executable._ClosureUberAlles,
+      executable=ctx.executable._ClosureWorker,
       arguments=["@@" + argfile.path],
       mnemonic="Closure",
       execution_requirements={"supports-workers": "1"},
@@ -257,8 +257,8 @@ closure_js_library = rule(
         # internal only
         "internal_descriptors": attr.label_list(allow_files=True),
         "internal_expect_failure": attr.bool(default=False),
-        "_ClosureUberAlles": attr.label(
-            default=Label("//java/io/bazel/rules/closure:ClosureUberAlles"),
+        "_ClosureWorker": attr.label(
+            default=Label("//java/io/bazel/rules/closure:ClosureWorker"),
             executable=True,
             cfg="host"),
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,

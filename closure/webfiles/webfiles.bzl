@@ -97,7 +97,7 @@ def _webfiles(ctx):
   ctx.action(
       inputs=inputs,
       outputs=[ctx.outputs.dummy],
-      executable=ctx.executable._ClosureUberAlles,
+      executable=ctx.executable._ClosureWorker,
       arguments=["@@" + argfile.path],
       mnemonic="Closure",
       execution_requirements={"supports-workers": "1"},
@@ -159,8 +159,8 @@ webfiles = rule(
         "exports": attr.label_list(),
         "data": attr.label_list(cfg="data", allow_files=True),
         "suppress": attr.string_list(),
-        "_ClosureUberAlles": attr.label(
-            default=Label("//java/io/bazel/rules/closure:ClosureUberAlles"),
+        "_ClosureWorker": attr.label(
+            default=Label("//java/io/bazel/rules/closure:ClosureWorker"),
             executable=True,
             cfg="host"),
         "_WebfilesServer": attr.label(

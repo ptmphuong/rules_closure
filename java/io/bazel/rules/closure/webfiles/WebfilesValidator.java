@@ -14,7 +14,6 @@
 
 package io.bazel.rules.closure.webfiles;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -46,6 +45,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.Set;
+import javax.inject.Inject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Node;
 import org.jsoup.parser.ParseError;
@@ -73,9 +73,14 @@ public class WebfilesValidator {
   private static final int MAX_HTML_PARSE_ERRORS_PER_FILE = 3;
 
   private final FileSystem fs;
+  private final Set<Webpath> accessibleAssets = new HashSet<>();
+  private final Multimap<Webpath, Webpath> relationships = HashMultimap.create();
+  private Multimap<String, String> errors;
+  private Supplier<? extends Iterable<Webfiles>> transitiveDeps;
 
-  public WebfilesValidator(FileSystem fs) {
-    this.fs = checkNotNull(fs, "fs");
+  @Inject
+  WebfilesValidator(FileSystem fs) {
+    this.fs = fs;
   }
 
   /** Validates {@code srcs} in {@code manifest} and returns error messages in categories. */
@@ -83,160 +88,155 @@ public class WebfilesValidator {
       Webfiles target,
       Iterable<Webfiles> directDeps,
       Supplier<? extends Iterable<Webfiles>> transitiveDeps)
-          throws IOException {
-    Impl impl = new Impl(target, directDeps, transitiveDeps);
-    impl.validate();
-    return impl.errors;
-  }
-
-  private final class Impl {
-    private final Webfiles target;
-    private final Iterable<Webfiles> directDeps;
-    private final Supplier<? extends Iterable<Webfiles>> transitiveDeps;
-    private final Set<Webpath> accessibleAssets = new HashSet<>();
-    private final Multimap<Webpath, Webpath> relationships = HashMultimap.create();
-    final Multimap<String, String> errors = ArrayListMultimap.create();
-
-    Impl(
-        Webfiles target,
-        Iterable<Webfiles> directDeps,
-        Supplier<? extends Iterable<Webfiles>> transitiveDeps) {
-      this.target = target;
-      this.directDeps = directDeps;
-      this.transitiveDeps = transitiveDeps;
+      throws IOException {
+    this.errors = ArrayListMultimap.create();
+    this.transitiveDeps = transitiveDeps;
+    accessibleAssets.clear();
+    relationships.clear();
+    for (WebfilesSource src : target.getSrcList()) {
+      accessibleAssets.add(Webpath.get(src.getWebpath()));
     }
-
-    void validate() throws IOException {
-      for (WebfilesSource src : target.getSrcList()) {
+    for (Webfiles dep : directDeps) {
+      for (WebfilesSource src : dep.getSrcList()) {
         accessibleAssets.add(Webpath.get(src.getWebpath()));
       }
-      for (Webfiles dep : directDeps) {
-        for (WebfilesSource src : dep.getSrcList()) {
-          accessibleAssets.add(Webpath.get(src.getWebpath()));
-        }
-      }
-      for (WebfilesSource src : target.getSrcList()) {
-        Path path = fs.getPath(src.getPath());
-        if (src.getPath().endsWith(".html")) {
-          validateHtml(path, Webpath.get(src.getWebpath()));
-        } else if (src.getPath().endsWith(".css")) {
-          validateCss(
-              path,
-              Webpath.get(src.getWebpath()),
-              new SourceCode(path.toString(), new String(Files.readAllBytes(path), UTF_8)));
-        }
-      }
-      for (ImmutableSet<Webpath> scc : Tarjan.findStronglyConnectedComponents(relationships)) {
-        errors.put(
-            CYCLES_ERROR,
-            String.format(
-                "These webpaths are strongly connected; please make your html acyclic\n\n  - %s\n",
-                Joiner.on("\n  - ").join(Ordering.natural().sortedCopy(scc))));
+    }
+    for (WebfilesSource src : target.getSrcList()) {
+      Path path = fs.getPath(src.getPath());
+      if (src.getPath().endsWith(".html")) {
+        validateHtml(path, Webpath.get(src.getWebpath()));
+      } else if (src.getPath().endsWith(".css")) {
+        validateCss(
+            path,
+            Webpath.get(src.getWebpath()),
+            new SourceCode(path.toString(), new String(Files.readAllBytes(path), UTF_8)));
       }
     }
-
-    private void validateHtml(final Path path, final Webpath origin) throws IOException {
-      HtmlParser.parse(
-          path,
-          new HtmlParser.Callback() {
-            @Override
-            public void onReference(Webpath destination) {
-              addRelationship(path, origin, destination);
-            }
-
-            @Override
-            public void onError(ParseError error) {
-              errors.put(
-                  HTML_SYNTAX_ERROR,
-                  String.format(
-                      "%s (offset %d): %s", path, error.getPosition(), error.getErrorMessage()));
-            }
-          });
+    for (ImmutableSet<Webpath> scc : Tarjan.findStronglyConnectedComponents(relationships)) {
+      errors.put(
+          CYCLES_ERROR,
+          String.format(
+              "These webpaths are strongly connected; please make your html acyclic\n\n  - %s\n",
+              Joiner.on("\n  - ").join(Ordering.natural().sortedCopy(scc))));
     }
+    return errors;
+  }
 
-    private void validateCss(final Path path, final Webpath origin, SourceCode source) {
-      GssParser parser = new GssParser(source);
-      CssTree stylesheet;
-      try {
-        stylesheet = parser.parse();
-      } catch (GssParserException e) {
-        errors.put(CSS_SYNTAX_ERROR, e.getMessage());
-        return;
-      }
-      new PassRunner(
-              new JobDescriptionBuilder().getJobDescription(),
-              new BasicErrorManager() {
-                @Override
-                public void print(String message) {
-                  Impl.this.errors.put(
-                      CSS_VALIDATION_ERROR,
-                      String.format("%s: %s", source.getFileName(), message));
-                }
-              })
-          .runPasses(stylesheet);
-      stylesheet.getVisitController().startVisit(
-          new DefaultTreeVisitor() {
-            @Override
-            public boolean enterFunctionNode(CssFunctionNode function) {
-              return function.getFunction().getFunctionName().equals("url");
-            }
-
-            @Override
-            public boolean enterArgumentNode(CssValueNode argument) {
-              String uri = nullToEmpty(argument.getValue());
-              if (!shouldIgnoreUri(uri)) {
-                addRelationship(path, origin, Webpath.get(uri));
-              }
-              return false;
-            }
-          });
-    }
-
-    private void addRelationship(Path path, Webpath origin, Webpath relativeDest) {
-      if (relativeDest.isAbsolute()) {
-        // Even though this code supports absolute paths, we're going to forbid them anyway, because
-        // we might want to write a rule in the future that allows the user to reposition a
-        // transitive closure of webfiles into a subdirectory on the web server.
-        errors.put(
-            ABSOLUTE_PATH_ERROR,
-            String.format("%s: Please use relative path for asset: %s", path, relativeDest));
-        return;
-      }
-      Webpath dest = origin.lookup(relativeDest);
-      if (dest == null) {
-        errors.put(
-            PATH_NORMALIZATION_ERROR,
-            String.format("%s: Could not normalize %s against %s", path, relativeDest, origin));
-        return;
-      }
-      if (relationships.put(origin, dest) && !accessibleAssets.contains(dest)) {
-        Optional<String> label = tryToFindLabelOfTargetProvidingAsset(dest);
-        errors.put(
-            STRICT_DEPENDENCIES_ERROR,
-            String.format(
-                "%s: Referenced %s (%s) without depending on %s",
-                path, relativeDest, dest, label.or("a webfiles() rule providing it")));
-        return;
-      }
-    }
-
-    private Optional<String> tryToFindLabelOfTargetProvidingAsset(Webpath webpath) {
-      String path = webpath.toString();
-      for (Webfiles dep : transitiveDeps.get()) {
-        for (WebfilesSource src : dep.getSrcList()) {
-          if (path.equals(src.getWebpath())) {
-            return Optional.of(dep.getLabel());
+  private void validateHtml(final Path path, final Webpath origin) throws IOException {
+    HtmlParser.parse(
+        path,
+        new HtmlParser.Callback() {
+          @Override
+          public void onReference(Webpath destination) {
+            addRelationship(path, origin, destination);
           }
+
+          @Override
+          public void onError(ParseError error) {
+            errors.put(
+                HTML_SYNTAX_ERROR,
+                String.format(
+                    "%s (offset %d): %s", path, error.getPosition(), error.getErrorMessage()));
+          }
+        });
+  }
+
+  private void validateCss(final Path path, final Webpath origin, final SourceCode source) {
+    GssParser parser = new GssParser(source);
+    CssTree stylesheet;
+    try {
+      stylesheet = parser.parse();
+    } catch (GssParserException e) {
+      errors.put(CSS_SYNTAX_ERROR, e.getMessage());
+      return;
+    }
+    new PassRunner(
+            new JobDescriptionBuilder().getJobDescription(),
+            new BasicErrorManager() {
+              @Override
+              public void print(String message) {
+                WebfilesValidator.this.errors.put(
+                    CSS_VALIDATION_ERROR, String.format("%s: %s", source.getFileName(), message));
+              }
+            })
+        .runPasses(stylesheet);
+    stylesheet
+        .getVisitController()
+        .startVisit(
+            new DefaultTreeVisitor() {
+              @Override
+              public boolean enterFunctionNode(CssFunctionNode function) {
+                return function.getFunction().getFunctionName().equals("url");
+              }
+
+              @Override
+              public boolean enterArgumentNode(CssValueNode argument) {
+                String uri = nullToEmpty(argument.getValue());
+                if (!shouldIgnoreUri(uri)) {
+                  addRelationship(path, origin, Webpath.get(uri));
+                }
+                return false;
+              }
+            });
+  }
+
+  private void addRelationship(Path path, Webpath origin, Webpath relativeDest) {
+    if (relativeDest.isAbsolute()) {
+      // Even though this code supports absolute paths, we're going to forbid them anyway, because
+      // we might want to write a rule in the future that allows the user to reposition a
+      // transitive closure of webfiles into a subdirectory on the web server.
+      errors.put(
+          ABSOLUTE_PATH_ERROR,
+          String.format("%s: Please use relative path for asset: %s", path, relativeDest));
+      return;
+    }
+    Webpath dest = origin.lookup(relativeDest);
+    if (dest == null) {
+      errors.put(
+          PATH_NORMALIZATION_ERROR,
+          String.format("%s: Could not normalize %s against %s", path, relativeDest, origin));
+      return;
+    }
+    if (relationships.put(origin, dest) && !accessibleAssets.contains(dest)) {
+      Optional<String> label = tryToFindLabelOfTargetProvidingAsset(dest);
+      errors.put(
+          STRICT_DEPENDENCIES_ERROR,
+          String.format(
+              "%s: Referenced %s (%s) without depending on %s",
+              path, relativeDest, dest, label.or("a webfiles() rule providing it")));
+      return;
+    }
+  }
+
+  private Optional<String> tryToFindLabelOfTargetProvidingAsset(Webpath webpath) {
+    String path = webpath.toString();
+    for (Webfiles dep : transitiveDeps.get()) {
+      for (WebfilesSource src : dep.getSrcList()) {
+        if (path.equals(src.getWebpath())) {
+          return Optional.of(dep.getLabel());
         }
       }
-      return Optional.absent();
     }
+    return Optional.absent();
+  }
+
+  private static boolean shouldIgnoreUri(String uri) {
+    return uri.isEmpty()
+        || uri.endsWith("/")
+        || uri.contains("//")
+        || uri.startsWith("data:")
+        // The following are intended to filter out URLs with Polymer variables.
+        || uri.startsWith("[")
+        || uri.startsWith("{")
+        || (uri.contains("[[") && uri.contains("]]"))
+        || (uri.contains("{{") && uri.contains("}}"));
   }
 
   private static class HtmlParser implements NodeVisitor {
 
     interface Callback {
       void onReference(Webpath webpath);
+
       void onError(ParseError error);
     }
 
@@ -276,17 +276,5 @@ public class WebfilesValidator {
       }
       callback.onReference(Webpath.get(uri));
     }
-  }
-
-  private static boolean shouldIgnoreUri(String uri) {
-    return uri.isEmpty()
-        || uri.endsWith("/")
-        || uri.contains("//")
-        || uri.startsWith("data:")
-        // The following are intended to filter out URLs with Polymer variables.
-        || uri.startsWith("[")
-        || uri.startsWith("{")
-        || (uri.contains("[[") && uri.contains("]]"))
-        || (uri.contains("{{") && uri.contains("}}"));
   }
 }

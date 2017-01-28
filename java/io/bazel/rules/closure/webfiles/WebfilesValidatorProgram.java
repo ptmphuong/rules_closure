@@ -14,12 +14,11 @@
 
 package io.bazel.rules.closure.webfiles;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Suppliers.memoize;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Supplier;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
@@ -38,6 +37,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import javax.inject.Inject;
 
 /** CLI for {@link WebfilesValidator}. */
 public final class WebfilesValidatorProgram implements CommandLineProgram {
@@ -62,13 +62,14 @@ public final class WebfilesValidatorProgram implements CommandLineProgram {
   private final FileSystem fs;
   private final WebfilesValidator validator;
 
-  public WebfilesValidatorProgram(
+  @Inject
+  WebfilesValidatorProgram(
       PrintStream output,
       FileSystem fs,
       WebfilesValidator validator) {
-    this.output = checkNotNull(output, "output");
-    this.fs = checkNotNull(fs, "fs");
-    this.validator = checkNotNull(validator, "validator");
+    this.output = output;
+    this.fs = fs;
+    this.validator = validator;
   }
 
   @Override
@@ -116,7 +117,7 @@ public final class WebfilesValidatorProgram implements CommandLineProgram {
         validator.validate(
             target,
             directDeps,
-            memoize(
+            Suppliers.memoize(
                 new Supplier<ImmutableList<Webfiles>>() {
                   @Override
                   public ImmutableList<Webfiles> get() {

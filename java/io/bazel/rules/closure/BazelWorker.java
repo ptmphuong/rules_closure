@@ -16,7 +16,6 @@
 
 package io.bazel.rules.closure;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.CharMatcher;
@@ -32,9 +31,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InterruptedIOException;
 import java.io.PrintStream;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import javax.inject.Inject;
+import javax.inject.Qualifier;
 
 /**
  * Bazel worker runner.
@@ -42,17 +46,26 @@ import java.nio.file.Paths;
  * <p>This class adapts a traditional command line program so it can be spawned by Bazel as a
  * persistent worker process that handles multiple invocations per JVM. It will also be backwards
  * compatible with being run as a normal single-invocation command.
+ *
+ * @param <T> delegate program type
  */
-final class BazelWorker implements CommandLineProgram {
+final class BazelWorker<T extends CommandLineProgram> implements CommandLineProgram {
+
+  /** Qualifier for name of Bazel persistent worker. */
+  @Qualifier
+  @Documented
+  @Retention(RetentionPolicy.RUNTIME)
+  @interface Mnemonic {}
 
   private final CommandLineProgram delegate;
   private final String mnemonic;
   private final PrintStream output;
 
-  BazelWorker(PrintStream output, CommandLineProgram delegate, String mnemonic) {
-    this.output = checkNotNull(output, "output");
-    this.delegate = checkNotNull(delegate, "delegate");
-    this.mnemonic = checkNotNull(mnemonic, "mnemonic");
+  @Inject
+  BazelWorker(T delegate, PrintStream output, @Mnemonic String mnemonic) {
+    this.delegate = delegate;
+    this.output = output;
+    this.mnemonic = mnemonic;
   }
 
   @Override
@@ -106,7 +119,8 @@ final class BazelWorker implements CommandLineProgram {
       if (wasInterrupted(e)) {
         return 0;
       }
-      throw Throwables.propagate(e);
+      Throwables.throwIfUnchecked(e);
+      throw new RuntimeException(e);
     } finally {
       System.setIn(realStdIn);
       System.setOut(realStdOut);
@@ -118,7 +132,7 @@ final class BazelWorker implements CommandLineProgram {
     String lastArg = Iterables.getLast(args, "");
     if (lastArg.startsWith("@")) {
       Path flagFile = Paths.get(CharMatcher.is('@').trimLeadingFrom(lastArg));
-      if (isWorker && lastArg.startsWith("@@") || Files.exists(flagFile)) {
+      if ((isWorker && lastArg.startsWith("@@")) || Files.exists(flagFile)) {
         if (!isWorker && !mnemonic.isEmpty()) {
           output.printf(
               "HINT: %s will compile faster if you run: "

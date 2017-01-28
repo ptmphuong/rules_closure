@@ -20,45 +20,27 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.javascript.jscomp.JsChecker;
 import com.google.javascript.jscomp.JsCompiler;
+import dagger.Component;
+import dagger.Module;
+import dagger.Provides;
+import io.bazel.rules.closure.BazelWorker.Mnemonic;
 import io.bazel.rules.closure.program.CommandLineProgram;
-import io.bazel.rules.closure.webfiles.WebfilesValidator;
 import io.bazel.rules.closure.webfiles.WebfilesValidatorProgram;
 import java.io.PrintStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
-import javax.inject.Provider;
+import javax.inject.Inject;
 
 /** Bazel worker for all Closure Tools programs, some of which are modded. */
-public final class ClosureUberAlles implements CommandLineProgram {
-
-  public static void main(String[] args) {
-    // Please note that dependency injection is being done by hand.
-    PrintStream output = System.err;
-    final FileSystem fs = FileSystems.getDefault();
-    final WebfilesValidator webfilesValidator = new WebfilesValidator(fs);
-    Provider<WebfilesValidatorProgram> webfilesValidatorProgram =
-        new Provider<WebfilesValidatorProgram>() {
-          @Override
-          public WebfilesValidatorProgram get() {
-            return new WebfilesValidatorProgram(System.err, fs, webfilesValidator);
-          }
-        };
-    System.exit(
-        new BazelWorker(
-                output,
-                new ClosureUberAlles(output, webfilesValidatorProgram),
-                "Closure")
-            .apply(ImmutableList.copyOf(args)));
-  }
+public final class ClosureWorker implements CommandLineProgram {
 
   private final PrintStream output;
-  private final Provider<WebfilesValidatorProgram> webfilesValidatorProgram;
+  private final WebfilesValidatorProgram webfilesValidator;
 
-  private ClosureUberAlles(
-      PrintStream output,
-      Provider<WebfilesValidatorProgram> webfilesValidatorProgram) {
+  @Inject
+  ClosureWorker(PrintStream output, WebfilesValidatorProgram webfilesValidator) {
     this.output = output;
-    this.webfilesValidatorProgram = webfilesValidatorProgram;
+    this.webfilesValidator = webfilesValidator;
   }
 
   @Override
@@ -72,12 +54,41 @@ public final class ClosureUberAlles implements CommandLineProgram {
       case "JsCompiler":
         return new JsCompiler().apply(tail);
       case "WebfilesValidator":
-        return webfilesValidatorProgram.get().apply(tail);
+        return webfilesValidator.apply(tail);
       default:
         output.println(
-            "\nERROR: First flag to ClosureUberAlles should be specific compiler to run, "
+            "\nERROR: First flag to ClosureWorker should be specific compiler to run, "
                 + "e.g. JsChecker\n");
         return 1;
     }
+  }
+
+  @Module
+  static class Config {
+
+    @Provides
+    @Mnemonic
+    static String provideMnemonic() {
+      return "Closure";
+    }
+
+    @Provides
+    static PrintStream provideOutput() {
+      return System.err;
+    }
+
+    @Provides
+    static FileSystem provideFileSystem() {
+      return FileSystems.getDefault();
+    }
+  }
+
+  @Component(modules = Config.class)
+  interface Server {
+    BazelWorker<ClosureWorker> worker();
+  }
+
+  public static void main(String[] args) {
+    System.exit(DaggerClosureWorker_Server.create().worker().apply(ImmutableList.copyOf(args)));
   }
 }
