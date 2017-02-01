@@ -30,15 +30,16 @@ import java.io.PrintStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 /** Bazel worker for all Closure Tools programs, some of which are modded. */
 public final class ClosureWorker implements CommandLineProgram {
 
   private final PrintStream output;
-  private final WebfilesValidatorProgram webfilesValidator;
+  private final Provider<WebfilesValidatorProgram> webfilesValidator;
 
   @Inject
-  ClosureWorker(PrintStream output, WebfilesValidatorProgram webfilesValidator) {
+  ClosureWorker(PrintStream output, Provider<WebfilesValidatorProgram> webfilesValidator) {
     this.output = output;
     this.webfilesValidator = webfilesValidator;
   }
@@ -54,7 +55,7 @@ public final class ClosureWorker implements CommandLineProgram {
       case "JsCompiler":
         return new JsCompiler().apply(tail);
       case "WebfilesValidator":
-        return webfilesValidator.apply(tail);
+        return webfilesValidator.get().apply(tail);
       default:
         output.println(
             "\nERROR: First flag to ClosureWorker should be specific compiler to run, "
