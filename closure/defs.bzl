@@ -23,6 +23,7 @@ load("//closure/templates:closure_java_template_library.bzl", "closure_java_temp
 load("//closure/templates:closure_js_template_library.bzl", "closure_js_template_library")
 load("//closure/testing:closure_js_test.bzl", "closure_js_test")
 load("//closure/testing:phantomjs_test.bzl", "phantomjs_test")
+load("//closure:filegroup_external.bzl", "filegroup_external")
 load("//closure:repositories.bzl", "closure_repositories")
 load("//closure:webfiles/webfiles.bzl", "webfiles")
 load("//closure:webfiles/webfiles_external.bzl", "webfiles_external")
