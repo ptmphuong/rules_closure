@@ -302,21 +302,22 @@ public class WebfilesValidatorTest {
   }
 
   @Test
-  public void invalidHtml_printsError() throws Exception {
+  public void invalidHtml_doesntCare() throws Exception {
+    // jsoup is too strict about html syntax errors to be useful for polymer and it doesn't provide
+    // a very friendly way to report these errors.
     save(fs.getPath("/fs/path/index.html"), "< ");
     assertThat(
             validator.validate(
                 Webfiles.newBuilder()
-                    .addSrc(WebfilesSource.newBuilder()
-                        .setPath("/fs/path/index.html")
-                        .setWebpath("/web/path/index.html")
-                        .build())
+                    .addSrc(
+                        WebfilesSource.newBuilder()
+                            .setPath("/fs/path/index.html")
+                            .setWebpath("/web/path/index.html")
+                            .build())
                     .build(),
                 ImmutableList.<Webfiles>of(),
                 Suppliers.ofInstance(ImmutableList.<Webfiles>of())))
-        .containsEntry(
-            WebfilesValidator.HTML_SYNTAX_ERROR,
-            "/fs/path/index.html (offset 1): Unexpected character ' ' in input state [TagOpen]");
+        .isEmpty();
   }
 
   @Test

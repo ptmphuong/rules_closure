@@ -48,7 +48,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Node;
-import org.jsoup.parser.ParseError;
 import org.jsoup.parser.Parser;
 import org.jsoup.select.NodeVisitor;
 
@@ -66,11 +65,8 @@ public class WebfilesValidator {
   public static final String CSS_SYNTAX_ERROR = "cssSyntax";
   public static final String CSS_VALIDATION_ERROR = "cssValidation";
   public static final String CYCLES_ERROR = "cycles";
-  public static final String HTML_SYNTAX_ERROR = "htmlSyntax";
   public static final String PATH_NORMALIZATION_ERROR = "pathNormalization";
   public static final String STRICT_DEPENDENCIES_ERROR = "strictDependencies";
-
-  private static final int MAX_HTML_PARSE_ERRORS_PER_FILE = 3;
 
   private final FileSystem fs;
   private final Set<Webpath> accessibleAssets = new HashSet<>();
@@ -129,14 +125,6 @@ public class WebfilesValidator {
           @Override
           public void onReference(Webpath destination) {
             addRelationship(path, origin, destination);
-          }
-
-          @Override
-          public void onError(ParseError error) {
-            errors.put(
-                HTML_SYNTAX_ERROR,
-                String.format(
-                    "%s (offset %d): %s", path, error.getPosition(), error.getErrorMessage()));
           }
         });
   }
@@ -245,8 +233,6 @@ public class WebfilesValidator {
 
     interface Callback {
       void onReference(Webpath webpath);
-
-      void onError(ParseError error);
     }
 
     static void parse(Path path, Callback callback) throws IOException {
@@ -261,12 +247,8 @@ public class WebfilesValidator {
 
     private void run(Path path) throws IOException {
       Parser parser = Parser.htmlParser();
-      parser.setTrackErrors(MAX_HTML_PARSE_ERRORS_PER_FILE);
       try (InputStream input = Files.newInputStream(path)) {
         Jsoup.parse(input, null, "", parser).traverse(this);
-      }
-      for (ParseError error : parser.getErrors()) {
-        callback.onError(error);
       }
     }
 
