@@ -164,16 +164,25 @@ public class WebfilesValidator {
         .getVisitController()
         .startVisit(
             new DefaultTreeVisitor() {
+              private boolean inUrlFunction;
+
               @Override
               public boolean enterFunctionNode(CssFunctionNode function) {
-                return function.getFunction().getFunctionName().equals("url");
+                return (inUrlFunction = function.getFunction().getFunctionName().equals("url"));
+              }
+
+              @Override
+              public void leaveFunctionNode(CssFunctionNode value) {
+                inUrlFunction = false;
               }
 
               @Override
               public boolean enterArgumentNode(CssValueNode argument) {
-                String uri = nullToEmpty(argument.getValue());
-                if (!shouldIgnoreUri(uri)) {
-                  addRelationship(path, origin, Webpath.get(uri));
+                if (inUrlFunction) {
+                  String uri = nullToEmpty(argument.getValue());
+                  if (!shouldIgnoreUri(uri)) {
+                    addRelationship(path, origin, Webpath.get(uri));
+                  }
                 }
                 return false;
               }
