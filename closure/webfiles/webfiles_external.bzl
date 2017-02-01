@@ -22,7 +22,7 @@ def _webfiles_external(repository_ctx):
     lines.append("")
   lines.append("licenses(%s)" % repr(repository_ctx.attr.licenses))
   lines.append("")
-  lines.append("load(\"//closure:" +
+  lines.append("load(\"@io_bazel_rules_closure//closure:" +
                "defs.bzl\", \"webfiles\")")
   lines.append("")
   lines.append("webfiles(")
