@@ -32,6 +32,7 @@ def _webfiles_external(repository_ctx):
                "path",
                "visibility",
                "exports",
+               "suppress",
                "deps"):
     value = getattr(repository_ctx.attr, attr, None)
     if value:
@@ -65,6 +66,7 @@ webfiles_external = repository_rule(
         "data": attr.string_list(allow_empty=False),
         "deps": attr.string_list(),
         "exports": attr.string_list(),
+        "suppress": attr.string_list(),
         "testonly_": attr.bool(),
         "generated_rule_name": attr.string(),
         "default_visibility": attr.string_list(default=["//visibility:public"]),
