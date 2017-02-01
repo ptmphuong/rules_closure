@@ -48,7 +48,7 @@ def _webfiles(ctx):
   manifest_srcs = []
   for src in ctx.files.srcs:
     webpath = "%s/%s" % ("" if ctx.attr.path == "/" else ctx.attr.path,
-                         get_path_relative_to_package(src))
+                         _get_path_relative_to_package(src))
     if webpath in new_webpaths:
       _fail(ctx, "multiple srcs within %s define the webpath %s " % (
           ctx.label, webpath))
@@ -138,16 +138,18 @@ def _fail(ctx, message):
   else:
     fail(message)
 
-def get_path_relative_to_package(artifact):
+def _get_path_relative_to_package(artifact):
   """Returns file path relative to the package that declared it."""
   path = artifact.path
-  root = artifact.root.path + "/"
-  if path.startswith(root):
-    path = path[len(root):]
-  package = artifact.owner.package + "/"
-  if not path.startswith(package):
-    fail("Path %s doesn't start with %s" % (path, package))
-  return path[len(package):]
+  for prefix in (artifact.root.path,
+                 artifact.owner.workspace_root if artifact.owner else '',
+                 artifact.owner.package if artifact.owner else ''):
+    if prefix:
+      prefix = prefix + "/"
+      if not path.startswith(prefix):
+        fail("Path %s doesn't start with %s" % (path, prefix))
+      path = path[len(prefix):]
+  return path
 
 webfiles = rule(
     implementation=_webfiles,
