@@ -117,6 +117,10 @@ def _webfiles(ctx):
       content=" \\\n  ".join(args))
 
   # export data to parent rules
+  transitive_runfiles = set()
+  transitive_runfiles += ctx.attr._WebfilesServer.data_runfiles.files
+  for dep in deps:
+    transitive_runfiles += dep.data_runfiles.files
   return struct(
       files=set([ctx.outputs.executable, ctx.outputs.dummy]),
       exports=unfurl(ctx.attr.exports),
@@ -129,8 +133,7 @@ def _webfiles(ctx):
           files=ctx.files.srcs + ctx.files.data + [manifest,
                                                    ctx.outputs.executable,
                                                    ctx.outputs.dummy],
-          transitive_files=ctx.attr._WebfilesServer.data_runfiles.files,
-          collect_data=True))
+          transitive_files=transitive_runfiles))
 
 def _fail(ctx, message):
   if ctx.attr.suppress == ["*"]:
