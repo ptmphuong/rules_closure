@@ -29,7 +29,7 @@ java_binary(
     deps = [
         ":listing",
         "//closure/templates",
-        "//java/io/bazel/rules/closure/webfiles",
+        "//java/io/bazel/rules/closure:webpath",
         "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
         "@com_google_code_findbugs_jsr305",
         "@com_google_guava",

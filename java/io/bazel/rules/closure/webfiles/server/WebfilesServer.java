@@ -24,7 +24,6 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 import com.google.common.base.Functions;
 import com.google.common.base.Predicate;
-import com.google.common.base.Splitter;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Iterators;
 import com.google.common.io.Resources;
@@ -35,9 +34,9 @@ import com.google.template.soy.SoyFileSet;
 import com.google.template.soy.data.SoyListData;
 import com.google.template.soy.data.SoyMapData;
 import com.google.template.soy.tofu.SoyTofu;
+import io.bazel.rules.closure.Webpath;
 import io.bazel.rules.closure.webfiles.BuildInfo.Webfiles;
 import io.bazel.rules.closure.webfiles.BuildInfo.WebfilesSource;
-import io.bazel.rules.closure.webfiles.Webpath;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.BindException;
@@ -72,7 +71,6 @@ public final class WebfilesServer extends HttpServlet {
   private static final Path TEST_SRCDIR = Paths.get("..");
   private static final Webpath RUNFILES_PREFIX = Webpath.get("/_/runfiles");
   private static final MediaType DEFAULT_MIME_TYPE = MediaType.OCTET_STREAM;
-  private static final Splitter TAB_SPLITTER = Splitter.on('\t');
   private static final Pattern ALLOWS_GZIP =
       Pattern.compile("(?:^|,|\\s)(?:(?:x-)?gzip|\\*)(?!;q=0)(?:\\s|,|$)");
   private static final SoyTofu TOFU =
@@ -185,7 +183,9 @@ public final class WebfilesServer extends HttpServlet {
         return;
       }
       if (webpath.startsWith(RUNFILES_PREFIX)) {
-        path = webpath.subpath(RUNFILES_PREFIX.getNameCount(), webpath.getNameCount()).getPath();
+        path =
+            Paths.get(
+                webpath.subpath(RUNFILES_PREFIX.getNameCount(), webpath.getNameCount()).toString());
         verify(!path.isAbsolute());
         path = TEST_SRCDIR.resolve(path);
         if (Files.exists(path)) {

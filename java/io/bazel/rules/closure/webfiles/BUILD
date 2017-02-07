@@ -21,15 +21,12 @@ java_library(
     srcs = [
         "WebfilesValidator.java",
         "WebfilesValidatorProgram.java",
-        "Webpath.java",
     ],
-    visibility = [
-        "//java/io/bazel/rules/closure:__subpackages__",
-        "//javatests/io/bazel/rules/closure/webfiles:__pkg__",
-    ],
+    visibility = ["//:__subpackages__"],
     deps = [
         ":build_info_java_proto",
         "//java/io/bazel/rules/closure:tarjan",
+        "//java/io/bazel/rules/closure:webpath",
         "//java/io/bazel/rules/closure/program",
         "@com_google_closure_stylesheets",
         "@com_google_dagger",

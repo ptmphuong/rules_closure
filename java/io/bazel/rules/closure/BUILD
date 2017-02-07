@@ -42,6 +42,16 @@ java_library(
     deps = ["@com_google_guava"],
 )
 
+java_library(
+    name = "webpath",
+    srcs = ["Webpath.java"],
+    visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_code_findbugs_jsr305",
+        "@com_google_guava",
+    ],
+)
+
 java_proto_library(
     name = "build_info_java_proto",
     src = "build_info.proto",

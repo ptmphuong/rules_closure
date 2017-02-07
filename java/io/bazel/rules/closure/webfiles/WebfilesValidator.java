@@ -36,6 +36,7 @@ import com.google.common.css.compiler.ast.GssParser;
 import com.google.common.css.compiler.ast.GssParserException;
 import com.google.common.css.compiler.passes.PassRunner;
 import io.bazel.rules.closure.Tarjan;
+import io.bazel.rules.closure.Webpath;
 import io.bazel.rules.closure.webfiles.BuildInfo.Webfiles;
 import io.bazel.rules.closure.webfiles.BuildInfo.WebfilesSource;
 import java.io.IOException;

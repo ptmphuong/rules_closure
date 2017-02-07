@@ -23,6 +23,5 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
   WebfilesValidatorProgramTest.class,
   WebfilesValidatorTest.class,
-  WebpathTest.class,
 })
 class WebfilesTestSuite {}
