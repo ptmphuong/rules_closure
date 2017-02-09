@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.javascript.jscomp.CompilerOptions.IncrementalCheckMode;
 import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
 import com.google.javascript.jscomp.parsing.Config;
 import io.bazel.rules.closure.BuildInfo.ClosureJsLibrary;
@@ -116,6 +117,11 @@ public final class JsChecker {
   private String output = "";
 
   @Option(
+      name = "--output_ijs_file",
+      usage = "Path of the generated .i.js file representing the given sources.")
+  private String outputIjsFile = "";
+
+  @Option(
       name = "--output_errors",
       usage = "Name of output file for compiler errors in --nofail mode.")
   private String outputErrors = "";
@@ -165,12 +171,14 @@ public final class JsChecker {
     Compiler compiler = new Compiler();
     CompilerOptions options = new CompilerOptions();
     options.setLanguage(LanguageMode.ECMASCRIPT6_STRICT);
+    options.setIncrementalChecks(IncrementalCheckMode.GENERATE_IJS);
     options.setCodingConvention(convention.convention);
     options.setSkipTranspilationAndCrash(true);
-    options.setChecksOnly(true);
     options.setContinueAfterErrors(true);
-    options.setAllowHotswapReplaceScript(true);
+    options.setPrettyPrint(true);
+    options.setPreserveTypeAnnotations(true);
     options.setPreserveDetailedSourceInfo(true);
+    options.setEmitUseStrict(false);
     options.setParseJsDocDocumentation(Config.JsDocParsing.INCLUDE_DESCRIPTIONS_NO_WHITESPACE);
     JsCheckerErrorFormatter errorFormatter =
         new JsCheckerErrorFormatter(compiler, state.roots, labels);
@@ -261,6 +269,11 @@ public final class JsChecker {
     }
     if (!outputErrors.isEmpty()) {
       Files.write(Paths.get(outputErrors), errorManager.stderr, UTF_8);
+    }
+
+    // write .i.js type summary for this library
+    if (!outputIjsFile.isEmpty()) {
+      Files.write(Paths.get(outputIjsFile), compiler.toSource().getBytes(UTF_8));
     }
 
     // write file full of information about these sauces
