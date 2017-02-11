@@ -449,11 +449,11 @@ def com_google_inject_extensions_guice_assistedinject():
       name = "com_google_inject_extensions_guice_assistedinject",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/3.0/guice-assistedinject-3.0.jar",
-          "http://repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/3.0/guice-assistedinject-3.0.jar",
-          "http://maven.ibiblio.org/maven2/com/google/inject/extensions/guice-assistedinject/3.0/guice-assistedinject-3.0.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/4.1.0/guice-assistedinject-4.1.0.jar",
+          "http://repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/4.1.0/guice-assistedinject-4.1.0.jar",
+          "http://maven.ibiblio.org/maven2/com/google/inject/extensions/guice-assistedinject/4.1.0/guice-assistedinject-4.1.0.jar",
       ],
-      jar_sha256 = "29a0e823babf10e28c6d3c71b2f9d56a3be2c9696d016fb16258e3fb1d184cf1",
+      jar_sha256 = "663728123fb9a6b79ea39ae289e5d56b4113e1b8e9413eb792f91e53a6dd5868",
       deps = [
           "@com_google_guava",
           "@com_google_inject_guice",
@@ -466,11 +466,11 @@ def com_google_inject_extensions_guice_multibindings():
       name = "com_google_inject_extensions_guice_multibindings",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/inject/extensions/guice-multibindings/3.0/guice-multibindings-3.0.jar",
-          "http://repo1.maven.org/maven2/com/google/inject/extensions/guice-multibindings/3.0/guice-multibindings-3.0.jar",
-          "http://maven.ibiblio.org/maven2/com/google/inject/extensions/guice-multibindings/3.0/guice-multibindings-3.0.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/inject/extensions/guice-multibindings/4.1.0/guice-multibindings-4.1.0.jar",
+          "http://repo1.maven.org/maven2/com/google/inject/extensions/guice-multibindings/4.1.0/guice-multibindings-4.1.0.jar",
+          "http://maven.ibiblio.org/maven2/com/google/inject/extensions/guice-multibindings/4.1.0/guice-multibindings-4.1.0.jar",
       ],
-      jar_sha256 = "29dd9f7774314827319cca4f00b693f0685f9dc3248c50c1ec54acc4819d4306",
+      jar_sha256 = "592773a4c745cc87ba37fa0647fed8126c7e474349c603c9f229aa25d3ef5448",
       deps = [
           "@com_google_guava",
           "@com_google_inject_guice",
@@ -483,11 +483,11 @@ def com_google_inject_guice():
       name = "com_google_inject_guice",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/inject/guice/3.0/guice-3.0.jar",
-          "http://repo1.maven.org/maven2/com/google/inject/guice/3.0/guice-3.0.jar",
-          "http://maven.ibiblio.org/maven2/com/google/inject/guice/3.0/guice-3.0.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/inject/guice/4.1.0/guice-4.1.0.jar",
+          "http://repo1.maven.org/maven2/com/google/inject/guice/4.1.0/guice-4.1.0.jar",
+          "http://maven.ibiblio.org/maven2/com/google/inject/guice/4.1.0/guice-4.1.0.jar",
       ],
-      jar_sha256 = "1a59d0421ffd355cc0b70b42df1c2e9af744c8a2d0c92da379f5fca2f07f1d22",
+      jar_sha256 = "9b9df27a5b8c7864112b4137fd92b36c3f1395bfe57be42fedf2f520ead1a93e",
       deps = [
           "@aopalliance",
           "@org_ow2_asm",
@@ -502,11 +502,10 @@ def com_google_javascript_closure_compiler():
       name = "com_google_javascript_closure_compiler",
       licenses = ["reciprocal"],  # MPL v1.1 (Rhino AST), Apache 2.0 (JSCompiler)
       jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20161024/closure-compiler-unshaded-v20161024.jar",
-          "http://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20161024/closure-compiler-unshaded-v20161024.jar",
-          "http://maven.ibiblio.org/maven2/com/google/javascript/closure-compiler-unshaded/v20161024/closure-compiler-unshaded-v20161024.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20170124/closure-compiler-unshaded-v20170124.jar",
+          "http://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20170124/closure-compiler-unshaded-v20170124.jar",
       ],
-      jar_sha256 = "b01b9fdcf0afc5dfe981b0309785e1226022be5eb21914957d3a52db0faede2f",
+      jar_sha256 = "1be9f716c09397156229cbf93479f78e82b54f56752843d5b733beec75df37e7",
       deps = [
           "@com_google_code_gson",
           "@com_google_guava",
@@ -543,16 +542,16 @@ def com_google_javascript_closure_library():
 
 def com_google_javascript_incremental_dom():
   # To update Incremental DOM, one needs to update
-  # third_party/incremental_dom/build.sh to remain compatible with the
-  # upstream "js-closure" gulpfile.js target.
+  # third_party/javascript/incremental_dom/build.sh to remain compatible with
+  # the upstream "js-closure" gulpfile.js target.
   # https://github.com/google/incremental-dom/blob/master/gulpfile.js
   native.http_file(
       name = "com_google_javascript_incremental_dom",
       urls = [
-          "http://bazel-mirror.storage.googleapis.com/github.com/google/incremental-dom/archive/0.5.0.tar.gz",
-          "https://github.com/google/incremental-dom/archive/0.5.0.tar.gz",
+          "http://bazel-mirror.storage.googleapis.com/github.com/google/incremental-dom/archive/0.5.2.tar.gz",
+          "https://github.com/google/incremental-dom/archive/0.5.2.tar.gz",
       ],
-      sha256 = "bb268af74c411c84372fb9926021859f1ebdbeff86d4ec3e8865758f10482fda",
+      sha256 = "554a778dff5cba561a98619b2f3de5061848744644c870f718e2cdcf9bf0dccf",
   )
 
 def com_google_protobuf_java():
@@ -604,11 +603,10 @@ def com_google_template_soy():
       name = "com_google_template_soy",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/template/soy/2016-08-25/soy-2016-08-25.jar",
-          "http://repo1.maven.org/maven2/com/google/template/soy/2016-08-25/soy-2016-08-25.jar",
-          "http://maven.ibiblio.org/maven2/com/google/template/soy/2016-08-25/soy-2016-08-25.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/template/soy/2017-02-01/soy-2017-02-01.jar",
+          "http://repo1.maven.org/maven2/com/google/template/soy/2017-02-01/soy-2017-02-01.jar",
       ],
-      jar_sha256 = "bed91e2dc5fa7acc4f79291517756bd3fb5c5ef2c6057af161db283648293b6a",
+      jar_sha256 = "b4baa7eaa2dc00fd949d7a0a4a95ab1818876877734468f1b2a9495d7e528218",
       deps = [
           "@args4j",
           "@org_ow2_asm",
@@ -644,11 +642,10 @@ def com_google_template_soy():
 def com_google_template_soy_jssrc():
   native.new_http_archive(
       name = "com_google_template_soy_jssrc",
-      sha256 = "15f5bf0b8ca40211a29bcd6486bd3198155ecc76e8bbf06407deb695ca848be6",
+      sha256 = "ed0be8195f5a05eea82099d234dab074ca80d7c1f2e54928e0fb2ee0a7ba666d",
       urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/template/soy/2016-08-25/soy-2016-08-25-jssrc_js.jar",
-          "http://repo1.maven.org/maven2/com/google/template/soy/2016-08-25/soy-2016-08-25-jssrc_js.jar",
-          "http://maven.ibiblio.org/maven2/com/google/template/soy/2016-08-25/soy-2016-08-25-jssrc_js.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/template/soy/2017-02-01/soy-2017-02-01-jssrc_js.jar",
+          "http://repo1.maven.org/maven2/com/google/template/soy/2017-02-01/soy-2017-02-01-jssrc_js.jar",
       ],
       build_file = str(Label("//closure/templates:soy_jssrc.BUILD")),
       type = "zip",
