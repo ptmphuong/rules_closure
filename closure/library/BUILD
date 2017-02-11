@@ -23,6 +23,7 @@ closure_js_library(
     name = "library",
     srcs = ["@com_google_javascript_closure_library//:js_library_files"],
     suppress = [
+        "CR_INVALID_SETTESTONLY",
         "JSC_ARRAY_PASSED_TO_GOOG_OBJECT",
         "JSC_DEPRECATED_CLASS_REASON",
         "JSC_DEPRECATED_PROP",
@@ -63,7 +64,6 @@ closure_js_library(
         "JSC_NTI_WRONG_ARGUMENT_COUNT",
         "JSC_NULLABLE_RETURN_WITH_NAME",
         "JSC_PROVIDES_NOT_SORTED",
-        "JSC_REQUIRES_NOT_SORTED",
         "JSC_UNKNOWN_EXPR_TYPE",
         "JSC_UNUSED_PRIVATE_PROPERTY",
     ],
