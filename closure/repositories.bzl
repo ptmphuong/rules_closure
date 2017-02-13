@@ -337,11 +337,10 @@ def com_google_common_html_types_html_proto():
 def com_google_dagger():
   java_import_external(
       name = "com_google_dagger",
-      jar_sha256 = "5070e1dff5c551a4908ba7b93125c0243de2a688aed3d2f475357d86d9d7c0ad",
+      jar_sha256 = "8b7806518bed270950002158934fbd8281725ee09909442f2f22b58520b667a7",
       jar_urls = [
-          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger/2.8/dagger-2.8.jar",
-          "http://repo1.maven.org/maven2/com/google/dagger/dagger/2.8/dagger-2.8.jar",
-          "http://maven.ibiblio.org/maven2/com/google/dagger/dagger/2.8/dagger-2.8.jar",
+          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger/2.9/dagger-2.9.jar",
+          "http://repo1.maven.org/maven2/com/google/dagger/dagger/2.9/dagger-2.9.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
       deps = ["@javax_inject"],
@@ -361,11 +360,10 @@ def com_google_dagger():
 def com_google_dagger_compiler():
   java_import_external(
       name = "com_google_dagger_compiler",
-      jar_sha256 = "7b2686f94907868c5364e9965601ffe2f020ba4af1849ad9b57dad5fe3fa6242",
+      jar_sha256 = "afe356def27710db5b60cad8e7a6c06510dc3d3b854f30397749cbf0d0e71315",
       jar_urls = [
-          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.8/dagger-compiler-2.8.jar",
-          "http://maven.ibiblio.org/maven2/com/google/dagger/dagger-compiler/2.8/dagger-compiler-2.8.jar",
-          "http://repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.8/dagger-compiler-2.8.jar",
+          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.9/dagger-compiler-2.9.jar",
+          "http://repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.9/dagger-compiler-2.9.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
       deps = [
@@ -392,11 +390,10 @@ def com_google_dagger_compiler():
 def com_google_dagger_producers():
   java_import_external(
       name = "com_google_dagger_producers",
-      jar_sha256 = "1e4043e85f67de381d19e22c7932aaf7ff1611091be7e1aaae93f2c37f331cf2",
+      jar_sha256 = "b452dc1b95dd02f6272e97b15d1bd35d92b5f484a7d69bb73887b6c6699d8843",
       jar_urls = [
-          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.8/dagger-producers-2.8.jar",
-          "http://maven.ibiblio.org/maven2/com/google/dagger/dagger-producers/2.8/dagger-producers-2.8.jar",
-          "http://repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.8/dagger-producers-2.8.jar",
+          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.9/dagger-producers-2.9.jar",
+          "http://repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.9/dagger-producers-2.9.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
       deps = [
@@ -406,10 +403,11 @@ def com_google_dagger_producers():
       generated_rule_name = "runtime",
       extra_build_file_content = "\n".join([
           "java_library(",
-          "    name = \"com_google_dagger\",",
+          "    name = \"com_google_dagger_producers\",",
           "    exported_plugins = [\"@com_google_dagger_compiler//:ComponentProcessor\"],",
           "    exports = [",
           "        \":runtime\",",
+          "        \"@com_google_dagger//:runtime\",",
           "        \"@javax_inject\",",
           "    ],",
           ")",
