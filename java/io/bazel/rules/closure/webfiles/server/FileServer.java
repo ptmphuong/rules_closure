@@ -1,4 +1,4 @@
-// Copyright 2016 The Closure Rules Authors. All Rights Reserved.
+// Copyright 2017 The Closure Rules Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,13 +14,31 @@
 
 package io.bazel.rules.closure.webfiles.server;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
 import com.google.common.net.MediaType;
+import io.bazel.rules.closure.Webpath;
+import io.bazel.rules.closure.http.HttpResponse;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Map;
+import javax.inject.Inject;
 
-final class MimeTypes {
+/**
+ * Handler that sends static assets to the browser.
+ *
+ * <p>This serves both webpaths and external assets, e.g. runfiles. It does this by binary searching
+ * an array mapping webpaths to either files or directories.
+ */
+class FileServer {
 
-  static final ImmutableMap<String, MediaType> EXTENSIONS =
+  private static final MediaType DEFAULT_MIME_TYPE = MediaType.OCTET_STREAM;
+  private static final ImmutableMap<String, MediaType> EXTENSIONS =
       new ImmutableMap.Builder<String, MediaType>()
           .put("atom", MediaType.ATOM_UTF_8)
           .put("bmp", MediaType.BMP)
@@ -75,31 +93,48 @@ final class MimeTypes {
           .put("zip", MediaType.ZIP)
           .build();
 
-  static final ImmutableSet<MediaType> COMPRESSIBLE =
-      new ImmutableSet.Builder<MediaType>()
-          .add(MediaType.ATOM_UTF_8.withoutParameters())
-          .add(MediaType.CSS_UTF_8.withoutParameters())
-          .add(MediaType.CSV_UTF_8.withoutParameters())
-          .add(MediaType.DART_UTF_8.withoutParameters())
-          .add(MediaType.EOT)
-          .add(MediaType.HTML_UTF_8.withoutParameters())
-          .add(MediaType.JAVASCRIPT_UTF_8.withoutParameters())
-          .add(MediaType.JSON_UTF_8.withoutParameters())
-          .add(MediaType.KML)
-          .add(MediaType.KMZ)
-          .add(MediaType.MANIFEST_JSON_UTF_8.withoutParameters())
-          .add(MediaType.PLAIN_TEXT_UTF_8.withoutParameters())
-          .add(MediaType.POSTSCRIPT)
-          .add(MediaType.RDF_XML_UTF_8.withoutParameters())
-          .add(MediaType.RTF_UTF_8.withoutParameters())
-          .add(MediaType.SFNT)
-          .add(MediaType.SVG_UTF_8.withoutParameters())
-          .add(MediaType.TAR)
-          .add(MediaType.TSV_UTF_8.withoutParameters())
-          .add(MediaType.VCARD_UTF_8.withoutParameters())
-          .add(MediaType.XHTML_UTF_8.withoutParameters())
-          .add(MediaType.XML_UTF_8.withoutParameters())
-          .build();
+  private final HttpResponse response;
+  private final ImmutableSortedMap<Webpath, Path> assets;
 
-  private MimeTypes() {}
+  @Inject
+  FileServer(HttpResponse response, ImmutableSortedMap<Webpath, Path> assets) {
+    this.response = response;
+    this.assets = assets;
+  }
+
+  /** Serves static asset or returns {@code false} if not found. */
+  boolean serve(Webpath webpath) throws IOException {
+    checkArgument(webpath.isAbsolute());
+    checkArgument(webpath.normalize().equals(webpath));
+    Map.Entry<Webpath, Path> floor = assets.floorEntry(webpath);
+    if (floor == null) {
+      return false;
+    }
+    if (webpath.equals(floor.getKey())) {
+      serveAsset(floor.getValue());
+      return true;
+    }
+    if (webpath.startsWith(floor.getKey())) {
+      Webpath path = webpath.subpath(floor.getKey().getNameCount(), webpath.getNameCount());
+      verify(!path.isAbsolute());
+      Path file = floor.getValue().resolve(path.toString());
+      if (Files.exists(file)) {
+        serveAsset(file);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private void serveAsset(Path path) throws IOException {
+    response.setContentLength(Files.size(path));
+    response.setContentType(firstNonNull(EXTENSIONS.get(getExtension(path)), DEFAULT_MIME_TYPE));
+    response.setPayload(Files.newInputStream(path));
+  }
+
+  private static String getExtension(Path path) {
+    String name = path.getFileName().toString();
+    int dot = name.lastIndexOf('.');
+    return dot == -1 ? "" : name.substring(dot + 1);
+  }
 }

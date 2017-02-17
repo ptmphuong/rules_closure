@@ -1,4 +1,4 @@
-// Copyright 2016 The Closure Rules Authors. All Rights Reserved.
+// Copyright 2017 The Closure Rules Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
 
 package io.bazel.rules.closure.webfiles.server;
 
+import com.google.common.net.HostAndPort;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -23,6 +24,17 @@ import java.util.Enumeration;
 
 /** Utilities for networking. */
 final class NetworkUtils {
+
+  /** Turns {@code address} into a more human readable form. */
+  static HostAndPort createUrlAddress(HostAndPort address) {
+    if (address.getHost().equals("::") || address.getHost().equals("0.0.0.0")) {
+      return address.getPortOrDefault(80) == 80
+          ? HostAndPort.fromHost(getCanonicalHostName())
+          : HostAndPort.fromParts(getCanonicalHostName(), address.getPort());
+    } else {
+      return address.getPortOrDefault(80) == 80 ? HostAndPort.fromHost(address.getHost()) : address;
+    }
+  }
 
   /**
    * Returns the fully-qualified domain name of the local host in all lower case.

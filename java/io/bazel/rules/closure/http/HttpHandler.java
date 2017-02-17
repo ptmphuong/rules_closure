@@ -1,4 +1,4 @@
-// Copyright 2016 The Closure Rules Authors. All Rights Reserved.
+// Copyright 2017 The Closure Rules Authors. All Rights Reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,16 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package io.bazel.rules.closure.webfiles;
+package io.bazel.rules.closure.http;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+/** HTTP request handler run by {@link HttpServer}. */
+public interface HttpHandler {
 
-/** Test suite for webfiles package. */
-@RunWith(Suite.class)
-@SuiteClasses({
-  WebfilesValidatorProgramTest.class,
-  WebfilesValidatorTest.class,
-})
-public class WebfilesTestSuite {}
+  /** Handles an HTTP request. */
+  void handle() throws Exception;
+}

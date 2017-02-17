@@ -20,6 +20,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
+import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import io.bazel.rules.closure.webfiles.BuildInfo.Webfiles;
 import io.bazel.rules.closure.webfiles.BuildInfo.WebfilesSource;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -35,8 +37,13 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class WebfilesValidatorTest {
 
-  private final FileSystem fs = Jimfs.newFileSystem();
+  private final FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
   private final WebfilesValidator validator = new WebfilesValidator(fs);
+
+  @After
+  public void after() throws Exception {
+    fs.close();
+  }
 
   @Test
   public void relativeReferenceToImgInSrcs_isAllowed() throws Exception {

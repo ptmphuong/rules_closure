@@ -51,11 +51,8 @@ def closure_repositories(
     omit_libfontconfig_amd64_deb=False,
     omit_libfreetype_amd64_deb=False,
     omit_libpng_amd64_deb=False,
-    omit_org_apache_tomcat_servlet_api=False,
     omit_org_json=False,
     omit_org_jsoup=False,
-    omit_org_mortbay_jetty=False,
-    omit_org_mortbay_jetty_util=False,
     omit_org_ow2_asm=False,
     omit_org_ow2_asm_analysis=False,
     omit_org_ow2_asm_commons=False,
@@ -130,16 +127,10 @@ def closure_repositories(
     libfreetype_amd64_deb()
   if not omit_libpng_amd64_deb:
     libpng_amd64_deb()
-  if not omit_org_apache_tomcat_servlet_api:
-    org_apache_tomcat_servlet_api()
   if not omit_org_json:
     org_json()
   if not omit_org_jsoup:
     org_jsoup()
-  if not omit_org_mortbay_jetty:
-    org_mortbay_jetty()
-  if not omit_org_mortbay_jetty_util:
-    org_mortbay_jetty_util()
   if not omit_org_ow2_asm:
     org_ow2_asm()
   if not omit_org_ow2_asm_analysis:
@@ -339,7 +330,7 @@ def com_google_dagger():
       name = "com_google_dagger",
       jar_sha256 = "8b7806518bed270950002158934fbd8281725ee09909442f2f22b58520b667a7",
       jar_urls = [
-          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger/2.9/dagger-2.9.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger/2.9/dagger-2.9.jar",
           "http://repo1.maven.org/maven2/com/google/dagger/dagger/2.9/dagger-2.9.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
@@ -362,7 +353,7 @@ def com_google_dagger_compiler():
       name = "com_google_dagger_compiler",
       jar_sha256 = "afe356def27710db5b60cad8e7a6c06510dc3d3b854f30397749cbf0d0e71315",
       jar_urls = [
-          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.9/dagger-compiler-2.9.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.9/dagger-compiler-2.9.jar",
           "http://repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.9/dagger-compiler-2.9.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
@@ -392,7 +383,7 @@ def com_google_dagger_producers():
       name = "com_google_dagger_producers",
       jar_sha256 = "b452dc1b95dd02f6272e97b15d1bd35d92b5f484a7d69bb73887b6c6699d8843",
       jar_urls = [
-          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.9/dagger-producers-2.9.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.9/dagger-producers-2.9.jar",
           "http://repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.9/dagger-producers-2.9.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
@@ -733,18 +724,6 @@ def libpng_amd64_deb():
       sha256 = "a57b6d53169c67a7754719f4b742c96554a18f931ca5b9e0408fb6502bb77e80",
   )
 
-def org_apache_tomcat_servlet_api():
-  java_import_external(
-      name = "org_apache_tomcat_servlet_api",
-      licenses = ["notice"],  # Apache 2.0
-      jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/org/apache/tomcat/servlet-api/6.0.20/servlet-api-6.0.20.jar",
-          "http://repo1.maven.org/maven2/org/apache/tomcat/servlet-api/6.0.20/servlet-api-6.0.20.jar",
-          "http://maven.ibiblio.org/maven2/org/apache/tomcat/servlet-api/6.0.20/servlet-api-6.0.20.jar",
-      ],
-      jar_sha256 = "877d21bd9e0de51fe3fb3dab57ec19deb50c726080fdffe8ba4f5a282c81dc7b",
-  )
-
 def org_json():
   java_import_external(
       name = "org_json",
@@ -766,34 +745,6 @@ def org_jsoup():
           "http://repo1.maven.org/maven2/org/jsoup/jsoup/1.10.2/jsoup-1.10.2.jar",
       ],
       jar_sha256 = "6ebe6abd7775c10a49407ae22db45c840cd2cdaf715866a5b0b5af70941c3f4a",
-  )
-
-def org_mortbay_jetty():
-  java_import_external(
-      name = "org_mortbay_jetty",
-      licenses = ["notice"],  # Apache 2.0
-      jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/org/mortbay/jetty/jetty/6.1.22/jetty-6.1.22.jar",
-          "http://repo1.maven.org/maven2/org/mortbay/jetty/jetty/6.1.22/jetty-6.1.22.jar",
-          "http://maven.ibiblio.org/maven2/org/mortbay/jetty/jetty/6.1.22/jetty-6.1.22.jar",
-      ],
-      jar_sha256 = "817e133d85c7fec40a91b5e9ba8b5ff8a8dfe581e0cd4ea092c54c20f55703a7",
-      deps = [
-          "@org_mortbay_jetty_util",
-          "@org_apache_tomcat_servlet_api",
-      ],
-  )
-
-def org_mortbay_jetty_util():
-  java_import_external(
-      name = "org_mortbay_jetty_util",
-      licenses = ["notice"],  # Apache 2.0
-      jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/org/mortbay/jetty/jetty-util/6.1.22/jetty-util-6.1.22.jar",
-          "http://repo1.maven.org/maven2/org/mortbay/jetty/jetty-util/6.1.22/jetty-util-6.1.22.jar",
-          "http://maven.ibiblio.org/maven2/org/mortbay/jetty/jetty-util/6.1.22/jetty-util-6.1.22.jar",
-      ],
-      jar_sha256 = "42e15b4fc26348c38f3c81692678594884fbf3e2c5d8b3cc0244479b0f5fc342",
   )
 
 def org_ow2_asm():

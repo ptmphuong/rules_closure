@@ -104,17 +104,21 @@ def _webfiles(ctx):
       progress_message="Checking webfiles in %s" % ctx.label)
 
   # define development web server that only applies to this transitive closure
-  args = ["#!/bin/sh\nexec " + ctx.executable._WebfilesServer.short_path]
-  args.append("--label")
-  args.append(ctx.label)
-  for man in manifests:
-    args.append("--manifest")
-    args.append(man.short_path)
-  args.append("\"$@\"")
+  params = struct(
+      label=str(ctx.label),
+      bind="[::]:6006",
+      manifest=[long_path(ctx, man) for man in manifests],
+      external_asset=[struct(webpath=k, path=v)
+                      for k, v in ctx.attr.external_assets.items()])
+  params_file = ctx.new_file(ctx.configuration.bin_dir,
+                             "%s_server_params.pbtxt" % ctx.label.name)
+  ctx.file_action(output=params_file, content=params.to_proto())
   ctx.file_action(
       executable=True,
       output=ctx.outputs.executable,
-      content=" \\\n  ".join(args))
+      content="#!/bin/sh\nexec %s %s" % (
+          ctx.executable._WebfilesServer.short_path,
+          long_path(ctx, params_file)))
 
   # export data to parent rules
   transitive_runfiles = set()
@@ -131,6 +135,7 @@ def _webfiles(ctx):
           dummy=ctx.outputs.dummy),
       runfiles=ctx.runfiles(
           files=ctx.files.srcs + ctx.files.data + [manifest,
+                                                   params_file,
                                                    ctx.outputs.executable,
                                                    ctx.outputs.dummy],
           transitive_files=transitive_runfiles))
@@ -164,13 +169,14 @@ webfiles = rule(
         "exports": attr.label_list(),
         "data": attr.label_list(cfg="data", allow_files=True),
         "suppress": attr.string_list(),
+        "external_assets": attr.string_dict(default={"/_/runfiles": "."}),
         "_ClosureWorker": attr.label(
             default=Label("//java/io/bazel/rules/closure:ClosureWorker"),
             executable=True,
             cfg="host"),
         "_WebfilesServer": attr.label(
             default=Label(
-                "//java/io/bazel/rules/closure/webfiles/server"),
+                "//java/io/bazel/rules/closure/webfiles/server:WebfilesServer"),
             executable=True,
             cfg="host"),
     },
