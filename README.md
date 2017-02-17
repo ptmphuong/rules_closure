@@ -252,7 +252,6 @@ This rule can be referenced as though it were the following:
     linting. See the [Google JavaScript Style Guide] for more information.
   - `GOOGLE`: Take [Google coding conventions] into consideration when
     linting. See the [Google JavaScript Style Guide] for more information.
-  - `JQUERY`: Take [jQuery coding conventions] into consideration when linting.
 
 - **no_closure_library** (Boolean; optional; default is `False`) Do not link
   Closure Library [base.js]. If this flag is used, an error will be raised if
@@ -1026,7 +1025,6 @@ This rule can be referenced as though it were the following:
 [dependency]: http://bazel.io/docs/build-ref.html#dependencies
 [filegroup]: http://www.bazel.io/docs/be/general.html#filegroup
 [idom-example]: https://github.com/bazelbuild/rules_closure/blob/80d493d5ffc3099372929a8cd4a301da72e1b43f/closure/templates/test/greeter_idom.js
-[jQuery coding conventions]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/JqueryCodingConvention.java
 [java_library.exports]: http://bazel.io/docs/be/java.html#java_library.exports
 [java_library]: http://www.bazel.io/docs/be/java.html#java_library
 [jquery]: http://jquery.com/
