@@ -17,6 +17,7 @@ licenses(["notice"])  # Apache 2.0
 java_library(
     name = "http",
     srcs = glob(["*.java"]),
+    javacopts = ["-Xep:FallThrough:OFF"],
     visibility = ["//visibility:public"],
     deps = [
         "@com_google_code_findbugs_jsr305",
