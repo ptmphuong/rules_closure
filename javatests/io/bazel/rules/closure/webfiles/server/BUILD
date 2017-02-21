@@ -23,6 +23,7 @@ java_test(
         "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
         "//java/io/bazel/rules/closure/webfiles/server",
         "//java/io/bazel/rules/closure/webfiles/server:build_info_java_proto",
+        "@com_google_code_findbugs_jsr305",
         "@com_google_dagger",
         "@com_google_guava",
         "@com_google_guava_testlib",

@@ -23,6 +23,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses({
   FileServerTest.class,
   ListingPageTest.class,
+  NetworkUtilsTest.class,
   WebfilesHandlerTest.class,
   WebfilesServerTest.class,
 })

@@ -34,6 +34,7 @@ import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.net.ServerSocketFactory;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -74,9 +75,10 @@ public class WebfilesServerTest {
   private final FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
   private final WebfilesServer server =
       DaggerWebfilesServer_Server.builder()
+          .configPath("/config.pbtxt")
           .executor(executor)
           .fs(fs)
-          .configPath("/config.pbtxt")
+          .serverSocketFactory(ServerSocketFactory.getDefault())
           .build()
           .server();
 

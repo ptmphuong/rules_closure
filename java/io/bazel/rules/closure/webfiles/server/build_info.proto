@@ -32,6 +32,10 @@ message WebfilesServerInfo {
 
   // Bindings for serving runfiles or other files outside the build graph.
   repeated AssetInfo external_asset = 4;
+
+  // If true, dev server process will fail if bind port is in use, rather than
+  // incrementing the port until one can be found.
+  bool fail_if_port_in_use = 5;
 }
 
 // Static asset mapping for development web server which is served when a

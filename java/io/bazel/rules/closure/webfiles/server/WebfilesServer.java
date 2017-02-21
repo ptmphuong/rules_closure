@@ -35,9 +35,9 @@ import io.bazel.rules.closure.http.filter.Transmitter;
 import io.bazel.rules.closure.webfiles.server.Annotations.ConfigPath;
 import io.bazel.rules.closure.webfiles.server.Annotations.RequestScope;
 import io.bazel.rules.closure.webfiles.server.Annotations.ServerScope;
+import io.bazel.rules.closure.webfiles.server.BuildInfo.WebfilesServerInfo;
 import java.io.IOException;
 import java.io.InterruptedIOException;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.file.FileSystem;
@@ -50,6 +50,7 @@ import java.util.logging.Logger;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
+import javax.net.ServerSocketFactory;
 
 /** Development web server for a single webfiles() rule. */
 public final class WebfilesServer implements Runnable {
@@ -64,9 +65,10 @@ public final class WebfilesServer implements Runnable {
     ExecutorService executor = Executors.newCachedThreadPool();
     try {
       DaggerWebfilesServer_Server.builder()
+          .configPath(args[0])
           .executor(executor)
           .fs(FileSystems.getDefault())
-          .configPath(args[0])
+          .serverSocketFactory(ServerSocketFactory.getDefault())
           .build()
           .server()
           .run();
@@ -76,6 +78,7 @@ public final class WebfilesServer implements Runnable {
   }
 
   private final Executor executor;
+  private final NetworkUtils network;
   private final HttpServer<Server> httpServer;
   private final Metadata.Config config;
   private final Metadata.Reloader metadataReloader;
@@ -87,10 +90,12 @@ public final class WebfilesServer implements Runnable {
   @Inject
   WebfilesServer(
       Executor executor,
+      NetworkUtils network,
       HttpServer<Server> httpServer,
       Metadata.Config config,
       Metadata.Reloader metadataReloader) {
     this.executor = executor;
+    this.network = network;
     this.httpServer = httpServer;
     this.config = config;
     this.metadataReloader = metadataReloader;
@@ -122,9 +127,9 @@ public final class WebfilesServer implements Runnable {
 
   /** Runs webfiles server in event loop. */
   public void runForever() throws IOException, InterruptedException {
-    HostAndPort bind = HostAndPort.fromString(config.get().getBind());
-    try (ServerSocket socket =
-        new ServerSocket(bind.getPortOrDefault(80), 5, InetAddress.getByName(bind.getHost()))) {
+    WebfilesServerInfo params = config.get();
+    HostAndPort bind = HostAndPort.fromString(params.getBind()).withDefaultPort(80);
+    try (ServerSocket socket = network.createServerSocket(bind, !params.getFailIfPortInUse())) {
       metadataReloader.spawn();
       HostAndPort address = HostAndPort.fromParts(bind.getHost(), socket.getLocalPort());
       synchronized (this) {
@@ -187,9 +192,10 @@ public final class WebfilesServer implements Runnable {
 
     @Component.Builder
     interface Builder {
+      @BindsInstance Builder configPath(@ConfigPath String configPath);
       @BindsInstance Builder executor(Executor executor);
       @BindsInstance Builder fs(FileSystem fs);
-      @BindsInstance Builder configPath(@ConfigPath String configPath);
+      @BindsInstance Builder serverSocketFactory(ServerSocketFactory serverSocketFactory);
       Server build();
     }
   }
