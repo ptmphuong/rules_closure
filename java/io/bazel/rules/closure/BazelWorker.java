@@ -58,14 +58,12 @@ final class BazelWorker<T extends CommandLineProgram> implements CommandLineProg
   @interface Mnemonic {}
 
   private final CommandLineProgram delegate;
-  private final String mnemonic;
   private final PrintStream output;
 
   @Inject
-  BazelWorker(T delegate, PrintStream output, @Mnemonic String mnemonic) {
+  BazelWorker(T delegate, PrintStream output) {
     this.delegate = delegate;
     this.output = output;
-    this.mnemonic = mnemonic;
   }
 
   @Override
@@ -133,12 +131,6 @@ final class BazelWorker<T extends CommandLineProgram> implements CommandLineProg
     if (lastArg.startsWith("@")) {
       Path flagFile = Paths.get(CharMatcher.is('@').trimLeadingFrom(lastArg));
       if ((isWorker && lastArg.startsWith("@@")) || Files.exists(flagFile)) {
-        if (!isWorker && !mnemonic.isEmpty()) {
-          output.printf(
-              "HINT: %s will compile faster if you run: "
-                  + "echo \"build --strategy=%s=worker\" >>~/.bazelrc\n",
-              mnemonic, mnemonic);
-        }
         try {
           return Files.readAllLines(flagFile, UTF_8);
         } catch (IOException e) {
