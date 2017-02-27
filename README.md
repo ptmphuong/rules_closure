@@ -994,7 +994,7 @@ This rule can be referenced as though it were the following:
 [Closure coding conventions]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/ClosureCodingConvention.java
 [ECMASCRIPT6]: http://es6-features.org/
 [Exports and Entry Points]: https://github.com/bazelbuild/rules_closure/blob/master/closure/compiler/test/exports_and_entry_points/BUILD
-[Google JavaScript Style Guide]: https://google.github.io/styleguide/javascriptguide.xml
+[Google JavaScript Style Guide]: https://google.github.io/styleguide/jsguide.html
 [Google coding conventions]: https://github.com/google/closure-compiler/blob/master/src/com/google/javascript/jscomp/GoogleCodingConvention.java
 [Incremental DOM]: https://github.com/google/incremental-dom/
 [Name]: http://bazel.io/docs/build-ref.html#name
