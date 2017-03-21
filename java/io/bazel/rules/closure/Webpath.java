@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
@@ -49,24 +48,16 @@ import javax.annotation.concurrent.Immutable;
 @Immutable
 public final class Webpath implements CharSequence, Comparable<Webpath> {
 
-  public static final char DOT = '.';
-  public static final char SEPARATOR = '/';
-  public static final String ROOT = "/";
-  public static final String CURRENT_DIR = ".";
-  public static final String PARENT_DIR = "..";
-  public static final Webpath EMPTY_PATH = new Webpath("");
-  public static final Webpath ROOT_PATH = new Webpath(ROOT);
+  private static final char SEPARATOR = '/';
+  private static final String ROOT = "/";
+  private static final String CURRENT_DIR = ".";
+  private static final String PARENT_DIR = "..";
+  private static final Webpath EMPTY_PATH = new Webpath("");
+  private static final Webpath ROOT_PATH = new Webpath(ROOT);
 
   private static final Splitter SPLITTER = Splitter.on(SEPARATOR).omitEmptyStrings();
   private static final Joiner JOINER = Joiner.on(SEPARATOR);
   private static final Ordering<Iterable<String>> ORDERING = Ordering.natural().lexicographical();
-
-  private final String path;
-  private List<String> lazyStringParts;
-
-  private Webpath(String path) {
-    this.path = checkNotNull(path);
-  }
 
   /** Returns new path of {@code first}. */
   public static Webpath get(String path) {
@@ -76,6 +67,14 @@ public final class Webpath implements CharSequence, Comparable<Webpath> {
       return ROOT_PATH;
     }
     return new Webpath(path);
+  }
+
+  private final String path;
+  private int lazyHashCode;
+  private List<String> lazyStringParts;
+
+  private Webpath(String path) {
+    this.path = checkNotNull(path);
   }
 
   /** Returns {@code true} consists only of {@code separator}. */
@@ -390,37 +389,6 @@ public final class Webpath implements CharSequence, Comparable<Webpath> {
     return startsWith(me.splitReverse(), other.splitReverse());
   }
 
-  /**
-   * Compares two paths lexicographically for ordering.
-   *
-   * @see java.nio.file.Path#compareTo(java.nio.file.Path)
-   */
-  @Override
-  public int compareTo(Webpath other) {
-    if (isAbsolute()) {
-      if (!other.isAbsolute()) {
-        return 1;
-      }
-    } else {
-      if (other.isAbsolute()) {
-        return -1;
-      }
-    }
-    int result = ORDERING.compare(getParts(), other.getParts());
-    if (result == 0) {
-      if (hasTrailingSeparator()) {
-        if (!other.hasTrailingSeparator()) {
-          return 1;
-        }
-      } else {
-        if (other.hasTrailingSeparator()) {
-          return -1;
-        }
-      }
-    }
-    return result;
-  }
-
   /** Converts relative path to an absolute path. */
   public Webpath toAbsolutePath(Webpath currentWorkingDirectory) {
     checkArgument(currentWorkingDirectory.isAbsolute());
@@ -461,14 +429,99 @@ public final class Webpath implements CharSequence, Comparable<Webpath> {
     return Lists.reverse(getParts()).iterator();
   }
 
+  /**
+   * Compares two paths lexicographically for ordering.
+   *
+   * @see java.nio.file.Path#compareTo(java.nio.file.Path)
+   */
   @Override
-  public boolean equals(Object other) {
-    return this == other || (other instanceof Webpath && compareTo((Webpath) other) == 0);
+  public int compareTo(Webpath other) {
+    if (isEmpty()) {
+      if (!other.isEmpty()) {
+        return -1;
+      }
+    } else {
+      if (other.isEmpty()) {
+        return 1;
+      }
+    }
+    if (isAbsolute()) {
+      if (!other.isAbsolute()) {
+        return 1;
+      }
+    } else {
+      if (other.isAbsolute()) {
+        return -1;
+      }
+    }
+    int result = ORDERING.compare(getParts(), other.getParts());
+    if (result == 0) {
+      if (hasTrailingSeparator()) {
+        if (!other.hasTrailingSeparator()) {
+          return 1;
+        }
+      } else {
+        if (other.hasTrailingSeparator()) {
+          return -1;
+        }
+      }
+    }
+    return result;
   }
 
+  /** Returns {@code true} if equal, without taking duplicate slashes into consideration. */
+  @Override
+  public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
+    if (!(other instanceof Webpath) || hashCode() != other.hashCode()) {
+      return false;
+    }
+    String path2 = ((Webpath) other).path;
+    int i = 0;
+    int i2 = 0;
+    while (true) {
+      if (i == path.length()) {
+        return i2 == path2.length();
+      }
+      if (i2 == path2.length()) {
+        return false;
+      }
+      char c = path.charAt(i++);
+      if (c == SEPARATOR) {
+        while (i < path.length() && path.charAt(i) == SEPARATOR) {
+          i++;
+        }
+      }
+      char c2 = path2.charAt(i2++);
+      if (c != c2) {
+        return false;
+      }
+      if (c2 == SEPARATOR) {
+        while (i2 < path2.length() && path2.charAt(i2) == SEPARATOR) {
+          i2++;
+        }
+      }
+    }
+  }
+
+  /** Returns hash code, without taking duplicate slashes into consideration. */
   @Override
   public int hashCode() {
-    return Objects.hash(getParts(), isAbsolute(), hasTrailingSeparator());
+    int h = lazyHashCode;
+    if (h == 0) {
+      boolean previousWasSlash = false;
+      for (int i = 0; i < path.length(); i++) {
+        char c = path.charAt(i);
+        if (c != SEPARATOR || !previousWasSlash) {
+          h = 31 * h + (c & 0xffff);
+        }
+        previousWasSlash = c == SEPARATOR;
+      }
+      lazyHashCode = h;
+    }
+    return h;
   }
 
   /** Returns path as a string. */

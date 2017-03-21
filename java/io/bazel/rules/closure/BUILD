@@ -44,11 +44,15 @@ java_library(
 
 java_library(
     name = "webpath",
-    srcs = ["Webpath.java"],
+    srcs = [
+        "Webpath.java",
+        "WebpathInterner.java",
+    ],
     visibility = ["//visibility:public"],
     deps = [
         "@com_google_code_findbugs_jsr305",
         "@com_google_guava",
+        "@javax_inject",
     ],
 )
 

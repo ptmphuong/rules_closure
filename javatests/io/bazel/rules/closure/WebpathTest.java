@@ -19,6 +19,7 @@ import static org.junit.Assume.assumeTrue;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Ordering;
+import com.google.common.collect.testing.Helpers;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import com.google.common.testing.EqualsTester;
@@ -535,6 +536,25 @@ public class WebpathTest {
   }
 
   @Test
+  public void testCompareTo_isConsistentWithEquals() {
+    Helpers.testCompareToAndEquals(
+        ImmutableList.of(
+            wp(""),
+            wp("0"),
+            wp("a"),
+            wp("a/"),
+            wp("a/b"),
+            wp("b"),
+            wp("/"),
+            wp("//a"),
+            wp("/a/"),
+            wp("/a/a"),
+            wp("/a//b"),
+            wp("/a/c"),
+            wp("/b")));
+  }
+
+  @Test
   public void testCompareTo_comparesComponentsIndividually() {
     assumeTrue('.' < '/');
     assertThat("hi./there".compareTo("hi/there")).isEqualTo(-1); // demonstration
@@ -595,10 +615,10 @@ public class WebpathTest {
   public void testEquals_withEqualsTester() {
     new EqualsTester()
         .addEqualityGroup(wp(""))
-        .addEqualityGroup(wp("/"), wp("//"))
+        .addEqualityGroup(wp("/"), wp("//"), wp("///"))
         .addEqualityGroup(wp("lol"))
         .addEqualityGroup(wp("/lol"))
-        .addEqualityGroup(wp("/lol//"), wp("/lol//"))
+        .addEqualityGroup(wp("/lol//"), wp("/lol//"), wp("//lol//"), wp("//lol///"))
         .addEqualityGroup(wp("a/b"), wp("a//b"))
         .testEquals();
   }
