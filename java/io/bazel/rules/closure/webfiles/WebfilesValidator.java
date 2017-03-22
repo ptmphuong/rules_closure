@@ -107,7 +107,7 @@ public class WebfilesValidator {
             path, Webpath.get(src.getWebpath()), new String(Files.readAllBytes(path), UTF_8));
       }
     }
-    for (ImmutableSet<Webpath> scc : Tarjan.findStronglyConnectedComponents(relationships)) {
+    for (ImmutableSet<Webpath> scc : Tarjan.run(relationships).getStronglyConnectedComponents()) {
       errors.put(
           CYCLES_ERROR,
           String.format(

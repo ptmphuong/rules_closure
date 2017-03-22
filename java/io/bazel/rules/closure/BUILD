@@ -39,7 +39,10 @@ java_library(
     name = "tarjan",
     srcs = ["Tarjan.java"],
     visibility = ["//visibility:public"],
-    deps = ["@com_google_guava"],
+    deps = [
+        "@com_google_auto_value",
+        "@com_google_guava",
+    ],
 )
 
 java_library(

@@ -21,6 +21,9 @@ def closure_repositories(
     omit_aopalliance=False,
     omit_args4j=False,
     omit_clang=False,
+    omit_com_google_auto_common=False,
+    omit_com_google_auto_factory=False,
+    omit_com_google_auto_value=False,
     omit_com_google_closure_stylesheets=False,
     omit_com_google_code_findbugs_jsr305=False,
     omit_com_google_code_gson=False,
@@ -67,6 +70,12 @@ def closure_repositories(
     args4j()
   if not omit_clang:
     clang()
+  if not omit_com_google_auto_common:
+    com_google_auto_common()
+  if not omit_com_google_auto_common:
+    com_google_auto_factory()
+  if not omit_com_google_auto_factory:
+    com_google_auto_value()
   if not omit_com_google_closure_stylesheets:
     com_google_closure_stylesheets()
   if not omit_com_google_code_findbugs_jsr305:
@@ -245,6 +254,116 @@ def clang():
       macos_sha256 = "e5a961e04b0e1738bbb5b824886a34932dc13b0af699d1fe16519d814d7b776f",
   )
 
+def com_google_auto_common():
+  java_import_external(
+      name = "com_google_auto_common",
+      jar_sha256 = "eee75e0d1b1b8f31584dcbe25e7c30752545001b46673d007d468d75cf6b2c52",
+      jar_urls = [
+          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/auto/auto-common/0.7/auto-common-0.7.jar",
+          "http://repo1.maven.org/maven2/com/google/auto/auto-common/0.7/auto-common-0.7.jar",
+          "http://maven.ibiblio.org/maven2/com/google/auto/auto-common/0.7/auto-common-0.7.jar",
+      ],
+      licenses = ["notice"],  # Apache 2.0
+      deps = ["@com_google_guava"],
+  )
+
+def com_google_auto_factory():
+  java_import_external(
+      name = "com_google_auto_factory",
+      licenses = ["notice"],  # Apache 2.0
+      jar_sha256 = "a038e409da90b9e065ec537cce2375b0bb0b07548dca0f9448671b0befb83439",
+      jar_urls = [
+          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/auto/factory/auto-factory/1.0-beta3/auto-factory-1.0-beta3.jar",
+          "http://maven.ibiblio.org/maven2/com/google/auto/factory/auto-factory/1.0-beta3/auto-factory-1.0-beta3.jar",
+          "http://repo1.maven.org/maven2/com/google/auto/factory/auto-factory/1.0-beta3/auto-factory-1.0-beta3.jar",
+      ],
+      # Auto Factory ships its annotations, runtime, and processor in the same
+      # jar. The generated code must link against this jar at runtime. So our
+      # goal is to introduce as little bloat as possible.The only class we need
+      # at runtime is com.google.auto.factory.internal.Preconditions. So we're
+      # not going to specify the deps of this jar as part of the java_import().
+      generated_rule_name = "jar",
+      extra_build_file_content = "\n".join([
+          "java_library(",
+          "    name = \"processor\",",
+          "    exports = [\":jar\"],",
+          "    runtime_deps = [",
+          "        \"@com_google_auto_common\",",
+          "        \"@com_google_guava\",",
+          "        \"@com_squareup_javawriter\",",
+          "        \"@javax_inject\",",
+          "    ],",
+          ")",
+          "",
+          "java_plugin(",
+          "    name = \"AutoFactoryProcessor\",",
+          "    output_licenses = [\"unencumbered\"],",
+          "    processor_class = \"com.google.auto.factory.processor.AutoFactoryProcessor\",",
+          "    generates_api = 1,",
+          "    tags = [\"annotation=com.google.auto.factory.AutoFactory;genclass=${package}.${outerclasses}@{className|${classname}Factory}\"],",
+          "    deps = [\":processor\"],",
+          ")",
+          "",
+          "java_library(",
+          "    name = \"com_google_auto_factory\",",
+          "    exported_plugins = [\":AutoFactoryProcessor\"],",
+          "    exports = [",
+          "        \":jar\",",
+          "        \"@com_google_code_findbugs_jsr305\",",
+          "        \"@javax_inject\",",
+          "    ],",
+          ")",
+      ]),
+  )
+
+def com_google_auto_value():
+  java_import_external(
+      name = "com_google_auto_value",
+      jar_sha256 = "ea26f99150825f61752efc8784739cf50dd25d7956774573f8cdc3b948b23086",
+      jar_urls = [
+          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/auto/value/auto-value/1.4-rc2/auto-value-1.4-rc2.jar",
+          "http://repo1.maven.org/maven2/com/google/auto/value/auto-value/1.4-rc2/auto-value-1.4-rc2.jar",
+      ],
+      licenses = ["notice"],  # Apache 2.0
+      neverlink = True,
+      generated_rule_name = "compile",
+      generated_linkable_rule_name = "processor",
+      deps = [
+          "@com_google_auto_common",
+          "@com_google_code_findbugs_jsr305",
+          "@com_google_guava",
+      ],
+      extra_build_file_content = "\n".join([
+          "java_plugin(",
+          "    name = \"AutoAnnotationProcessor\",",
+          "    output_licenses = [\"unencumbered\"],",
+          "    processor_class = \"com.google.auto.value.processor.AutoAnnotationProcessor\",",
+          "    tags = [\"annotation=com.google.auto.value.AutoAnnotation;genclass=${package}.AutoAnnotation_${outerclasses}${classname}_${methodname}\"],",
+          "    deps = [\":processor\"],",
+          ")",
+          "",
+          "java_plugin(",
+          "    name = \"AutoValueProcessor\",",
+          "    output_licenses = [\"unencumbered\"],",
+          "    processor_class = \"com.google.auto.value.processor.AutoValueProcessor\",",
+          "    tags = [\"annotation=com.google.auto.value.AutoValue;genclass=${package}.AutoValue_${outerclasses}${classname}\"],",
+          "    deps = [\":processor\"],",
+          ")",
+          "",
+          "java_library(",
+          "    name = \"com_google_auto_value\",",
+          "    exported_plugins = [",
+          "        \":AutoAnnotationProcessor\",",
+          "        \":AutoValueProcessor\",",
+          "    ],",
+          "    exports = [",
+          "        \":compile\",",
+          "        \"@com_google_code_findbugs_jsr305\",",
+          "    ],",
+          ")",
+      ]),
+  )
+
 def com_google_closure_stylesheets():
   java_import_external(
       name = "com_google_closure_stylesheets",
@@ -366,8 +485,7 @@ def com_google_dagger_compiler():
       extra_build_file_content = "\n".join([
           "java_plugin(",
           "    name = \"ComponentProcessor\",",
-          # TODO(jart): https://github.com/bazelbuild/bazel/issues/2286
-          # "    output_licenses = [\"unencumbered\"],",
+          "    output_licenses = [\"unencumbered\"],",
           "    processor_class = \"dagger.internal.codegen.ComponentProcessor\",",
           "    generates_api = 1,",
           "    tags = [",
