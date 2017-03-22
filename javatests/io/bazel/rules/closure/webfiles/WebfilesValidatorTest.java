@@ -19,11 +19,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimap;
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
 import io.bazel.rules.closure.webfiles.BuildInfo.Webfiles;
 import io.bazel.rules.closure.webfiles.BuildInfo.WebfilesSource;
+import io.bazel.rules.closure.webfiles.compiler.CssParser;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -38,7 +40,7 @@ import org.junit.runners.JUnit4;
 public class WebfilesValidatorTest {
 
   private final FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
-  private final WebfilesValidator validator = new WebfilesValidator(fs);
+  private final WebfilesValidator validator = new WebfilesValidator(fs, new CssParser());
 
   @After
   public void after() throws Exception {
@@ -328,8 +330,8 @@ public class WebfilesValidatorTest {
   }
 
   @Test
-  public void invalidCss_printsError() throws Exception {
-    save(fs.getPath("/fs/path/index.css"), ".{}");
+  public void invalidCssWithBadRelationshipAfterBadSyntax_stillAbleToFindUrl() throws Exception {
+    save(fs.getPath("/fs/path/index.css"), ".{}\n.hi{background: url(nope.jpg)}");
     Multimap<String, String> errors =
         validator.validate(
             Webfiles.newBuilder()
@@ -341,9 +343,9 @@ public class WebfilesValidatorTest {
             ImmutableList.<Webfiles>of(),
             Suppliers.ofInstance(ImmutableList.<Webfiles>of()));
     assertThat(errors).hasSize(1);
-    assertThat(errors).containsKey(WebfilesValidator.CSS_SYNTAX_ERROR);
-    assertThat(errors.get(WebfilesValidator.CSS_SYNTAX_ERROR).iterator().next())
-        .startsWith("Parse error in /fs/path/index.css at line 1 column 2:");
+    assertThat(errors).containsKey(WebfilesValidator.STRICT_DEPENDENCIES_ERROR);
+    assertThat(Iterables.getFirst(errors.get(WebfilesValidator.STRICT_DEPENDENCIES_ERROR), null))
+        .contains("nope.jpg");
   }
 
   private void save(Path path, String contents) throws IOException {

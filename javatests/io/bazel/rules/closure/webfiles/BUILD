@@ -20,6 +20,7 @@ java_test(
     deps = [
         "//java/io/bazel/rules/closure/webfiles",
         "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
+        "//java/io/bazel/rules/closure/webfiles/compiler",
         "@com_google_guava",
         "@com_google_guava_testlib",
         "@com_google_jimfs",
