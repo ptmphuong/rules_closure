@@ -1,4 +1,4 @@
-# Copyright 2016 The Closure Rules Authors. All rights reserved.
+# Copyright 2017 The Closure Rules Authors. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,9 +14,19 @@
 
 licenses(["notice"])  # Apache 2.0
 
-java_library(
-    name = "program",
-    srcs = ["CommandLineProgram.java"],
-    visibility = ["//visibility:public"],
-    deps = ["@com_google_guava"],
+java_test(
+    name = "WorkerTestSuite",
+    srcs = glob(["*.java"]),
+    deps = [
+        "//java/io/bazel/rules/closure/worker",
+        "//java/io/bazel/rules/closure/worker:worker_protocol_java_proto",
+        "@com_google_code_findbugs_jsr305",
+        "@com_google_dagger",
+        "@com_google_guava",
+        "@com_google_jimfs",
+        "@com_google_protobuf_java",
+        "@com_google_truth",
+        "@junit",
+        "@org_mockito_all",
+    ],
 )

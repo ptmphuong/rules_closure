@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.bazel.rules.closure.program;
+package io.bazel.rules.closure.worker;
 
 import com.google.common.base.Function;
 

@@ -16,47 +16,27 @@ load("//closure/private:java_proto_library.bzl", "java_proto_library")
 
 licenses(["notice"])  # Apache 2.0
 
-java_binary(
-    name = "ClosureWorker",
-    srcs = ["ClosureWorker.java"],
-    main_class = "io.bazel.rules.closure.ClosureWorker",
-    visibility = ["//visibility:public"],
+java_library(
+    name = "worker",
+    srcs = glob(["*.java"]),
+    visibility = ["//:__subpackages__"],
+    # Our goal with this depnedency list is to keep it lightweight. It only
+    # depends on Guava, Protobuf, and a few tiny annotation runtime libraries.
+    #
+    # TODO(jart): Investigate removing Dagger dependency and push DI heavy
+    #             functionality into sub-package that makes Dagger optional.
     deps = [
-        "//java/com/google/javascript/jscomp",
-        "//java/io/bazel/rules/closure/webfiles",
-        "//java/io/bazel/rules/closure/worker",
+        ":worker_protocol_java_proto",
+        "@com_google_auto_value",
+        "@com_google_code_findbugs_jsr305",
         "@com_google_dagger",
         "@com_google_guava",
-        "@javax_inject",
-    ],
-)
-
-java_library(
-    name = "tarjan",
-    srcs = ["Tarjan.java"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "@com_google_auto_value",
-        "@com_google_guava",
-    ],
-)
-
-java_library(
-    name = "webpath",
-    srcs = [
-        "Webpath.java",
-        "WebpathInterner.java",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-        "@com_google_code_findbugs_jsr305",
-        "@com_google_guava",
-        "@javax_inject",
+        "@com_google_protobuf_java",
     ],
 )
 
 java_proto_library(
-    name = "build_info_java_proto",
-    src = "build_info.proto",
-    visibility = ["//visibility:public"],
+    name = "worker_protocol_java_proto",
+    src = "worker_protocol.proto",
+    visibility = ["//javatests/io/bazel/rules/closure/worker:__pkg__"],
 )

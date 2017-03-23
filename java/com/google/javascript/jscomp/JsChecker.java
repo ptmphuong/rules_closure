@@ -29,7 +29,7 @@ import com.google.javascript.jscomp.CompilerOptions.IncrementalCheckMode;
 import com.google.javascript.jscomp.CompilerOptions.LanguageMode;
 import com.google.javascript.jscomp.parsing.Config;
 import io.bazel.rules.closure.BuildInfo.ClosureJsLibrary;
-import io.bazel.rules.closure.program.CommandLineProgram;
+import io.bazel.rules.closure.worker.CommandLineProgram;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -41,6 +41,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.inject.Inject;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
@@ -306,6 +307,10 @@ public final class JsChecker {
   }
 
   public static final class Program implements CommandLineProgram {
+
+    @Inject
+    Program() {}
+
     @Override
     public Integer apply(Iterable<String> args) {
       JsChecker checker = new JsChecker();
