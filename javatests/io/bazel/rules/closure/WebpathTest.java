@@ -18,6 +18,7 @@ import static org.junit.Assume.assumeTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.testing.Helpers;
 import com.google.common.jimfs.Configuration;
@@ -31,6 +32,7 @@ import com.google.common.truth.Subject;
 import com.google.common.truth.Truth;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
+import java.util.List;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.Test;
@@ -629,5 +631,27 @@ public class WebpathTest {
     tester.ignore(Webpath.class.getMethod("equals", Object.class));
     tester.testAllPublicStaticMethods(Webpath.class);
     tester.testAllPublicInstanceMethods(wp("solo"));
+    tester.testConstructors(WebpathInterner.class, NullPointerTester.Visibility.PUBLIC);
+    tester.testAllPublicInstanceMethods(new WebpathInterner());
+  }
+
+  @Test
+  public void testInterner_producesIdenticalInstances() throws Exception {
+    WebpathInterner interner = new WebpathInterner();
+    assertThat(interner.get("foo")).isSameAs(interner.get("foo"));
+  }
+
+  @Test
+  public void testInterner_supportsFunctionalProgramming_forGreatJustice() throws Exception {
+    WebpathInterner interner = new WebpathInterner();
+    List<Webpath> dubs = Lists.transform(ImmutableList.of("foo", "foo"), interner);
+    assertThat(dubs.get(0)).isSameAs(dubs.get(1));
+  }
+
+  @Test
+  public void testInterner_duplicateSlashes_throwsIae() throws Exception {
+    WebpathInterner interner = new WebpathInterner();
+    thrown.expect(IllegalArgumentException.class);
+    interner.get("foo//bar");
   }
 }

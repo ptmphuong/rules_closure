@@ -45,7 +45,7 @@ public final class WebpathInterner implements Function<String, Webpath> {
    * @throws IllegalArgumentException if {@code path} has superfluous slashes
    */
   public Webpath get(String path) {
-    checkArgument(path.contains("//"), "Interned webpath with superfluous slashes: %s", path);
+    checkArgument(!path.contains("//"), "Interned webpath with superfluous slashes: %s", path);
     path = path.intern();
     Webpath result = pool.get(path);
     if (result == null) {
