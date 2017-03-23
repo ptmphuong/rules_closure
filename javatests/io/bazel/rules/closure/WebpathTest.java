@@ -192,6 +192,8 @@ public class WebpathTest {
 
   @Test
   public void testResolve() {
+    assertThat(xp("").resolve(xp("cat"))).isEqualTo(xp("cat"));
+    assertThat(wp("").resolve(wp("cat"))).isEqualTo(wp("cat"));
     assertThat(xp("/hello").resolve(xp("cat"))).isEqualTo(xp("/hello/cat"));
     assertThat(wp("/hello").resolve(wp("cat"))).isEqualTo(wp("/hello/cat"));
     assertThat(xp("/hello/").resolve(xp("cat"))).isEqualTo(xp("/hello/cat"));

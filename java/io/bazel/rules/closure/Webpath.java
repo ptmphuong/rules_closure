@@ -284,7 +284,7 @@ public final class Webpath implements CharSequence, Comparable<Webpath> {
   public Webpath resolve(Webpath other) {
     if (other.path.isEmpty()) {
       return this;
-    } else if (other.isAbsolute()) {
+    } else if (isEmpty() || other.isAbsolute()) {
       return other;
     } else if (hasTrailingSeparator()) {
       return new Webpath(path + other.path);
