@@ -18,6 +18,7 @@ java_test(
     name = "HttpTestSuite",
     size = "medium",
     srcs = glob(["*.java"]),
+    javacopts = ["-Xep:FutureReturnValueIgnored:OFF"],
     deps = [
         "//java/io/bazel/rules/closure/http",
         "//java/io/bazel/rules/closure/http/filter",
