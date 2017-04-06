@@ -63,7 +63,7 @@ def closure_repositories(
     omit_org_ow2_asm_util=False,
     omit_phantomjs=False):
   """Imports dependencies for Closure Rules."""
-  _check_bazel_version("Closure Rules", "0.4.2")
+  _check_bazel_version("Closure Rules", "0.4.5")
   if not omit_aopalliance:
     aopalliance()
   if not omit_args4j:
