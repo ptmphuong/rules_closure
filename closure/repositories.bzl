@@ -47,6 +47,7 @@ def closure_repositories(
     omit_com_google_template_soy=False,
     omit_com_google_template_soy_jssrc=False,
     omit_com_ibm_icu_icu4j=False,
+    omit_com_squareup_javawriter=False,
     omit_fonts_noto_hinted_deb=False,
     omit_fonts_noto_mono_deb=False,
     omit_javax_inject=False,
@@ -122,6 +123,8 @@ def closure_repositories(
     com_google_template_soy_jssrc()
   if not omit_com_ibm_icu_icu4j:
     com_ibm_icu_icu4j()
+  if not omit_com_squareup_javawriter:
+    com_squareup_javawriter()
   if not omit_fonts_noto_hinted_deb:
     fonts_noto_hinted_deb()
   if not omit_fonts_noto_mono_deb:
@@ -769,6 +772,18 @@ def com_ibm_icu_icu4j():
           "http://maven.ibiblio.org/maven2/com/ibm/icu/icu4j/57.1/icu4j-57.1.jar",
       ],
       jar_sha256 = "759d89ed2f8c6a6b627ab954be5913fbdc464f62254a513294e52260f28591ee",
+  )
+
+def com_squareup_javawriter():
+  java_import_external(
+      name = "com_squareup_javawriter",
+      jar_sha256 = "39b054910ff212d4379129a89070fb7dbb1f341371c925e9e99904f154a22d93",
+      jar_urls = [
+          "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/squareup/javawriter/2.5.1/javawriter-2.5.1.jar",
+          "http://maven.ibiblio.org/maven2/com/squareup/javawriter/2.5.1/javawriter-2.5.1.jar",
+          "http://repo1.maven.org/maven2/com/squareup/javawriter/2.5.1/javawriter-2.5.1.jar",
+      ],
+      licenses = ["notice"],  # Apache 2.0
   )
 
 def fonts_noto_hinted_deb():
