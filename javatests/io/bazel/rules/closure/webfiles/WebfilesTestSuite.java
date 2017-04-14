@@ -21,7 +21,10 @@ import org.junit.runners.Suite.SuiteClasses;
 /** Test suite for webfiles package. */
 @RunWith(Suite.class)
 @SuiteClasses({
-  WebfilesValidatorProgramTest.class,
+  WebfilesUtilsTest.class,
   WebfilesValidatorTest.class,
+  WebfilesValidatorProgramTest.class,
+  WebfilesZipTest.class,
+  WebsetTest.class,
 })
 public class WebfilesTestSuite {}

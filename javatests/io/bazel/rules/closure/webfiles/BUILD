@@ -18,6 +18,7 @@ java_test(
     name = "WebfilesTestSuite",
     srcs = glob(["*.java"]),
     deps = [
+        "//java/io/bazel/rules/closure:webpath",
         "//java/io/bazel/rules/closure/webfiles",
         "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
         "//java/io/bazel/rules/closure/webfiles/compiler",
