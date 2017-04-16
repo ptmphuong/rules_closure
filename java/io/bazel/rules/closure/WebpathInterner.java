@@ -17,7 +17,7 @@ package io.bazel.rules.closure;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.Function;
-import java.util.IdentityHashMap;
+import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 
@@ -34,7 +34,7 @@ import javax.inject.Inject;
  */
 public final class WebpathInterner implements Function<String, Webpath> {
 
-  private final Map<String, Webpath> pool = new IdentityHashMap<>(256);
+  private final Map<String, Webpath> pool = new HashMap<>(256);
 
   @Inject
   public WebpathInterner() {}
@@ -45,7 +45,6 @@ public final class WebpathInterner implements Function<String, Webpath> {
    * @throws IllegalArgumentException if {@code path} has superfluous slashes
    */
   public Webpath get(String path) {
-    path = path.intern();
     Webpath result = pool.get(path);
     if (result == null) {
       checkArgument(!path.contains("//"), "Interned webpath with superfluous slashes: %s", path);
