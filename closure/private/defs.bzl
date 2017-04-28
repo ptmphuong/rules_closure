@@ -219,7 +219,7 @@ def create_argfile(ctx, args):
   ctx.file_action(output=argfile, content="\n".join(args))
   return argfile
 
-def library_level_checks(ctx, ijs_deps, srcs, executable, output):
+def library_level_checks(ctx, ijs_deps, srcs, executable, output, suppress = []):
   args = [
       "JsCompiler",
       "--checks_only",
@@ -237,6 +237,9 @@ def library_level_checks(ctx, ijs_deps, srcs, executable, output):
   for f in srcs:
     args.append("--js=%s" % f.path)
     inputs.append(f)
+  for s in suppress:
+    args.append("--suppress")
+    args.append(s)
   ctx.action(
       inputs=inputs,
       outputs=[output],

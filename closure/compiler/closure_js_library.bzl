@@ -170,6 +170,7 @@ def _closure_js_library(ctx):
       srcs=srcs,
       executable=ctx.executable._ClosureWorker,
       output=ctx.outputs.typecheck,
+      suppress=ctx.attr.suppress,
   )
 
   # We now export providers to any parent Target. This is considered a public
