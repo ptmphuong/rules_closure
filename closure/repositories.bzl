@@ -400,11 +400,11 @@ def com_google_code_findbugs_jsr305():
       name = "com_google_code_findbugs_jsr305",
       licenses = ["notice"],  # BSD 3-clause
       jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar",
-          "http://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar",
-          "http://maven.ibiblio.org/maven2/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3.jar",
+          "http://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3.jar",
+          "http://maven.ibiblio.org/maven2/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3.jar",
       ],
-      jar_sha256 = "905721a0eea90a81534abb7ee6ef4ea2e5e645fa1def0a5cd88402df1b46c9ed",
+      jar_sha256 = "bec0b24dcb23f9670172724826584802b80ae6cbdaba03bdebdef9327b962f6a",
   )
 
 def com_google_code_gson():
@@ -429,7 +429,7 @@ def com_google_common_html_types():
           "http://repo1.maven.org/maven2/com/google/common/html/types/types/1.0.5/types-1.0.5.jar",
           "http://maven.ibiblio.org/maven2/com/google/common/html/types/types/1.0.5/types-1.0.5.jar",
       ],
-      jar_sha256 = "",
+      jar_sha256 = "bf62fc3bf994ab1e043f3884b19cba6156181118eb7fbb6fbf7ff398a21170b2",
       deps = [
           "@com_google_guava",
           "@com_google_code_findbugs_jsr305",
@@ -531,11 +531,10 @@ def com_google_errorprone_error_prone_annotations():
   java_import_external(
       name = "com_google_errorprone_error_prone_annotations",
       licenses = ["notice"],  # Apache 2.0
-      jar_sha256 = "e7749ffdf03fb8ebe08a727ea205acb301c8791da837fee211b99b04f9d79c46",
+      jar_sha256 = "cde78ace21e46398299d0d9c6be9f47b7f971c7f045d40c78f95be9a638cbf7e",
       jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.0.15/error_prone_annotations-2.0.15.jar",
-          "http://maven.ibiblio.org/maven2/com/google/errorprone/error_prone_annotations/2.0.15/error_prone_annotations-2.0.15.jar",
-          "http://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.0.15/error_prone_annotations-2.0.15.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.0.19/error_prone_annotations-2.0.19.jar",
+          "http://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.0.19/error_prone_annotations-2.0.19.jar",
       ],
   )
 
@@ -613,10 +612,10 @@ def com_google_javascript_closure_compiler():
       name = "com_google_javascript_closure_compiler",
       licenses = ["reciprocal"],  # MPL v1.1 (Rhino AST), Apache 2.0 (JSCompiler)
       jar_urls = [
-          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20170124/closure-compiler-unshaded-v20170124.jar",
-          "http://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20170124/closure-compiler-unshaded-v20170124.jar",
+          "http://bazel-mirror.storage.googleapis.com/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20170423/closure-compiler-unshaded-v20170423.jar",
+          "http://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20170423/closure-compiler-unshaded-v20170423.jar",
       ],
-      jar_sha256 = "1be9f716c09397156229cbf93479f78e82b54f56752843d5b733beec75df37e7",
+      jar_sha256 = "13950cb2b039ba2d0be54ad4575df6c5e6a9ee5582e31cd341ae18d099943383",
       deps = [
           "@com_google_code_gson",
           "@com_google_guava",
@@ -643,11 +642,11 @@ def com_google_javascript_closure_library():
   native.new_http_archive(
       name = "com_google_javascript_closure_library",
       urls = [
-          "http://bazel-mirror.storage.googleapis.com/github.com/google/closure-library/archive/v20170124.tar.gz",
-          "https://github.com/google/closure-library/archive/v20170124.tar.gz",
+          "http://bazel-mirror.storage.googleapis.com/github.com/google/closure-library/archive/0e309e9c5fb611a70a47736a2eb1204ae48ab989.tar.gz",
+          "https://github.com/google/closure-library/archive/0e309e9c5fb611a70a47736a2eb1204ae48ab989.tar.gz",
       ],
-      sha256 = "2bd046004e741283641f761ab0a2c7caf4a457db4b3b81bd3299eeca609c11a2",
-      strip_prefix = "closure-library-20170124",
+      sha256 = "08b34d8efe3026f106c1ae2901a2cd1c7106be0c4173681c1fc57415e8532be9",
+      strip_prefix = "closure-library-0e309e9c5fb611a70a47736a2eb1204ae48ab989",
       build_file = str(Label("//closure/library:closure_library.BUILD")),
   )
 
