@@ -548,7 +548,7 @@ def com_google_guava():
           "http://maven.ibiblio.org/maven2/com/google/guava/guava/20.0/guava-20.0.jar",
       ],
       jar_sha256 = "36a666e3b71ae7f0f0dca23654b67e086e6c93d192f60ba5dfd5519db6c288c8",
-      deps = [
+      exports = [
           "@com_google_code_findbugs_jsr305",
           "@com_google_errorprone_error_prone_annotations",
       ],
