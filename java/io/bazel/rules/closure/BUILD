@@ -19,6 +19,10 @@ licenses(["notice"])  # Apache 2.0
 java_binary(
     name = "ClosureWorker",
     srcs = ["ClosureWorker.java"],
+    jvm_flags = [
+        "-Xss20m",  # JSCompiler needs big stacks for recursive parsing
+        "-XX:+UseParallelGC",  # Best GC when app isn't latency sensitive
+    ],
     main_class = "io.bazel.rules.closure.ClosureWorker",
     visibility = ["//visibility:public"],
     deps = [
