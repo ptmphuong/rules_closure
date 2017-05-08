@@ -211,9 +211,11 @@ public class WebfilesValidator {
 
   private static boolean shouldIgnoreUri(String uri) {
     return uri.isEmpty()
+        || uri.startsWith("#")
         || uri.endsWith("/")
         || uri.contains("//")
         || uri.startsWith("data:")
+        || uri.startsWith("javascript:")
         // The following are intended to filter out URLs with Polymer variables.
         || (uri.contains("[[") && uri.contains("]]"))
         || (uri.contains("{{") && uri.contains("}}"));
