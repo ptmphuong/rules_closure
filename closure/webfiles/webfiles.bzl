@@ -26,12 +26,15 @@ def _webfiles(ctx):
       fail("deps can not be set when srcs is not")
     if not ctx.attr.exports:
       fail("exports must be set if srcs is not")
-  if not ctx.attr.path.startswith("/"):
-    fail("webpath must start with /")
-  if ctx.attr.path != "/" and ctx.attr.path.endswith("/"):
-    fail("webpath must not end with / unless it is /")
-  if "//" in ctx.attr.path:
-    fail("webpath must not have //")
+  if ctx.attr.path:
+    if not ctx.attr.path.startswith("/"):
+      fail("webpath must start with /")
+    if ctx.attr.path != "/" and ctx.attr.path.endswith("/"):
+      fail("webpath must not end with / unless it is /")
+    if "//" in ctx.attr.path:
+      fail("webpath must not have //")
+  elif ctx.attr.srcs:
+    fail("path must be set when srcs is set")
   if "*" in ctx.attr.suppress and len(ctx.attr.suppress) != 1:
     fail("when \"*\" is suppressed no other items should be present")
 
@@ -46,9 +49,15 @@ def _webfiles(ctx):
   # process what comes now
   new_webpaths = []
   manifest_srcs = []
+  path = ctx.attr.path
+  strip = _get_strip(ctx)
   for src in ctx.files.srcs:
-    webpath = "%s/%s" % ("" if ctx.attr.path == "/" else ctx.attr.path,
-                         _get_path_relative_to_package(src))
+    suffix = _get_path_relative_to_package(src)
+    if strip:
+      if not suffix.startswith(strip):
+        fail("Relative src path not start with '%s': %s" % (strip, suffix))
+      suffix = suffix[len(strip):]
+    webpath = "%s/%s" % ("" if path == "/" else path, suffix)
     if webpath in new_webpaths:
       _fail(ctx, "multiple srcs within %s define the webpath %s " % (
           ctx.label, webpath))
@@ -159,16 +168,29 @@ def _get_path_relative_to_package(artifact):
       path = path[len(prefix):]
   return path
 
+def _get_strip(ctx):
+  strip = ctx.attr.strip_prefix
+  if strip:
+    if strip.startswith("/"):
+      _fail(ctx, "strip_prefix should not end with /")
+      strip = strip[1:]
+    if strip.endswith("/"):
+      _fail(ctx, "strip_prefix should not end with /")
+    else:
+      strip += "/"
+  return strip
+
 webfiles = rule(
     implementation=_webfiles,
     executable=True,
     attrs={
-        "path": attr.string(mandatory=True),
+        "path": attr.string(),
         "srcs": attr.label_list(allow_files=True),
         "deps": attr.label_list(providers=["webfiles"]),
         "exports": attr.label_list(),
         "data": attr.label_list(cfg="data", allow_files=True),
         "suppress": attr.string_list(),
+        "strip_prefix": attr.string(),
         "external_assets": attr.string_dict(default={"/_/runfiles": "."}),
         "_ClosureWorker": attr.label(
             default=Label("//java/io/bazel/rules/closure:ClosureWorker"),
@@ -183,3 +205,6 @@ webfiles = rule(
     outputs={
         "dummy": "%{name}.ignoreme",
     })
+
+# TODO(jart): Refactor so web_library is the only definition.
+web_library = webfiles

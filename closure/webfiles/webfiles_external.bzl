@@ -27,16 +27,25 @@ def _webfiles_external(repository_ctx):
   lines.append("")
   lines.append("webfiles(")
   lines.append("    name = %s," % repr(name))
-  for attr in ("srcs",
-               "data",
-               "path",
+  if ctx.attr.path:
+    lines.append("    path = %r," % ctx.attr.path)
+  if ctx.attr.srcs:
+    lines.append("    srcs = %s," % _repr_list(ctx.attr.srcs))
+  else:
+    lines.append("    srcs = glob(")
+    lines.append("        %s," % _repr_list(ctx.attr.glob, indent="        "))
+    lines.append("        exclude = %s," %
+                 _repr_list(ctx.attr.exclude + ["BUILD", "WORKSPACE"],
+                            indent="        "))
+    lines.append("    ),")
+  for attr in ("data",
                "visibility",
                "exports",
                "suppress",
                "deps"):
     value = getattr(repository_ctx.attr, attr, None)
     if value:
-      lines.append("    %s = %s," % (attr, repr(value)))
+      lines.append("    %s = %s," % (attr, _repr_list(value)))
   if repository_ctx.attr.testonly_:
     lines.append("    testonly = 1,")
   lines.append(")")
@@ -54,6 +63,17 @@ def _webfiles_external(repository_ctx):
       repository_ctx.attr.strip_prefix)
   repository_ctx.file("BUILD", "\n".join(lines))
 
+def _repr_list(items, indent="    "):
+  items = sorted(items)
+  if not items:
+    return "[]"
+  if len(items) == 1:
+    return repr(items)
+  parts = [repr(item) for item in items]
+  return (("[\n%s    " % indent) +
+          (",\n%s    " % indent).join(parts) +
+          (",\n%s]" % indent))
+
 webfiles_external = repository_rule(
     implementation=_webfiles_external,
     attrs={
@@ -62,7 +82,9 @@ webfiles_external = repository_rule(
         "licenses": attr.string_list(mandatory=True, allow_empty=False),
         "strip_prefix": attr.string(),
         "path": attr.string(mandatory=True),
-        "srcs": attr.string_list(mandatory=True, allow_empty=False),
+        "srcs": attr.string_list(),
+        "glob": attr.string_list(default=["**"]),
+        "exclude": attr.string_list(),
         "data": attr.string_list(allow_empty=False),
         "deps": attr.string_list(),
         "exports": attr.string_list(),
@@ -72,3 +94,6 @@ webfiles_external = repository_rule(
         "default_visibility": attr.string_list(default=["//visibility:public"]),
         "extra_build_file_content": attr.string(),
     })
+
+# TODO(jart): Refactor so web_library_external is the only definition.
+web_library_external = webfiles_external
