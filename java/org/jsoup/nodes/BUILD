@@ -17,7 +17,7 @@ licenses(["notice"])  # Apache 2.0
 java_library(
     name = "nodes",
     srcs = ["Html5Printer.java"],
-    visibility = ["//:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "@com_google_guava",
         "@org_jsoup",
