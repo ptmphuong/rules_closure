@@ -132,6 +132,7 @@ file_test(
 
 sh_test(
     name = "dataAttributeReferencingJsDeps_providesDepsFileSourcesAndData",
+    size = "small",
     srcs = ["hyperion2_deps_runfiles_test.sh"],
     data = [":hyperion2_deps"],
 )

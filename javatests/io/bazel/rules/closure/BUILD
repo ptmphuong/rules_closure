@@ -16,6 +16,7 @@ licenses(["notice"])  # Apache 2.0
 
 java_test(
     name = "TarjanTest",
+    size = "small",
     srcs = ["TarjanTest.java"],
     deps = [
         "//java/io/bazel/rules/closure:tarjan",
@@ -27,6 +28,7 @@ java_test(
 
 java_test(
     name = "WebpathTest",
+    size = "small",
     srcs = ["WebpathTest.java"],
     deps = [
         "//java/io/bazel/rules/closure:webpath",

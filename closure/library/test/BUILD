@@ -20,6 +20,7 @@ load("//closure:defs.bzl", "closure_js_test")
 
 closure_js_test(
     name = "dom_test",
+    timeout = "short",
     srcs = ["dom_test.js"],
     deps = [
         "//closure/library",

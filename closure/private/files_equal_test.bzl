@@ -46,7 +46,7 @@ def _impl(ctx):
   return struct(runfiles=ctx.runfiles([ctx.file.golden,
                                        ctx.file.actual]))
 
-files_equal_test = rule(
+_files_equal_test = rule(
     attrs = {
         "golden": attr.label(
             mandatory = True,
@@ -61,3 +61,6 @@ files_equal_test = rule(
     },
     implementation = _impl,
     test = True)
+
+def files_equal_test(size="small", **kwargs):
+  _files_equal_test(size=size, **kwargs)

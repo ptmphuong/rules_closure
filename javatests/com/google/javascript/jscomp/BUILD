@@ -16,6 +16,7 @@ licenses(["notice"])  # Apache 2.0
 
 java_test(
     name = "DiagnosticsTest",
+    size = "small",
     srcs = ["DiagnosticsTest.java"],
     deps = [
         "//java/com/google/javascript/jscomp",
@@ -26,6 +27,7 @@ java_test(
 
 java_test(
     name = "JsCheckerTest",
+    size = "small",
     srcs = ["JsCheckerTest.java"],
     deps = [
         "//java/com/google/javascript/jscomp",
@@ -36,6 +38,7 @@ java_test(
 
 java_test(
     name = "JsCompilerTest",
+    size = "small",
     srcs = ["JsCompilerTest.java"],
     deps = [
         "//java/com/google/javascript/jscomp",

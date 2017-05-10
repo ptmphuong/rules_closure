@@ -81,7 +81,7 @@ def _getattr(obj, name):
     obj = getattr(obj, label)
   return obj
 
-rule_test = rule(
+_rule_test = rule(
     attrs = {
         "rule": attr.label(mandatory = True),
         "generates": attr.string_list(),
@@ -90,3 +90,6 @@ rule_test = rule(
     executable = True,
     implementation = _impl,
     test = True)
+
+def rule_test(size="small", **kwargs):
+  _rule_test(size=size, **kwargs)

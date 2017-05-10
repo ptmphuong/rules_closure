@@ -36,6 +36,7 @@ closure_js_library(
 
 closure_js_test(
     name = "example_test",
+    timeout = "short",
     srcs = ["example_test.js"],
     deps = [
         ":example_lib",

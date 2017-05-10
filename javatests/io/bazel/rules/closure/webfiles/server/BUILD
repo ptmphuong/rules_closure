@@ -16,6 +16,7 @@ licenses(["notice"])  # Apache 2.0
 
 java_test(
     name = "ServerTestSuite",
+    size = "small",
     srcs = glob(["*.java"]),
     deps = [
         "//java/io/bazel/rules/closure:webpath",

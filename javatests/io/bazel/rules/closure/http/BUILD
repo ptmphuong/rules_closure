@@ -16,7 +16,7 @@ licenses(["notice"])  # Apache 2.0
 
 java_test(
     name = "HttpTestSuite",
-    size = "medium",
+    size = "small",
     srcs = glob(["*.java"]),
     javacopts = ["-Xep:FutureReturnValueIgnored:OFF"],
     deps = [

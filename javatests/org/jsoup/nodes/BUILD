@@ -16,6 +16,7 @@ licenses(["notice"])  # Apache 2.0
 
 java_test(
     name = "Html5PrinterTest",
+    size = "small",
     srcs = ["Html5PrinterTest.java"],
     deps = [
         "//java/org/jsoup/nodes",

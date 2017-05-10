@@ -47,7 +47,7 @@ def _impl(ctx):
       executable=True)
   return struct(runfiles=ctx.runfiles([exe, file_]))
 
-file_test = rule(
+_file_test = rule(
     attrs = {
         "file": attr.label(
             mandatory = True,
@@ -62,3 +62,6 @@ file_test = rule(
     executable = True,
     implementation = _impl,
     test = True)
+
+def file_test(size="small", **kwargs):
+  _file_test(size=size, **kwargs)

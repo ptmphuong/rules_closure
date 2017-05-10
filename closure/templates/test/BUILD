@@ -95,6 +95,7 @@ closure_js_library(
 
 closure_js_test(
     name = "greeter_test",
+    timeout = "short",
     srcs = ["greeter_test.js"],
     deps = [
         ":greeter_lib",
@@ -105,6 +106,7 @@ closure_js_test(
 
 closure_js_test(
     name = "greeter_idom_test",
+    timeout = "short",
     srcs = ["greeter_idom_test.js"],
     deps = [
         ":greeter_idom_lib",
@@ -115,6 +117,7 @@ closure_js_test(
 
 closure_js_test(
     name = "greeter_proto_test",
+    timeout = "short",
     srcs = ["greeter_proto_test.js"],
     deps = [
         ":greeter_proto_lib",
@@ -125,6 +128,7 @@ closure_js_test(
 
 closure_js_test(
     name = "greeter_idom_proto_test",
+    timeout = "short",
     srcs = ["greeter_idom_proto_test.js"],
     deps = [
         ":greeter_idom_proto_lib",
@@ -183,6 +187,7 @@ closure_js_template_library(
 
 closure_js_test(
     name = "globals_test",
+    timeout = "short",
     srcs = ["globals_test.js"],
     deps = [
         ":globals_soy",
