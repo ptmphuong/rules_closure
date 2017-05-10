@@ -84,6 +84,8 @@ public final class Html5Printer {
   private final Document.OutputSettings settings;
   private boolean omittedTableSectionEnd;
   private Node currentNode;
+  private boolean hadHead;
+  private boolean hadHeadClose;
 
   public Html5Printer(Appendable output, Document.OutputSettings settings) throws IOException {
     this.output = checkNotNull(output, "output");
@@ -129,6 +131,10 @@ public final class Html5Printer {
           }
           break;
         case "head":
+          if (hadHead) {
+            return;
+          }
+          hadHead = true;
           if (currentNode.childNodeSize() == 0 || currentNode.childNode(0) instanceof Element) {
             return;
           }
@@ -174,6 +180,10 @@ public final class Html5Printer {
           }
           break;
         case "head":
+          if (hadHeadClose) {
+            return;
+          }
+          hadHeadClose = true;
           if (!(nextSibling instanceof Comment && startsWithWhitespace(nextSibling))) {
             return;
           }
