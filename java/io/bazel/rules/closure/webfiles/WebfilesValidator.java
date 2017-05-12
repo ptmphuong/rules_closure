@@ -192,7 +192,7 @@ public class WebfilesValidator {
           STRICT_DEPENDENCIES_ERROR,
           String.format(
               "%s: Referenced %s (%s) without depending on %s",
-              path, relativeDest, dest, label.or("a webfiles() rule providing it")));
+              path, relativeDest, dest, label.or("a web_library() rule providing it")));
       return;
     }
   }

@@ -16,17 +16,17 @@ package(default_testonly = True)
 
 licenses(["notice"])  # Apache 2.0
 
-load("//closure:defs.bzl", "webfiles")
+load("//closure:defs.bzl", "web_library")
 
 # ProTip: bazel run //closure/webfiles/test:raven
-webfiles(
+web_library(
     name = "raven",
     srcs = ["index.html"],
     path = "/",
     deps = [":stuff"],
 )
 
-webfiles(
+web_library(
     name = "stuff",
     srcs = [
         "import.html",

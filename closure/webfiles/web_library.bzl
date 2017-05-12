@@ -20,7 +20,7 @@ load("//closure/private:defs.bzl",
      "long_path",
      "unfurl")
 
-def _webfiles(ctx):
+def _web_library(ctx):
   if not ctx.attr.srcs:
     if ctx.attr.deps:
       fail("deps can not be set when srcs is not")
@@ -180,8 +180,8 @@ def _get_strip(ctx):
       strip += "/"
   return strip
 
-webfiles = rule(
-    implementation=_webfiles,
+web_library = rule(
+    implementation=_web_library,
     executable=True,
     attrs={
         "path": attr.string(),
@@ -205,6 +205,3 @@ webfiles = rule(
     outputs={
         "dummy": "%{name}.ignoreme",
     })
-
-# TODO(jart): Refactor so web_library is the only definition.
-web_library = webfiles

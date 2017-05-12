@@ -108,7 +108,7 @@ public class WebfilesValidatorTest {
         .containsEntry(
             WebfilesValidator.STRICT_DEPENDENCIES_ERROR,
             "/fs/path/index.html: Referenced hello.jpg (/web/path/hello.jpg)"
-                + " without depending on a webfiles() rule providing it");
+                + " without depending on a web_library() rule providing it");
   }
 
   @Test
