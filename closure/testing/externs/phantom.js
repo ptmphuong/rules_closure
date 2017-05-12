@@ -216,6 +216,9 @@ phantomjs.Page = class {
    */
   onError(message, trace) {}
 
+  /**
+   * @return {void}
+   */
   onInitialized() {}
 
   /**
@@ -223,6 +226,9 @@ phantomjs.Page = class {
    */
   onLoadFinished(status) {}
 
+  /**
+   * @return {void}
+   */
   onLoadStarted() {}
 };
 
