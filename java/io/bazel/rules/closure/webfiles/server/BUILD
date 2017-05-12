@@ -29,10 +29,10 @@ java_library(
         "//java/io/bazel/rules/closure/http",
         "//java/io/bazel/rules/closure/http/filter",
         "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
+        "//third_party/protobuf:protobuf-java",
         "@com_google_code_findbugs_jsr305",
         "@com_google_dagger",
         "@com_google_guava",
-        "@com_google_protobuf_java",
         "@com_google_template_soy",
     ],
 )

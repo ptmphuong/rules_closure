@@ -21,11 +21,11 @@ java_test(
     deps = [
         "//java/io/bazel/rules/closure/worker",
         "//java/io/bazel/rules/closure/worker:worker_protocol_java_proto",
+        "//third_party/protobuf:protobuf-java",
         "@com_google_code_findbugs_jsr305",
         "@com_google_dagger",
         "@com_google_guava",
         "@com_google_jimfs",
-        "@com_google_protobuf_java",
         "@com_google_truth",
         "@junit",
         "@org_mockito_all",
