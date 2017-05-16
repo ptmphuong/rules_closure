@@ -124,7 +124,7 @@ public class ProducersExample {
 
   @Before
   public void createServer() throws Exception {
-    server = new ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"));
+    server = new ServerSocket(0, 1, InetAddress.getByName("localhost"));
   }
 
   @After
@@ -147,7 +147,7 @@ public class ProducersExample {
             .httpServer());
     HttpURLConnection connection =
         (HttpURLConnection)
-            new URL(String.format("http://127.0.0.1:%d%s", server.getLocalPort(), "/"))
+            new URL(String.format("http://localhost:%d%s", server.getLocalPort(), "/"))
                 .openConnection();
     connection.connect();
     assertThat(connection.getResponseCode()).isEqualTo(200);

@@ -14,13 +14,9 @@
 
 package io.bazel.rules.closure.webfiles.server;
 
-import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import com.google.common.net.HostAndPort;
@@ -28,7 +24,6 @@ import java.net.BindException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import javax.net.ServerSocketFactory;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -46,54 +41,10 @@ public class NetworkUtilsTest {
   @Rule public final ExpectedException thrown = ExpectedException.none();
 
   @Test
-  public void createServerSocket_succeeds_doesntRetry() throws Exception {
-    when(serverSocketFactory.createServerSocket(anyInt(), anyInt(), any(InetAddress.class)))
-        .thenReturn(serverSocket);
-    assertThat(networkUtils.createServerSocket(HostAndPort.fromParts("127.0.0.1", 80), true))
-        .isSameAs(serverSocket);
-    verify(serverSocketFactory)
-        .createServerSocket(
-            eq(80), anyInt(), eq(InetAddress.getByAddress(new byte[] {127, 0, 0, 1})));
-    verifyNoMoreInteractions(serverSocketFactory);
-  }
-
-  @Test
-  public void createServerSocket_bindFailsAndThenSucceeds_retries() throws Exception {
-    when(serverSocketFactory.createServerSocket(anyInt(), anyInt(), any(InetAddress.class)))
-        .thenThrow(new BindException())
-        .thenReturn(serverSocket);
-    assertThat(networkUtils.createServerSocket(HostAndPort.fromParts("127.0.0.1", 80), true))
-        .isSameAs(serverSocket);
-    verify(serverSocketFactory)
-        .createServerSocket(
-            eq(80), anyInt(), eq(InetAddress.getByAddress(new byte[] {127, 0, 0, 1})));
-    verify(serverSocketFactory)
-        .createServerSocket(
-            eq(81), anyInt(), eq(InetAddress.getByAddress(new byte[] {127, 0, 0, 1})));
-    verifyNoMoreInteractions(serverSocketFactory);
-  }
-
-  @Test
   public void createServerSocket_bindRepeatedlyFails_eventuallyGivesUp() throws Exception {
     when(serverSocketFactory.createServerSocket(anyInt(), anyInt(), any(InetAddress.class)))
         .thenThrow(new BindException());
     thrown.expect(BindException.class);
-    networkUtils.createServerSocket(HostAndPort.fromParts("127.0.0.1", 80), true);
-  }
-
-  @Test
-  public void createServerSocket_portIsZeroAndFails_doesntRetry() throws Exception {
-    when(serverSocketFactory.createServerSocket(anyInt(), anyInt(), any(InetAddress.class)))
-        .thenThrow(new BindException());
-    try {
-      networkUtils.createServerSocket(HostAndPort.fromParts("127.0.0.1", 0), true);
-      Assert.fail("Wanted BindException");
-    } catch (BindException ignored) {
-      // expected
-    }
-    verify(serverSocketFactory)
-        .createServerSocket(
-            eq(0), anyInt(), eq(InetAddress.getByAddress(new byte[] {127, 0, 0, 1})));
-    verifyNoMoreInteractions(serverSocketFactory);
+    networkUtils.createServerSocket(HostAndPort.fromParts("localhost", 80), true);
   }
 }

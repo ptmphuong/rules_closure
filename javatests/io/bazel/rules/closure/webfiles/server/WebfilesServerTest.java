@@ -49,7 +49,7 @@ public class WebfilesServerTest {
   private static final WebfilesServerInfo CONFIG =
       WebfilesServerInfo.newBuilder()
           .setLabel("//label")
-          .setBind("127.0.0.1:0")
+          .setBind("localhost:0")
           .addManifest("/manifest.pbtxt")
           .addExternalAsset(
               AssetInfo.newBuilder().setWebpath("/external.txt").setPath("/external.txt").build())

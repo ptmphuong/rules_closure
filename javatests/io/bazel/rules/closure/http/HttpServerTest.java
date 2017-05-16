@@ -104,7 +104,7 @@ public class HttpServerTest {
 
   @Before
   public void createServer() throws Exception {
-    server = new ServerSocket(0, 1, InetAddress.getByName("127.0.0.1"));
+    server = new ServerSocket(0, 1, InetAddress.getByName("localhost"));
   }
 
   @After
@@ -173,7 +173,7 @@ public class HttpServerTest {
 
   private HttpURLConnection openConnection(String path) throws IOException {
     return (HttpURLConnection)
-        new URL(String.format("http://127.0.0.1:%d%s", server.getLocalPort(), path))
+        new URL(String.format("http://localhost:%d%s", server.getLocalPort(), path))
             .openConnection();
   }
 
