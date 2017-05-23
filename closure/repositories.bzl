@@ -16,6 +16,7 @@
 
 load("//closure/private:java_import_external.bzl", "java_import_external")
 load("//closure/private:platform_http_file.bzl", "platform_http_file")
+load("//closure:filegroup_external.bzl", "filegroup_external")
 
 def closure_repositories(
     omit_aopalliance=False,
@@ -42,8 +43,7 @@ def closure_repositories(
     omit_com_google_javascript_incremental_dom=False,
     omit_com_google_protobuf_java=False,
     omit_com_google_protobuf_js=False,
-    omit_com_google_protobuf_protoc_linux_x86_64=False,
-    omit_com_google_protobuf_protoc_macosx=False,
+    omit_com_google_protobuf_protoc=False,
     omit_com_google_template_soy=False,
     omit_com_google_template_soy_jssrc=False,
     omit_com_ibm_icu_icu4j=False,
@@ -113,10 +113,8 @@ def closure_repositories(
     com_google_protobuf_java()
   if not omit_com_google_protobuf_js:
     com_google_protobuf_js()
-  if not omit_com_google_protobuf_protoc_linux_x86_64:
-    com_google_protobuf_protoc_linux_x86_64()
-  if not omit_com_google_protobuf_protoc_macosx:
-    com_google_protobuf_protoc_macosx()
+  if not omit_com_google_protobuf_protoc:
+    com_google_protobuf_protoc()
   if not omit_com_google_template_soy:
     com_google_template_soy()
   if not omit_com_google_template_soy_jssrc:
@@ -688,24 +686,51 @@ def com_google_protobuf_js():
       build_file = str(Label("//closure/protobuf:protobuf_js.BUILD")),
   )
 
-def com_google_protobuf_protoc_linux_x86_64():
-  native.http_file(
-      name = "com_google_protobuf_protoc_linux_x86_64",
-      urls = [
-          "http://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.1.0/protoc-3.1.0-linux-x86_64.zip",
-          "https://github.com/google/protobuf/releases/download/v3.1.0/protoc-3.1.0-linux-x86_64.zip",
-      ],
-      sha256 = "7c98f9e8a3d77e49a072861b7a9b18ffb22c98e37d2a80650264661bfaad5b3a",
-  )
-
-def com_google_protobuf_protoc_macosx():
-  native.http_file(
-      name = "com_google_protobuf_protoc_macosx",
-      urls = [
-          "http://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.1.0/protoc-3.1.0-osx-x86_64.zip",
-          "https://github.com/google/protobuf/releases/download/v3.1.0/protoc-3.1.0-osx-x86_64.zip",
-      ],
-      sha256 = "2cea7b1acb86671362f7aa554a21b907d18de70b15ad1f68e72ad2b50502920e",
+def com_google_protobuf_protoc():
+  filegroup_external(
+      name = "com_google_protobuf_protoc",
+      licenses = ["notice"],  # BSD
+      sha256_urls_extract_macos = {
+          "2cea7b1acb86671362f7aa554a21b907d18de70b15ad1f68e72ad2b50502920e": [
+              "http://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.1.0/protoc-3.1.0-osx-x86_64.zip",
+              "https://github.com/google/protobuf/releases/download/v3.1.0/protoc-3.1.0-osx-x86_64.zip",
+          ],
+      },
+      sha256_urls_extract_windows = {
+          "e46b3b7c5c99361bbdd1bbda93c67e5cbf2873b7098482d85ff8e587ff596b23": [
+              "http://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.1.0/protoc-3.1.0-win32.zip",
+              "https://github.com/google/protobuf/releases/download/v3.1.0/protoc-3.1.0-win32.zip",
+          ],
+      },
+      sha256_urls_extract = {
+          "7c98f9e8a3d77e49a072861b7a9b18ffb22c98e37d2a80650264661bfaad5b3a": [
+              "http://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.1.0/protoc-3.1.0-linux-x86_64.zip",
+              "https://github.com/google/protobuf/releases/download/v3.1.0/protoc-3.1.0-linux-x86_64.zip",
+          ],
+      },
+      generated_rule_name = "files",
+      extra_build_file_content = "\n".join([
+          "filegroup(",
+          "    name = \"com_google_protobuf_protoc\",",
+          "    srcs = select({",
+          "        \":windows\": [\"bin/protoc.exe\"],",
+          "        \":windows_msvc\": [\"bin/protoc.exe\"],",
+          "        \"//conditions:default\": [\"bin/protoc\"],",
+          "    }),",
+          ")",
+          "",
+          "config_setting(",
+          "    name = \"windows\",",
+          "    values = {\"cpu\": \"x64_windows\"},",
+          "    visibility = [\"//visibility:private\"],",
+          ")",
+          "",
+          "config_setting(",
+          "    name = \"windows_msvc\",",
+          "    values = {\"cpu\": \"x64_windows_msvc\"},",
+          "    visibility = [\"//visibility:private\"],",
+          ")",
+      ]),
   )
 
 def com_google_template_soy():
