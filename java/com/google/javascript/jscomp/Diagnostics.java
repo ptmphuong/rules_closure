@@ -43,8 +43,6 @@ final class Diagnostics {
         CheckStrictDeps.NOT_PROVIDED);
     DiagnosticGroups.registerGroup("constantWithoutExplicitType",
         ConvertToTypedInterface.CONSTANT_WITHOUT_EXPLICIT_TYPE);
-    DiagnosticGroups.registerGroup("unsupportedGoogScope",
-        ConvertToTypedInterface.UNSUPPORTED_GOOG_SCOPE);
   }
 
   static final DiagnosticGroups GROUPS = new DiagnosticGroups();
@@ -116,7 +114,6 @@ final class Diagnostics {
           "underscore",
           "unknownDefines",
           "unnecessaryCasts",
-          "unsupportedGoogScope",
           "unusedLocalVariables",
           "unusedPrivateMembers",
           "uselessCode",
