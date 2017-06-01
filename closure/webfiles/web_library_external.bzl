@@ -23,9 +23,9 @@ def _web_library_external(ctx):
   lines.append("licenses(%s)" % repr(ctx.attr.licenses))
   lines.append("")
   lines.append("load(\"@io_bazel_rules_closure//closure:" +
-               "defs.bzl\", \"webfiles\")")
+               "defs.bzl\", \"web_library\")")
   lines.append("")
-  lines.append("webfiles(")
+  lines.append("web_library(")
   lines.append("    name = %s," % repr(name))
   if ctx.attr.path:
     lines.append("    path = %r," % ctx.attr.path)
