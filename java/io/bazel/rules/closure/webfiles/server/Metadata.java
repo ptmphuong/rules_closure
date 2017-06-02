@@ -18,6 +18,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import dagger.Module;
@@ -42,8 +43,11 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -136,7 +140,7 @@ final class Metadata {
       manifestPaths.add(config.getPath());
       WebfilesServerInfo params = config.get();
       List<Webfiles> manifests = new ArrayList<>();
-      for (String longPath : params.getManifestList()) {
+      for (String longPath : Lists.reverse(params.getManifestList())) {
         Path manifestPath = runfiles.getPath(longPath);
         manifestPaths.add(manifestPath);
         try {
@@ -145,12 +149,11 @@ final class Metadata {
           throw new RuntimeException(e);
         }
       }
-      ImmutableSortedMap.Builder<Webpath, Path> assets =
-          new ImmutableSortedMap.Builder<>(Ordering.natural());
+      SortedMap<Webpath, Path> assets = new TreeMap<>(Ordering.natural());
       for (AssetInfo asset : params.getExternalAssetList()) {
         assets.put(Webpath.get(asset.getWebpath()), runfiles.getPath(asset.getPath()));
       }
-      ImmutableSet.Builder<Webpath> webpaths = new ImmutableSet.Builder<>();
+      Set<Webpath> webpaths = new LinkedHashSet<>();
       for (Webfiles manifest : manifests) {
         for (WebfilesSource src : manifest.getSrcList()) {
           Webpath webpath = Webpath.get(src.getWebpath());
@@ -158,7 +161,11 @@ final class Metadata {
           webpaths.add(Webpath.get(src.getWebpath()));
         }
       }
-      container.snapshot = new Snapshot(assets.build(), webpaths.build(), manifestPaths.build());
+      container.snapshot =
+          new Snapshot(
+              ImmutableSortedMap.copyOfSorted(assets),
+              ImmutableSet.copyOf(webpaths),
+              manifestPaths.build());
       logger.info(String.format("Loaded build graph in %,dms", System.currentTimeMillis() - start));
       synchronized (container) {
         container.notifyAll();
