@@ -166,7 +166,11 @@ final class Diagnostics {
       ImmutableSet.of(
           // TODO(hochhaus): Make unknownDefines an error for user supplied defines.
           // https://github.com/bazelbuild/rules_closure/issues/79
-          ProcessDefines.UNKNOWN_DEFINE_WARNING);
+          ProcessDefines.UNKNOWN_DEFINE_WARNING,
+          // TODO(jart): Remove these when regression is fixed relating to jscomp being able to
+          //             identify externs files that were passed via srcs.
+          CheckJSDoc.INVALID_MODIFIES_ANNOTATION,
+          CheckJSDoc.INVALID_NO_SIDE_EFFECT_ANNOTATION);
 
   static final ImmutableMap<String, DiagnosticType> DIAGNOSTIC_TYPES = initDiagnosticTypes();
   static final ImmutableMultimap<DiagnosticType, String> DIAGNOSTIC_GROUPS = initDiagnosticGroups();

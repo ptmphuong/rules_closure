@@ -211,6 +211,11 @@ public final class JsChecker {
         new WarningsGuard() {
           @Override
           public CheckLevel level(JSError error) {
+            // Closure Rules will always ignore these checks no matter what.
+            if (Diagnostics.IGNORE_ALWAYS.contains(error.getType())) {
+              return CheckLevel.OFF;
+            }
+
             // Disable warnings specific to conventions other than the one we're using.
             if (!convention.diagnostics.contains(error.getType())) {
               for (JsCheckerConvention conv : JsCheckerConvention.values()) {
