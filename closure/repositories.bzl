@@ -385,7 +385,6 @@ def com_google_closure_stylesheets():
       extra_build_file_content = "\n".join([
           "java_binary(",
           "    name = \"ClosureCommandLineCompiler\",",
-          "    jvm_flags = [\"-client\"],",
           "    main_class = \"com.google.common.css.compiler.commandline.ClosureCommandLineCompiler\",",
           "    output_licenses = [\"unencumbered\"],",
           "    runtime_deps = [\":com_google_closure_stylesheets\"],",
@@ -761,7 +760,6 @@ def com_google_template_soy():
       extra_build_file_content = "\n".join([
           ("java_binary(\n" +
            "    name = \"%s\",\n" +
-           "    jvm_flags = [\"-client\"],\n" +
            "    main_class = \"com.google.template.soy.%s\",\n" +
            "    output_licenses = [\"unencumbered\"],\n" +
            "    runtime_deps = [\":com_google_template_soy\"],\n" +

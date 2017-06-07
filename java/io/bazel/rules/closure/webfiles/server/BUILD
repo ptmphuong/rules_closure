@@ -39,7 +39,6 @@ java_library(
 
 java_binary(
     name = "WebfilesServer",
-    jvm_flags = ["-client"],
     main_class = "io.bazel.rules.closure.webfiles.server.WebfilesServer",
     visibility = ["//visibility:public"],
     runtime_deps = [":server"],
