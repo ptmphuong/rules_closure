@@ -41,6 +41,11 @@ CLOSURE_LIBRARY_DEPS_ATTR = attr.label(
     allow_files=True,
     single_file=True)
 
+CLOSURE_WORKER_ATTR = attr.label(
+    default=Label("//java/io/bazel/rules/closure:ClosureWorker"),
+    executable=True,
+    cfg="host")
+
 def unfurl(deps, provider=""):
   """Returns deps as well as deps exported by parent rules."""
   res = []

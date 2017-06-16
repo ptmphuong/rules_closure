@@ -15,6 +15,7 @@
 """Rule for building JavaScript binaries with Closure Compiler."""
 
 load("//closure/private:defs.bzl",
+     "CLOSURE_WORKER_ATTR",
      "CLOSURE_LIBRARY_BASE_ATTR",
      "CLOSURE_LIBRARY_DEPS_ATTR",
      "JS_LANGUAGES",
@@ -27,6 +28,9 @@ load("//closure/private:defs.bzl",
      "find_js_module_roots",
      "sort_roots",
      "unfurl")
+
+load("//closure/compiler:closure_js_aspect.bzl",
+     "closure_js_aspect")
 
 def _impl(ctx):
   if not ctx.attr.deps:
@@ -247,6 +251,7 @@ closure_js_binary = rule(
         "defs": attr.string_list(),
         "dependency_mode": attr.string(default="LOOSE"),
         "deps": attr.label_list(
+            aspects=[closure_js_aspect],
             providers=["closure_js_library"]),
         "entry_points": attr.string_list(),
         "formatting": attr.string(),
@@ -262,10 +267,7 @@ closure_js_binary = rule(
         # internal only
         "internal_expect_failure": attr.bool(default=False),
         "internal_expect_warnings": attr.bool(default=False),
-        "_ClosureWorker": attr.label(
-            default=Label("//java/io/bazel/rules/closure:ClosureWorker"),
-            executable=True,
-            cfg="host"),
+        "_ClosureWorker": CLOSURE_WORKER_ATTR,
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_closure_library_deps": CLOSURE_LIBRARY_DEPS_ATTR,
     },

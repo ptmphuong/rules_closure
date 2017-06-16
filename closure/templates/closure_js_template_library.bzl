@@ -15,6 +15,7 @@
 """Utilities for compiling Closure Templates to JavaScript.
 """
 
+load("//closure/compiler:closure_js_aspect.bzl", "closure_js_aspect")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:defs.bzl", "SOY_FILE_TYPE", "unfurl")
 
@@ -75,6 +76,7 @@ _closure_js_template_library = rule(
     attrs={
         "srcs": attr.label_list(allow_files=SOY_FILE_TYPE),
         "deps": attr.label_list(
+            aspects=[closure_js_aspect],
             providers=["closure_js_library"]),
         "outputs": attr.output_list(),
         "globals": attr.label(allow_files=True, single_file=True),

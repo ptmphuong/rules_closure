@@ -15,6 +15,7 @@
 """Build definitions for Closure JavaScript libraries."""
 
 load("//closure/private:defs.bzl",
+     "CLOSURE_WORKER_ATTR",
      "CLOSURE_LIBRARY_BASE_ATTR",
      "CLOSURE_LIBRARY_DEPS_ATTR",
      "JS_FILE_TYPE",
@@ -28,6 +29,9 @@ load("//closure/private:defs.bzl",
      "make_jschecker_progress_message",
      "sort_roots",
      "unfurl")
+
+load("//closure/compiler:closure_js_aspect.bzl",
+     "closure_js_aspect")
 
 def _closure_js_library(ctx):
   if not ctx.files.srcs and not ctx.files.externs and not ctx.attr.exports:
@@ -255,8 +259,10 @@ closure_js_library = rule(
         "convention": attr.string(default="CLOSURE"),
         "data": attr.label_list(cfg="data", allow_files=True),
         "deps": attr.label_list(
+            aspects=[closure_js_aspect],
             providers=["closure_js_library"]),
         "exports": attr.label_list(
+            aspects=[closure_js_aspect],
             providers=["closure_js_library"]),
         "includes": attr.string_list(),
         "no_closure_library": attr.bool(),
@@ -270,10 +276,7 @@ closure_js_library = rule(
         # internal only
         "internal_descriptors": attr.label_list(allow_files=True),
         "internal_expect_failure": attr.bool(default=False),
-        "_ClosureWorker": attr.label(
-            default=Label("//java/io/bazel/rules/closure:ClosureWorker"),
-            executable=True,
-            cfg="host"),
+        "_ClosureWorker": CLOSURE_WORKER_ATTR,
         "_closure_library_base": CLOSURE_LIBRARY_BASE_ATTR,
         "_closure_library_deps": CLOSURE_LIBRARY_DEPS_ATTR,
     },
