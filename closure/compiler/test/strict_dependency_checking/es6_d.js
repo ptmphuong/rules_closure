@@ -12,13 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { a } from '/closure/compiler/test/strict_dependency_checking/es6_a.js';
+import { a } from './es6_a.js';
 
 
 /**
- * Function B.
+ * Function D.
  */
-function b() {
+export function d() {
   a();
-  console.log('b');
 }

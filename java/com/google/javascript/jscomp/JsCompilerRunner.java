@@ -37,7 +37,7 @@ final class JsCompilerRunner extends CommandLineRunner {
     this.compiler = compiler;
     this.exportTestFunctions = exportTestFunctions;
     this.sourceMapIncludeSourcesContent = sourceMapIncludeSourcesContent;
-    this.warnings = warnings;;
+    this.warnings = warnings;
   }
 
   int go() throws IOException {
@@ -61,7 +61,7 @@ final class JsCompilerRunner extends CommandLineRunner {
     options.setExportTestFunctions(exportTestFunctions);
     options.addWarningsGuard(warnings);
     options.setSourceMapIncludeSourcesContent(sourceMapIncludeSourcesContent);
-    options.setModuleResolutionMode(ModuleLoader.ResolutionMode.LEGACY);
+    options.setModuleResolutionMode(ModuleLoader.ResolutionMode.BROWSER);
     return options;
   }
 }

@@ -15,7 +15,7 @@
 import 'goog:goog.testing.asserts';
 import 'goog:goog.testing.jsunit';
 
-import { add } from 'closure/testing/test/arithmetic_es6module';
+import { add } from '/closure/testing/test/arithmetic_es6module.js';
 
 
 function testAdd() {

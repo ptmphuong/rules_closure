@@ -38,14 +38,14 @@ final class JsCheckerHelper {
     if (!path.endsWith(".js")) {
       return Optional.absent();
     }
-    String module = path.substring(0, path.length() - 3);
+    String module = path;
     for (String root : roots) {
       if (module.startsWith(root + "/")) {
         module = module.substring(root.length() + 1);
         break;
       }
     }
-    return Optional.of(module);
+    return Optional.of("/" + module);
   }
 
   static String normalizeClosureNamespace(String namespace) {

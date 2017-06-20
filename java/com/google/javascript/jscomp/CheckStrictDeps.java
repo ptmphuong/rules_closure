@@ -20,6 +20,7 @@ import static com.google.javascript.jscomp.JsCheckerHelper.convertPathToModuleNa
 
 import com.google.javascript.jscomp.NodeTraversal.AbstractShallowCallback;
 import com.google.javascript.rhino.Node;
+import io.bazel.rules.closure.Webpath;
 
 abstract class CheckStrictDeps
     extends AbstractShallowCallback implements HotSwapCompilerPass {
@@ -133,6 +134,14 @@ abstract class CheckStrictDeps
     }
 
     private void checkNamespaceIsProvided(NodeTraversal t, Node n, String namespace) {
+      if (namespace.startsWith("/") || namespace.startsWith(".")) {
+        // TODO(jart): Unify path resolution with ModuleLoader.
+        Webpath me = Webpath.get(t.getSourceName());
+        if (!me.isAbsolute()) {
+          me = Webpath.get("/").resolve(me);
+        }
+        namespace = me.lookup(Webpath.get(namespace)).toString();
+      }
       if (!state.provided.contains(namespace)
           && !state.provides.contains(namespace)
           && state.notProvidedNamespaces.add(namespace)) {

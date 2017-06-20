@@ -207,7 +207,7 @@ closure_js_library(
 file_test(
     name = "fileWithoutGoogProvideInEs6Mode_providesShortPathWithoutJs",
     file = "es6_a.pbtxt",
-    regexp = "namespace: \"closure/compiler/test/strict_dependency_checking/es6_a\"",
+    regexp = "namespace: \"/closure/compiler/test/strict_dependency_checking/es6_a.js\"",
 )
 
 closure_js_library(
@@ -266,7 +266,7 @@ file_test(
 genrule(
     name = "es6_g2_generate",
     outs = ["es6_g2.js"],
-    cmd = "echo 'import { g } from \"closure/compiler/test/strict_dependency_checking/es6_g\"; g();' >$@",
+    cmd = "echo 'import { g } from \"/closure/compiler/test/strict_dependency_checking/es6_g.js\"; g();' >$@",
 )
 
 closure_js_library(
@@ -284,4 +284,25 @@ file_test(
     name = "es6ModulesWithRootPaths_compileCorrectlyWhenReferencedWithoutRootPrefix",
     content = "console.log(\"hi\");\n",
     file = "es6_g2_bin.js",
+)
+
+closure_js_library(
+    name = "es6_relative_imports_lib",
+    srcs = [
+        "es6_d.js",
+        "subdir/es6_e.js",
+    ],
+    tags = ["manual"],
+    deps = [":es6_a"],
+)
+
+closure_js_binary(
+    name = "es6_relative_imports_bin",
+    deps = [":es6_relative_imports_lib"],
+)
+
+file_test(
+    name = "es6RelativeImports_workCorrectly",
+    content = "console.log(\"a\");\n",
+    file = "es6_relative_imports_bin.js",
 )
