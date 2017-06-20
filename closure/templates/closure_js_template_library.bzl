@@ -19,7 +19,7 @@ load("//closure/compiler:closure_js_aspect.bzl", "closure_js_aspect")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:defs.bzl", "SOY_FILE_TYPE", "unfurl")
 
-_SOYTOJSSRCCOMPILER = "@com_google_template_soy//:SoyToJsSrcCompiler"
+_SOYTOJSSRCCOMPILER = "@com_google_template_soy"
 _SOYTOINCREMENTALDOMSRCCOMPILER = "@com_google_template_soy//:SoyToIncrementalDomSrcCompiler"
 
 def _impl(ctx):

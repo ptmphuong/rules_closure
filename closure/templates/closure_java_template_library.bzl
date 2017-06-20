@@ -15,7 +15,7 @@
 """Utilities for compiling Closure Templates to Java.
 """
 
-_SOY_COMPILER_BIN = "@com_google_template_soy//:SoyParseInfoGenerator"
+_SOY_COMPILER_BIN = "@com_google_template_soy"
 _SOY_LIBRARY = "@com_google_template_soy//:com_google_template_soy"
 
 
