@@ -107,6 +107,7 @@ def closure_java_template_library(
 def _gen_soy_java_wrappers(name, java_package, srcs, deps, outs,
     allow_external_calls = 1,
     soycompilerbin = str(Label(_SOY_COMPILER_BIN)),
+    compatible_with = None,
     **kwargs):
   additional_flags = ''
   srcs_flag_file_name = name + '__srcs'
@@ -115,11 +116,13 @@ def _gen_soy_java_wrappers(name, java_package, srcs, deps, outs,
     out_name = srcs_flag_file_name,
     targets = srcs,
     flag = '--srcs',
+    compatible_with = compatible_with,
   )
   _soy__gen_file_list_arg_as_file(
     out_name = deps_flag_file_name,
     targets = deps,
     flag = '--deps',
+    compatible_with = compatible_with,
   )
   native.genrule(
     name = name,
@@ -136,6 +139,7 @@ def _gen_soy_java_wrappers(name, java_package, srcs, deps, outs,
         # Include the sources and deps files as command line flags.
         ' $$(cat $(location ' + srcs_flag_file_name + '))' +
         ' $$(cat $(location ' + deps_flag_file_name + '))',
+    compatible_with = compatible_with,
     **kwargs)
 
 
@@ -162,7 +166,8 @@ def _soy__filename(file):
   return file[file.rfind('/')+1:]
 
 
-def _soy__gen_file_list_arg_as_file(out_name, targets, flag):
+def _soy__gen_file_list_arg_as_file(out_name, targets, flag,
+    compatible_with=None):
   native.genrule(
     name = out_name + '_gen',
     srcs = targets,
@@ -171,6 +176,7 @@ def _soy__gen_file_list_arg_as_file(out_name, targets, flag):
            "then echo -n '%s='$$(echo \"$(SRCS)\" | sed -e 's/ /,/g') > $@ ; " +
            "fi ; " +
            "touch $@") % flag),  # touch the file, in case empty
+    compatible_with = compatible_with,
     visibility = ['//visibility:private'])
 
 
