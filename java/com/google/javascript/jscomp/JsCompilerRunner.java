@@ -17,6 +17,7 @@
 package com.google.javascript.jscomp;
 
 import com.google.common.collect.Iterables;
+import com.google.javascript.jscomp.deps.ModuleLoader;
 import java.io.IOException;
 
 final class JsCompilerRunner extends CommandLineRunner {
@@ -60,6 +61,7 @@ final class JsCompilerRunner extends CommandLineRunner {
     options.setExportTestFunctions(exportTestFunctions);
     options.addWarningsGuard(warnings);
     options.setSourceMapIncludeSourcesContent(sourceMapIncludeSourcesContent);
+    options.setModuleResolutionMode(ModuleLoader.ResolutionMode.LEGACY);
     return options;
   }
 }
