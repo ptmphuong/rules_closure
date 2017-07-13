@@ -171,7 +171,7 @@ public final class JsChecker {
     // configure compiler
     Compiler compiler = new Compiler();
     CompilerOptions options = new CompilerOptions();
-    options.setLanguage(LanguageMode.ECMASCRIPT_2015);
+    options.setLanguage(LanguageMode.ECMASCRIPT_2017);
     options.setStrictModeInput(true);
     options.setIncrementalChecks(IncrementalCheckMode.GENERATE_IJS);
     options.setCodingConvention(convention.convention);
