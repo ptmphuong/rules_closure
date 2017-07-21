@@ -29,6 +29,7 @@ import com.google.javascript.jscomp.lint.CheckPrototypeProperties;
 import com.google.javascript.jscomp.lint.CheckRequiresAndProvidesSorted;
 import com.google.javascript.jscomp.lint.CheckUnusedLabels;
 import com.google.javascript.jscomp.lint.CheckUselessBlocks;
+import com.google.javascript.jscomp.parsing.parser.FeatureSet;
 import java.util.List;
 
 final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
@@ -71,14 +72,19 @@ final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
                   new CheckMissingSuper(compiler),
                   new CheckPrimitiveAsObject(compiler),
                   new CheckRequiresAndProvidesSorted(compiler),
-                  new CheckMissingAndExtraRequires(
-                      compiler, CheckMissingAndExtraRequires.Mode.SINGLE_FILE),
+                  new CheckRequiresForConstructors(
+                      compiler, CheckRequiresForConstructors.Mode.SINGLE_FILE),
                   new CheckUnusedLabels(compiler),
                   new CheckUselessBlocks(compiler),
                   new ClosureCheckModule(compiler),
                   new Es6SuperCheck(compiler),
                   new CheckSetTestOnly(state, compiler),
                   new CheckStrictDeps.FirstPass(state, compiler)));
+        }
+
+        @Override
+        protected FeatureSet featureSet() {
+          return FeatureSet.latest().withoutTypes();
         }
       };
 
@@ -88,6 +94,11 @@ final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
         protected HotSwapCompilerPass create(AbstractCompiler compiler) {
           return new ScopedAliases(compiler, null, options.getAliasTransformationHandler());
         }
+
+        @Override
+        protected FeatureSet featureSet() {
+          return FeatureSet.latest().withoutTypes();
+        }
       };
 
   private final PassFactory closureRewriteClass =
@@ -95,6 +106,11 @@ final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
         @Override
         protected HotSwapCompilerPass create(AbstractCompiler compiler) {
           return new ClosureRewriteClass(compiler);
+        }
+
+        @Override
+        protected FeatureSet featureSet() {
+          return FeatureSet.latest().withoutTypes();
         }
       };
 
@@ -109,6 +125,11 @@ final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
                   new CheckPrototypeProperties(compiler),
                   new CheckStrictDeps.SecondPass(state, compiler)));
         }
+
+        @Override
+        protected FeatureSet featureSet() {
+          return FeatureSet.latest().withoutTypes();
+        }
       };
 
   private final PassFactory ijsGeneration =
@@ -116,6 +137,11 @@ final class JsCheckerPassConfig extends PassConfig.PassConfigDelegate {
         @Override
         protected CompilerPass create(AbstractCompiler compiler) {
           return new ConvertToTypedInterface(compiler);
+        }
+
+        @Override
+        protected FeatureSet featureSet() {
+          return FeatureSet.latest().withoutTypes();
         }
       };
 }

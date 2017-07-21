@@ -338,7 +338,11 @@ public final class JsChecker {
         return 0;
       }
       try {
-        return checker.run() == !checker.expectFailure ? 0 : 1;
+        boolean success = checker.run();
+        if (success && checker.expectFailure) {
+          System.err.println("ERROR: Expected failure but did not fail");
+        }
+        return success == !checker.expectFailure ? 0 : 1;
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
