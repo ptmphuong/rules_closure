@@ -41,8 +41,8 @@ def _impl(ctx):
   if not ctx.attr.incremental_dom:
     if ctx.attr.soy_msgs_are_external:
       args += ["--googMsgsAreExternal"]
-    if ctx.attr.should_generate_js_doc:
-      args += ["--shouldGenerateJsdoc"]
+    if not ctx.attr.should_generate_js_doc:
+      args += ["--shouldGenerateJsdoc=false"]
     if ctx.attr.should_provide_require_soy_namespaces:
       args += ["--shouldProvideRequireSoyNamespaces"]
     if ctx.attr.should_generate_soy_msg_defs:
