@@ -769,7 +769,7 @@ This rule does not compile your stylesheets; it is used in conjunction with
 This rule should be referenced by any [closure_js_library] rule whose sources
 contain a `goog.getCssName('foo')` call if `foo` is a CSS class name defined by
 this rule. The same concept applies to [closure_js_template_library] rules that
-contain `{css foo}` expressions.
+contain `{css('foo')}` expressions.
 
 #### Rule Polymorphism
 
@@ -886,7 +886,7 @@ This rule can be referenced as though it were the following:
   target, so the build system can verify (at compile time) that your CSS and
   JS binaries are both being compiled in a harmonious way.
 
-  You'll also need update your templates to say `{css foo-bar}` in place of
+  You'll also need update your templates to say `{css('foo-bar')}` in place of
   class names. The [closure_js_template_library] must also depend on the
   appropriate CSS library.
 
