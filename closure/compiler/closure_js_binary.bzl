@@ -153,8 +153,7 @@ def _impl(ctx):
     args.append("--use_types_for_optimization")
 
   if ctx.attr.output_wrapper:
-    args.append("--output_wrapper")
-    args.append(ctx.attr.output_wrapper)
+    args.append("--output_wrapper=" + ctx.attr.output_wrapper)
     if ctx.attr.output_wrapper == "(function(){%output%}).call(this);":
       args.append("--assume_function_wrapper")
   if ctx.outputs.property_renaming_report:
