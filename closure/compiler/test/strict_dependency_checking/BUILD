@@ -17,7 +17,6 @@ package(default_testonly = True)
 licenses(["notice"])  # Apache 2.0
 
 load("//closure/private:file_test.bzl", "file_test")
-load("//closure/private:rule_test.bzl", "rule_test")
 load("//closure:defs.bzl", "closure_js_binary")
 load("//closure:defs.bzl", "closure_js_library")
 
@@ -48,30 +47,6 @@ closure_js_library(
     name = "t",
     testonly = True,
     srcs = ["t.js"],
-)
-
-rule_test(
-    name = "a_rule_test",
-    provides = {"closure_js_library.srcs": "/a.js>\\?\\]"},
-    rule = ":a",
-)
-
-rule_test(
-    name = "b_rule_test",
-    provides = {"closure_js_library.srcs": "/a\\.js.*/b\\.js>\\?\\]"},
-    rule = ":b",
-)
-
-rule_test(
-    name = "c_rule_test",
-    provides = {"closure_js_library.srcs": "/a\\.js.*/b\\.js.*/c\\.js>\\?\\]"},
-    rule = ":c",
-)
-
-rule_test(
-    name = "t_rule_test",
-    provides = {"closure_js_library.srcs": "/t\\.js>\\?\\]"},
-    rule = ":t",
 )
 
 file_test(
