@@ -34,5 +34,5 @@ def _closure_js_aspect_impl(target, ctx):
 
 closure_js_aspect = aspect(
     implementation=_closure_js_aspect_impl,
-    attr_aspects=["deps", "sticky_deps"],
+    attr_aspects=["deps", "sticky_deps", "exports"],
     attrs={"_ClosureWorkerAspect": CLOSURE_WORKER_ATTR})
