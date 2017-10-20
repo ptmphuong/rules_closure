@@ -209,7 +209,7 @@ def _parse_bazel_version(bazel_version):
 #          url="https://repo1.maven.org/maven2/${BASH_REMATCH[1]//.//}/${BASH_REMATCH[2]}/${BASH_REMATCH[3]}/${BASH_REMATCH[2]}-${BASH_REMATCH[3]}.jar"
 #        fi
 #        local dest="gs://bazel-mirror/${url#http*//}"
-#        local desturl="http://mirror.bazel.build/${url#http*//}"
+#        local desturl="https://mirror.bazel.build/${url#http*//}"
 #        local name="$(basename "${dest}")"
 #        wget -O "/tmp/${name}" "${url}" || return 1
 #        gsutil cp -a public-read "/tmp/${name}" "${dest}" || return 1
@@ -227,8 +227,8 @@ def aopalliance():
       name = "aopalliance",
       jar_sha256 = "0addec670fedcd3f113c5c8091d783280d23f75e3acb841b61a9cdb079376a08",
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.jar",
-          "http://repo1.maven.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.jar",
+          "https://repo1.maven.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.jar",
           "http://maven.ibiblio.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.jar",
       ],
       licenses = ["unencumbered"],  # public domain
@@ -239,8 +239,8 @@ def args4j():
       name = "args4j",
       jar_sha256 = "989bda2321ea073a03686e9d4437ea4928c72c99f993f9ca6fab24615f0771a4",
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/args4j/args4j/2.0.26/args4j-2.0.26.jar",
-          "http://repo1.maven.org/maven2/args4j/args4j/2.0.26/args4j-2.0.26.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/args4j/args4j/2.0.26/args4j-2.0.26.jar",
+          "https://repo1.maven.org/maven2/args4j/args4j/2.0.26/args4j-2.0.26.jar",
           "http://maven.ibiblio.org/maven2/args4j/args4j/2.0.26/args4j-2.0.26.jar",
       ],
       licenses = ["notice"],  # MIT License
@@ -250,12 +250,12 @@ def clang():
   platform_http_file(
       name = "clang",
       amd64_urls = [
-          "http://mirror.bazel.build/llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz",
+          "https://mirror.bazel.build/llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz",
           "http://llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-linux-gnu-ubuntu-14.04.tar.xz",
       ],
       amd64_sha256 = "3120c3055ea78bbbb6848510a2af70c68538b990cb0545bac8dad01df8ff69d7",
       macos_urls = [
-          "http://mirror.bazel.build/llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-apple-darwin.tar.xz",
+          "https://mirror.bazel.build/llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-apple-darwin.tar.xz",
           "http://llvm.org/releases/3.8.0/clang+llvm-3.8.0-x86_64-apple-darwin.tar.xz",
       ],
       macos_sha256 = "e5a961e04b0e1738bbb5b824886a34932dc13b0af699d1fe16519d814d7b776f",
@@ -267,7 +267,7 @@ def com_google_auto_common():
       jar_sha256 = "eee75e0d1b1b8f31584dcbe25e7c30752545001b46673d007d468d75cf6b2c52",
       jar_urls = [
           "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/auto/auto-common/0.7/auto-common-0.7.jar",
-          "http://repo1.maven.org/maven2/com/google/auto/auto-common/0.7/auto-common-0.7.jar",
+          "https://repo1.maven.org/maven2/com/google/auto/auto-common/0.7/auto-common-0.7.jar",
           "http://maven.ibiblio.org/maven2/com/google/auto/auto-common/0.7/auto-common-0.7.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
@@ -282,7 +282,7 @@ def com_google_auto_factory():
       jar_urls = [
           "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/auto/factory/auto-factory/1.0-beta3/auto-factory-1.0-beta3.jar",
           "http://maven.ibiblio.org/maven2/com/google/auto/factory/auto-factory/1.0-beta3/auto-factory-1.0-beta3.jar",
-          "http://repo1.maven.org/maven2/com/google/auto/factory/auto-factory/1.0-beta3/auto-factory-1.0-beta3.jar",
+          "https://repo1.maven.org/maven2/com/google/auto/factory/auto-factory/1.0-beta3/auto-factory-1.0-beta3.jar",
       ],
       # Auto Factory ships its annotations, runtime, and processor in the same
       # jar. The generated code must link against this jar at runtime. So our
@@ -329,7 +329,7 @@ def com_google_auto_value():
       jar_sha256 = "ea26f99150825f61752efc8784739cf50dd25d7956774573f8cdc3b948b23086",
       jar_urls = [
           "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/google/auto/value/auto-value/1.4-rc2/auto-value-1.4-rc2.jar",
-          "http://repo1.maven.org/maven2/com/google/auto/value/auto-value/1.4-rc2/auto-value-1.4-rc2.jar",
+          "https://repo1.maven.org/maven2/com/google/auto/value/auto-value/1.4-rc2/auto-value-1.4-rc2.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
       neverlink = True,
@@ -376,8 +376,8 @@ def com_google_closure_stylesheets():
       name = "com_google_closure_stylesheets",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/closure-stylesheets/closure-stylesheets/1.4.0/closure-stylesheets-1.4.0.jar",
-          "http://repo1.maven.org/maven2/com/google/closure-stylesheets/closure-stylesheets/1.4.0/closure-stylesheets-1.4.0.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/closure-stylesheets/closure-stylesheets/1.4.0/closure-stylesheets-1.4.0.jar",
+          "https://repo1.maven.org/maven2/com/google/closure-stylesheets/closure-stylesheets/1.4.0/closure-stylesheets-1.4.0.jar",
           "http://maven.ibiblio.org/maven2/com/google/closure-stylesheets/closure-stylesheets/1.4.0/closure-stylesheets-1.4.0.jar",
       ],
       jar_sha256 = "4038c17fa38a90983fe4030a63ff8a644ed53a48187f55f3c4c3487fe9ad9f97",
@@ -403,8 +403,8 @@ def com_google_code_findbugs_jsr305():
       name = "com_google_code_findbugs_jsr305",
       licenses = ["notice"],  # BSD 3-clause
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3.jar",
-          "http://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3.jar",
+          "https://repo1.maven.org/maven2/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3.jar",
           "http://maven.ibiblio.org/maven2/com/google/code/findbugs/jsr305/2.0.3/jsr305-2.0.3.jar",
       ],
       jar_sha256 = "bec0b24dcb23f9670172724826584802b80ae6cbdaba03bdebdef9327b962f6a",
@@ -415,8 +415,8 @@ def com_google_code_gson():
       name = "com_google_code_gson",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/code/gson/gson/2.7/gson-2.7.jar",
-          "http://repo1.maven.org/maven2/com/google/code/gson/gson/2.7/gson-2.7.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/code/gson/gson/2.7/gson-2.7.jar",
+          "https://repo1.maven.org/maven2/com/google/code/gson/gson/2.7/gson-2.7.jar",
           "http://maven.ibiblio.org/maven2/com/google/code/gson/gson/2.7/gson-2.7.jar",
       ],
       jar_sha256 = "2d43eb5ea9e133d2ee2405cc14f5ee08951b8361302fdd93494a3a997b508d32",
@@ -428,8 +428,8 @@ def com_google_common_html_types():
       name = "com_google_common_html_types",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/common/html/types/types/1.0.7/types-1.0.7.jar",
-          "http://repo1.maven.org/maven2/com/google/common/html/types/types/1.0.7/types-1.0.7.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/common/html/types/types/1.0.7/types-1.0.7.jar",
+          "https://repo1.maven.org/maven2/com/google/common/html/types/types/1.0.7/types-1.0.7.jar",
       ],
       jar_sha256 = "78b6baa2ecc56435dc0ae88c57f442bd2d07127cb50424d400441ddccc45ea24",
       deps = [
@@ -447,7 +447,7 @@ def com_google_common_html_types_html_proto():
       name = "com_google_common_html_types_html_proto",
       sha256 = "6ece202f11574e37d0c31d9cf2e9e11a0dbc9218766d50d211059ebd495b49c3",
       urls = [
-          "http://mirror.bazel.build/raw.githubusercontent.com/google/safe-html-types/release-1.0.5/proto/src/main/protobuf/webutil/html/types/proto/html.proto",
+          "https://mirror.bazel.build/raw.githubusercontent.com/google/safe-html-types/release-1.0.5/proto/src/main/protobuf/webutil/html/types/proto/html.proto",
           "https://raw.githubusercontent.com/google/safe-html-types/release-1.0.5/proto/src/main/protobuf/webutil/html/types/proto/html.proto",
       ],
   )
@@ -457,8 +457,8 @@ def com_google_dagger():
       name = "com_google_dagger",
       jar_sha256 = "8b7806518bed270950002158934fbd8281725ee09909442f2f22b58520b667a7",
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/dagger/dagger/2.9/dagger-2.9.jar",
-          "http://repo1.maven.org/maven2/com/google/dagger/dagger/2.9/dagger-2.9.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/dagger/dagger/2.9/dagger-2.9.jar",
+          "https://repo1.maven.org/maven2/com/google/dagger/dagger/2.9/dagger-2.9.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
       deps = ["@javax_inject"],
@@ -480,8 +480,8 @@ def com_google_dagger_compiler():
       name = "com_google_dagger_compiler",
       jar_sha256 = "afe356def27710db5b60cad8e7a6c06510dc3d3b854f30397749cbf0d0e71315",
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.9/dagger-compiler-2.9.jar",
-          "http://repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.9/dagger-compiler-2.9.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.9/dagger-compiler-2.9.jar",
+          "https://repo1.maven.org/maven2/com/google/dagger/dagger-compiler/2.9/dagger-compiler-2.9.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
       deps = [
@@ -510,8 +510,8 @@ def com_google_dagger_producers():
       name = "com_google_dagger_producers",
       jar_sha256 = "b452dc1b95dd02f6272e97b15d1bd35d92b5f484a7d69bb73887b6c6699d8843",
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.9/dagger-producers-2.9.jar",
-          "http://repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.9/dagger-producers-2.9.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.9/dagger-producers-2.9.jar",
+          "https://repo1.maven.org/maven2/com/google/dagger/dagger-producers/2.9/dagger-producers-2.9.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
       deps = [
@@ -538,8 +538,8 @@ def com_google_errorprone_error_prone_annotations():
       licenses = ["notice"],  # Apache 2.0
       jar_sha256 = "cde78ace21e46398299d0d9c6be9f47b7f971c7f045d40c78f95be9a638cbf7e",
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.0.19/error_prone_annotations-2.0.19.jar",
-          "http://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.0.19/error_prone_annotations-2.0.19.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.0.19/error_prone_annotations-2.0.19.jar",
+          "https://repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.0.19/error_prone_annotations-2.0.19.jar",
       ],
   )
 
@@ -548,8 +548,8 @@ def com_google_guava():
       name = "com_google_guava",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/guava/guava/20.0/guava-20.0.jar",
-          "http://repo1.maven.org/maven2/com/google/guava/guava/20.0/guava-20.0.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/guava/guava/20.0/guava-20.0.jar",
+          "https://repo1.maven.org/maven2/com/google/guava/guava/20.0/guava-20.0.jar",
           "http://maven.ibiblio.org/maven2/com/google/guava/guava/20.0/guava-20.0.jar",
       ],
       jar_sha256 = "36a666e3b71ae7f0f0dca23654b67e086e6c93d192f60ba5dfd5519db6c288c8",
@@ -564,8 +564,8 @@ def com_google_inject_extensions_guice_assistedinject():
       name = "com_google_inject_extensions_guice_assistedinject",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/4.1.0/guice-assistedinject-4.1.0.jar",
-          "http://repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/4.1.0/guice-assistedinject-4.1.0.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/4.1.0/guice-assistedinject-4.1.0.jar",
+          "https://repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/4.1.0/guice-assistedinject-4.1.0.jar",
           "http://maven.ibiblio.org/maven2/com/google/inject/extensions/guice-assistedinject/4.1.0/guice-assistedinject-4.1.0.jar",
       ],
       jar_sha256 = "663728123fb9a6b79ea39ae289e5d56b4113e1b8e9413eb792f91e53a6dd5868",
@@ -581,8 +581,8 @@ def com_google_inject_extensions_guice_multibindings():
       name = "com_google_inject_extensions_guice_multibindings",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/inject/extensions/guice-multibindings/4.1.0/guice-multibindings-4.1.0.jar",
-          "http://repo1.maven.org/maven2/com/google/inject/extensions/guice-multibindings/4.1.0/guice-multibindings-4.1.0.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/inject/extensions/guice-multibindings/4.1.0/guice-multibindings-4.1.0.jar",
+          "https://repo1.maven.org/maven2/com/google/inject/extensions/guice-multibindings/4.1.0/guice-multibindings-4.1.0.jar",
           "http://maven.ibiblio.org/maven2/com/google/inject/extensions/guice-multibindings/4.1.0/guice-multibindings-4.1.0.jar",
       ],
       jar_sha256 = "592773a4c745cc87ba37fa0647fed8126c7e474349c603c9f229aa25d3ef5448",
@@ -598,8 +598,8 @@ def com_google_inject_guice():
       name = "com_google_inject_guice",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/inject/guice/4.1.0/guice-4.1.0.jar",
-          "http://repo1.maven.org/maven2/com/google/inject/guice/4.1.0/guice-4.1.0.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/inject/guice/4.1.0/guice-4.1.0.jar",
+          "https://repo1.maven.org/maven2/com/google/inject/guice/4.1.0/guice-4.1.0.jar",
           "http://maven.ibiblio.org/maven2/com/google/inject/guice/4.1.0/guice-4.1.0.jar",
       ],
       jar_sha256 = "9b9df27a5b8c7864112b4137fd92b36c3f1395bfe57be42fedf2f520ead1a93e",
@@ -617,8 +617,8 @@ def com_google_javascript_closure_compiler():
       name = "com_google_javascript_closure_compiler",
       licenses = ["reciprocal"],  # MPL v1.1 (Rhino AST), Apache 2.0 (JSCompiler)
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20170626/closure-compiler-unshaded-v20170626.jar",
-          "http://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20170626/closure-compiler-unshaded-v20170626.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20170626/closure-compiler-unshaded-v20170626.jar",
+          "https://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20170626/closure-compiler-unshaded-v20170626.jar",
       ],
       jar_sha256 = "a2d746d986dd08730be743ec553e39e0dba0e74fab847e7e1962723c41cc398b",
       deps = [
@@ -647,7 +647,7 @@ def com_google_javascript_closure_library():
   native.new_http_archive(
       name = "com_google_javascript_closure_library",
       urls = [
-          "http://mirror.bazel.build/github.com/google/closure-library/archive/v20170626.tar.gz",
+          "https://mirror.bazel.build/github.com/google/closure-library/archive/v20170626.tar.gz",
           "https://github.com/google/closure-library/archive/v20170626.tar.gz",
       ],
       sha256 = "d018003a6895141f6e24b11fd969f6a9ad7756fc15dff6acfb49e2aab1d02b14",
@@ -663,7 +663,7 @@ def com_google_javascript_incremental_dom():
   native.http_file(
       name = "com_google_javascript_incremental_dom",
       urls = [
-          "http://mirror.bazel.build/github.com/google/incremental-dom/archive/0.5.2.tar.gz",
+          "https://mirror.bazel.build/github.com/google/incremental-dom/archive/0.5.2.tar.gz",
           "https://github.com/google/incremental-dom/archive/0.5.2.tar.gz",
       ],
       sha256 = "554a778dff5cba561a98619b2f3de5061848744644c870f718e2cdcf9bf0dccf",
@@ -675,9 +675,9 @@ def com_google_jsinterop_annotations():
       licenses = ["notice"],  # GWT Terms
       jar_sha256 = "b2cc45519d62a1144f8cd932fa0c2c30a944c3ae9f060934587a337d81b391c8",
       jar_urls = [
-          "http://mirror.bazel.build/maven.ibiblio.org/maven2/com/google/jsinterop/jsinterop-annotations/1.0.1/jsinterop-annotations-1.0.1.jar",
+          "https://mirror.bazel.build/maven.ibiblio.org/maven2/com/google/jsinterop/jsinterop-annotations/1.0.1/jsinterop-annotations-1.0.1.jar",
           "http://maven.ibiblio.org/maven2/com/google/jsinterop/jsinterop-annotations/1.0.1/jsinterop-annotations-1.0.1.jar",
-          "http://repo1.maven.org/maven2/com/google/jsinterop/jsinterop-annotations/1.0.1/jsinterop-annotations-1.0.1.jar",
+          "https://repo1.maven.org/maven2/com/google/jsinterop/jsinterop-annotations/1.0.1/jsinterop-annotations-1.0.1.jar",
       ],
   )
 
@@ -686,8 +686,8 @@ def com_google_protobuf_java():
       name = "com_google_protobuf_java",
       jar_sha256 = "f3411ade77523d5f0d013d4f25c36879e66f0c5e1e4310f7096d54d0d2553554",
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.3.0/protobuf-java-3.3.0.jar",
-          "http://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.3.0/protobuf-java-3.3.0.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.3.0/protobuf-java-3.3.0.jar",
+          "https://repo1.maven.org/maven2/com/google/protobuf/protobuf-java/3.3.0/protobuf-java-3.3.0.jar",
       ],
       licenses = ["notice"],  # New BSD and Apache 2.0
   )
@@ -701,7 +701,7 @@ def com_google_protobuf_js():
           #
           # TODO(jart): Update when https://github.com/google/protobuf/pull/3387
           #             is merged.
-          "http://mirror.bazel.build/github.com/google/protobuf/archive/33545583286a31940b6a732b1888e639cdf2e3c4.tar.gz",
+          "https://mirror.bazel.build/github.com/google/protobuf/archive/33545583286a31940b6a732b1888e639cdf2e3c4.tar.gz",
           "https://github.com/google/protobuf/archive/33545583286a31940b6a732b1888e639cdf2e3c4.tar.gz",  # 2017-07-17
       ],
       sha256 = "ecd9f92f137e75d140a8b611cd2c0d6c0f34f561946dc5f7fcecde631bb13c25",
@@ -715,19 +715,19 @@ def com_google_protobuf_protoc():
       licenses = ["notice"],  # BSD
       sha256_urls_extract_macos = {
           "d752ba0ea67239e327a48b2f23da0e673928a9ff06ee530319fc62200c0aff89": [
-              "http://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-osx-x86_64.zip",
+              "https://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-osx-x86_64.zip",
               "https://github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-osx-x86_64.zip",
           ],
       },
       sha256_urls_extract_windows = {
           "19ec3d3853c1181912dc442840b3a76bfe0607ecc67d0854b323fdd1fdd8ab77": [
-              "http://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-win32.zip",
+              "https://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-win32.zip",
               "https://github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-win32.zip",
           ],
       },
       sha256_urls_extract = {
           "feb112bbc11ea4e2f7ef89a359b5e1c04428ba6cfa5ee628c410eccbfe0b64c3": [
-              "http://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-linux-x86_64.zip",
+              "https://mirror.bazel.build/github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-linux-x86_64.zip",
               "https://github.com/google/protobuf/releases/download/v3.3.0/protoc-3.3.0-linux-x86_64.zip",
           ],
       },
@@ -761,8 +761,8 @@ def com_google_template_soy():
       name = "com_google_template_soy",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22.jar",
-          "http://repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22.jar",
+          "https://repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22.jar",
       ],
       jar_sha256 = "3c4e61234e9ee9f79411da997e23b201bcf281255469c76d162dac07a67dbb78",
       deps = [
@@ -803,8 +803,8 @@ def com_google_template_soy_jssrc():
       name = "com_google_template_soy_jssrc",
       sha256 = "604b363d00fc4712356f0ca37dded83062d46b6c39043fff4d1ae23f5661edac",
       urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22-jssrc_js.jar",
-          "http://repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22-jssrc_js.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22-jssrc_js.jar",
+          "https://repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22-jssrc_js.jar",
       ],
       build_file = str(Label("//closure/templates:soy_jssrc.BUILD")),
       type = "zip",
@@ -815,8 +815,8 @@ def com_ibm_icu_icu4j():
       name = "com_ibm_icu_icu4j",
       licenses = ["notice"],  # ICU License (old X License)
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/ibm/icu/icu4j/57.1/icu4j-57.1.jar",
-          "http://repo1.maven.org/maven2/com/ibm/icu/icu4j/57.1/icu4j-57.1.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/ibm/icu/icu4j/57.1/icu4j-57.1.jar",
+          "https://repo1.maven.org/maven2/com/ibm/icu/icu4j/57.1/icu4j-57.1.jar",
           "http://maven.ibiblio.org/maven2/com/ibm/icu/icu4j/57.1/icu4j-57.1.jar",
       ],
       jar_sha256 = "759d89ed2f8c6a6b627ab954be5913fbdc464f62254a513294e52260f28591ee",
@@ -829,7 +829,7 @@ def com_squareup_javawriter():
       jar_urls = [
           "http://domain-registry-maven.storage.googleapis.com/repo1.maven.org/maven2/com/squareup/javawriter/2.5.1/javawriter-2.5.1.jar",
           "http://maven.ibiblio.org/maven2/com/squareup/javawriter/2.5.1/javawriter-2.5.1.jar",
-          "http://repo1.maven.org/maven2/com/squareup/javawriter/2.5.1/javawriter-2.5.1.jar",
+          "https://repo1.maven.org/maven2/com/squareup/javawriter/2.5.1/javawriter-2.5.1.jar",
       ],
       licenses = ["notice"],  # Apache 2.0
   )
@@ -838,7 +838,7 @@ def fonts_noto_hinted_deb():
   native.http_file(
       name = "fonts_noto_hinted_deb",
       urls = [
-          "http://mirror.bazel.build/http.us.debian.org/debian/pool/main/f/fonts-noto/fonts-noto-hinted_20161116-1_all.deb",
+          "https://mirror.bazel.build/http.us.debian.org/debian/pool/main/f/fonts-noto/fonts-noto-hinted_20161116-1_all.deb",
           "http://http.us.debian.org/debian/pool/main/f/fonts-noto/fonts-noto-hinted_20161116-1_all.deb",
       ],
       sha256 = "a71fcee2bc7820fc4e0c780bb9c7c6db8364fd2c5bac20867c5c33eed470dc51",
@@ -848,7 +848,7 @@ def fonts_noto_mono_deb():
   native.http_file(
       name = "fonts_noto_mono_deb",
       urls = [
-          "http://mirror.bazel.build/http.us.debian.org/debian/pool/main/f/fonts-noto/fonts-noto-mono_20161116-1_all.deb",
+          "https://mirror.bazel.build/http.us.debian.org/debian/pool/main/f/fonts-noto/fonts-noto-mono_20161116-1_all.deb",
           "http://http.us.debian.org/debian/pool/main/f/fonts-noto/fonts-noto-mono_20161116-1_all.deb",
       ],
       sha256 = "71ff715cf50a74a8cc11b02e7c906b69a242d3d677e739e0b2d18cd23b7de375",
@@ -860,8 +860,8 @@ def javax_annotation_jsr250_api():
       licenses = ["reciprocal"],  # CDDL 1.0
       jar_sha256 = "a1a922d0d9b6d183ed3800dfac01d1e1eb159f0e8c6f94736931c1def54a941f",
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar",
-          "http://repo1.maven.org/maven2/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar",
+          "https://repo1.maven.org/maven2/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar",
           "http://maven.ibiblio.org/maven2/javax/annotation/jsr250-api/1.0/jsr250-api-1.0.jar",
       ],
   )
@@ -871,8 +871,8 @@ def javax_inject():
       name = "javax_inject",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar",
-          "http://repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar",
+          "https://repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar",
           "http://maven.ibiblio.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar",
       ],
       jar_sha256 = "91c77044a50c481636c32d916fd89c9118a72195390452c81065080f957de7ff",
@@ -882,7 +882,7 @@ def libexpat_amd64_deb():
   native.http_file(
       name = "libexpat_amd64_deb",
       urls = [
-          "http://mirror.bazel.build/http.us.debian.org/debian/pool/main/e/expat/libexpat1_2.1.0-6+deb8u3_amd64.deb",
+          "https://mirror.bazel.build/http.us.debian.org/debian/pool/main/e/expat/libexpat1_2.1.0-6+deb8u3_amd64.deb",
           "http://http.us.debian.org/debian/pool/main/e/expat/libexpat1_2.1.0-6+deb8u3_amd64.deb",
       ],
       sha256 = "682d2321297c56dec327770efa986d4bef43a5acb1a5528b3098e05652998fae",
@@ -892,7 +892,7 @@ def libfontconfig_amd64_deb():
   native.http_file(
       name = "libfontconfig_amd64_deb",
       urls = [
-          "http://mirror.bazel.build/http.us.debian.org/debian/pool/main/f/fontconfig/libfontconfig1_2.11.0-6.3+deb8u1_amd64.deb",
+          "https://mirror.bazel.build/http.us.debian.org/debian/pool/main/f/fontconfig/libfontconfig1_2.11.0-6.3+deb8u1_amd64.deb",
           "http://http.us.debian.org/debian/pool/main/f/fontconfig/libfontconfig1_2.11.0-6.3+deb8u1_amd64.deb",
       ],
       sha256 = "0bb54d61c13aa5b5253cb5e08aaca0dfc4c626a05ee30f51d0e3002cda166fec",
@@ -902,7 +902,7 @@ def libfreetype_amd64_deb():
   native.http_file(
       name = "libfreetype_amd64_deb",
       urls = [
-          "http://mirror.bazel.build/http.us.debian.org/debian/pool/main/f/freetype/libfreetype6_2.5.2-3+deb8u1_amd64.deb",
+          "https://mirror.bazel.build/http.us.debian.org/debian/pool/main/f/freetype/libfreetype6_2.5.2-3+deb8u1_amd64.deb",
           "http://http.us.debian.org/debian/pool/main/f/freetype/libfreetype6_2.5.2-3+deb8u1_amd64.deb",
       ],
       sha256 = "80184d932f9b0acc130af081c60a2da114c7b1e7531c18c63174498fae47d862",
@@ -912,7 +912,7 @@ def libpng_amd64_deb():
   native.http_file(
       name = "libpng_amd64_deb",
       urls = [
-          "http://mirror.bazel.build/http.us.debian.org/debian/pool/main/libp/libpng/libpng12-0_1.2.50-2+deb8u2_amd64.deb",
+          "https://mirror.bazel.build/http.us.debian.org/debian/pool/main/libp/libpng/libpng12-0_1.2.50-2+deb8u2_amd64.deb",
           "http://http.us.debian.org/debian/pool/main/libp/libpng/libpng12-0_1.2.50-2+deb8u2_amd64.deb",
       ],
       sha256 = "a57b6d53169c67a7754719f4b742c96554a18f931ca5b9e0408fb6502bb77e80",
@@ -923,8 +923,8 @@ def org_json():
       name = "org_json",
       licenses = ["notice"],  # MIT-style license
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/org/json/json/20160212/json-20160212.jar",
-          "http://repo1.maven.org/maven2/org/json/json/20160212/json-20160212.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/json/json/20160212/json-20160212.jar",
+          "https://repo1.maven.org/maven2/org/json/json/20160212/json-20160212.jar",
           "http://maven.ibiblio.org/maven2/org/json/json/20160212/json-20160212.jar",
       ],
       jar_sha256 = "0aaf0e7e286ece88fb60b9ba14dd45c05a48e55618876efb7d1b6f19c25e7a29",
@@ -935,8 +935,8 @@ def org_jsoup():
       name = "org_jsoup",
       licenses = ["notice"],  # The MIT License
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/org/jsoup/jsoup/1.10.2/jsoup-1.10.2.jar",
-          "http://repo1.maven.org/maven2/org/jsoup/jsoup/1.10.2/jsoup-1.10.2.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/jsoup/jsoup/1.10.2/jsoup-1.10.2.jar",
+          "https://repo1.maven.org/maven2/org/jsoup/jsoup/1.10.2/jsoup-1.10.2.jar",
       ],
       jar_sha256 = "6ebe6abd7775c10a49407ae22db45c840cd2cdaf715866a5b0b5af70941c3f4a",
   )
@@ -945,8 +945,8 @@ def org_ow2_asm():
   java_import_external(
       name = "org_ow2_asm",
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar",
-          "http://repo1.maven.org/maven2/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar",
+          "https://repo1.maven.org/maven2/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar",
           "http://maven.ibiblio.org/maven2/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar",
       ],
       jar_sha256 = "71c4f78e437b8fdcd9cc0dfd2abea8c089eb677005a6a5cff320206cc52b46cc",
@@ -957,8 +957,8 @@ def org_ow2_asm_analysis():
   java_import_external(
       name = "org_ow2_asm_analysis",
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3.jar",
-          "http://repo1.maven.org/maven2/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3.jar",
+          "https://repo1.maven.org/maven2/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3.jar",
           "http://maven.ibiblio.org/maven2/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3.jar",
       ],
       jar_sha256 = "e8fa2a63462c96557dcd36c25525e1264b77366ff851cf0b94eb7592b290849d",
@@ -974,8 +974,8 @@ def org_ow2_asm_commons():
       name = "org_ow2_asm_commons",
       licenses = ["notice"],  # BSD 3-clause
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3.jar",
-          "http://repo1.maven.org/maven2/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3.jar",
+          "https://repo1.maven.org/maven2/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3.jar",
           "http://maven.ibiblio.org/maven2/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3.jar",
       ],
       jar_sha256 = "18c1e092230233c9d29e46f21943d769bdb48130cc279e4b0e663f423948c2da",
@@ -987,8 +987,8 @@ def org_ow2_asm_tree():
       name = "org_ow2_asm_tree",
       licenses = ["notice"],  # BSD 3-clause
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3.jar",
-          "http://repo1.maven.org/maven2/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3.jar",
+          "https://repo1.maven.org/maven2/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3.jar",
           "http://maven.ibiblio.org/maven2/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3.jar",
       ],
       jar_sha256 = "347a7a9400f9964e87c91d3980e48eebdc8d024bc3b36f7f22189c662853a51c",
@@ -1000,8 +1000,8 @@ def org_ow2_asm_util():
       name = "org_ow2_asm_util",
       licenses = ["notice"],  # BSD 3-clause
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar",
-          "http://repo1.maven.org/maven2/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar",
+          "https://repo1.maven.org/maven2/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar",
           "http://maven.ibiblio.org/maven2/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar",
       ],
       jar_sha256 = "2768edbfa2681b5077f08151de586a6d66b916703cda3ab297e58b41ae8f2362",
@@ -1015,12 +1015,12 @@ def phantomjs():
   platform_http_file(
       name = "phantomjs",
       amd64_urls = [
-          "http://mirror.bazel.build/bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2",
+          "https://mirror.bazel.build/bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2",
           "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2",
       ],
       amd64_sha256 = "86dd9a4bf4aee45f1a84c9f61cf1947c1d6dce9b9e8d2a907105da7852460d2f",
       macos_urls = [
-          "http://mirror.bazel.build/bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-macosx.zip",
+          "https://mirror.bazel.build/bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-macosx.zip",
           "https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-macosx.zip",
       ],
       macos_sha256 = "538cf488219ab27e309eafc629e2bcee9976990fe90b1ec334f541779150f8c1",
