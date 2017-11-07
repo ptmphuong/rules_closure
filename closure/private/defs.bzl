@@ -230,7 +230,7 @@ def library_level_checks(ctx, ijs_deps, srcs, executable, output, suppress = [])
       "--incremental_check_mode", "CHECK_IJS",
       "--warning_level", "VERBOSE",
       "--jscomp_off", "reportUnknownTypes",
-      "--language_in", "ECMASCRIPT_NEXT",
+      "--language_in", "ECMASCRIPT_2017",
       "--language_out", "ECMASCRIPT5",
       "--js_output_file", output.path,
   ]
