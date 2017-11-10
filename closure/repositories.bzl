@@ -184,43 +184,7 @@ def _parse_bazel_version(bazel_version):
     version_tuple += (str(number),)
   return version_tuple
 
-# MAINTAINERS
-#
-# 1. Please sort everything in this file.
-#
-# 2. Every external rule must have a SHA checksum.
-#
-# 3. Use http:// URLs since we're relying on the checksum for security.
-#
-# 4. Files must be mirrored to servers operated by Google SREs. This minimizes
-#    the points of failure. It also minimizes the probability failure. For
-#    example, if we assumed all external download servers were equal, had 99.9%
-#    availability, and uniformly distributed downtime, that would put the
-#    probability of an install working at 97.0% (0.999^30). Google static
-#    content servers should have 99.999% availability, which *in theory* means
-#    Closure Rules will install without any requests failing 99.9% of the time.
-#
-#    To get files mirrored, email the new artifacts or URLs to jart@google.com
-#    so she can run:
-#
-#      bzmirror() {
-#        local url="${1:?url}"
-#        if [[ "${url}" =~ ^([^:]+):([^:]+):([^:]+)$ ]]; then
-#          url="https://repo1.maven.org/maven2/${BASH_REMATCH[1]//.//}/${BASH_REMATCH[2]}/${BASH_REMATCH[3]}/${BASH_REMATCH[2]}-${BASH_REMATCH[3]}.jar"
-#        fi
-#        local dest="gs://bazel-mirror/${url#http*//}"
-#        local desturl="https://mirror.bazel.build/${url#http*//}"
-#        local name="$(basename "${dest}")"
-#        wget -O "/tmp/${name}" "${url}" || return 1
-#        gsutil cp -a public-read "/tmp/${name}" "${dest}" || return 1
-#        gsutil setmeta -h 'Cache-Control:public, max-age=31536000' "${dest}" || return 1
-#        curl -I "${desturl}"
-#        echo
-#        sha1sum "/tmp/${name}"
-#        sha256sum "/tmp/${name}"
-#        echo "${desturl}"
-#        rm "/tmp/${name}" || return 1
-#      }
+# BEGIN_DECLARATIONS
 
 def aopalliance():
   java_import_external(
@@ -617,7 +581,7 @@ def com_google_javascript_closure_compiler():
       name = "com_google_javascript_closure_compiler",
       licenses = ["reciprocal"],  # MPL v1.1 (Rhino AST), Apache 2.0 (JSCompiler)
       jar_urls = [
-          "http://mirror.bazel.build/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20171023/closure-compiler-unshaded-v20171023.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20171023/closure-compiler-unshaded-v20171023.jar",
           "http://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20171023/closure-compiler-unshaded-v20171023.jar",
       ],
       jar_sha256 = "90d274556466785adbf77b091e7acda17ffd1c17b01262573aa1723dc97cdba0",
@@ -647,7 +611,7 @@ def com_google_javascript_closure_library():
   native.new_http_archive(
       name = "com_google_javascript_closure_library",
       urls = [
-          "http://mirror.bazel.build/github.com/google/closure-library/archive/v20170910.tar.gz",
+          "https://mirror.bazel.build/github.com/google/closure-library/archive/v20170910.tar.gz",
           "https://github.com/google/closure-library/archive/v20170910.tar.gz",
       ],
       sha256 = "2b98ddcc6171eb2350f4db9d3ae65169916ca375337e2475ec8dd92e8d3f89ee",

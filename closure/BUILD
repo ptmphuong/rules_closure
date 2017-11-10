@@ -18,7 +18,7 @@ load("//closure/private:lines_sorted_test.bzl", "lines_sorted_test")
 
 lines_sorted_test(
     name = "repositories_defs_sorted_test",
-    cmd = "sed '1,/MAINTAINERS/ d' $< | grep ^def >$@",
+    cmd = "sed '1,/BEGIN_DECLARATIONS/ d' $< | grep ^def >$@",
     error_message = "The functions in repositories.bzl must be sorted",
     file = "repositories.bzl",
 )
