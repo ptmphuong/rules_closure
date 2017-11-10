@@ -17,9 +17,8 @@ package io.bazel.rules.closure.worker.testing;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.auto.value.AutoValue;
-import com.google.common.truth.FailureStrategy;
+import com.google.common.truth.FailureMetadata;
 import com.google.common.truth.Subject;
-import com.google.common.truth.SubjectFactory;
 import com.google.common.truth.Truth;
 import java.util.Arrays;
 import java.util.Set;
@@ -73,8 +72,8 @@ public abstract class ProgramResult {
       extends Subject<ProgramResultSubject, ProgramResult>
       implements ResultChain, WarningsChain, FailedChain {
 
-    private ProgramResultSubject(FailureStrategy fs, ProgramResult subject) {
-      super(fs, subject);
+    private ProgramResultSubject(FailureMetadata failureMetadata, ProgramResult subject) {
+      super(failureMetadata, subject);
     }
 
     @Override
@@ -120,13 +119,8 @@ public abstract class ProgramResult {
     }
   }
 
-  private static final SubjectFactory<ProgramResultSubject, ProgramResult> SUBJECT_FACTORY =
-      new SubjectFactory<ProgramResultSubject, ProgramResult>() {
-        @Override
-        public ProgramResultSubject getSubject(FailureStrategy fs, ProgramResult subject) {
-          return new ProgramResultSubject(fs, subject);
-        }
-      };
+  private static final Subject.Factory<ProgramResultSubject, ProgramResult> SUBJECT_FACTORY =
+      ProgramResultSubject::new;
 
   ProgramResult() {}
 }
