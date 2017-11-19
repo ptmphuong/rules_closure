@@ -57,7 +57,7 @@ final class JsCompilerRunner extends CommandLineRunner {
     CompilerOptions options = super.createOptions();
     options.setExportTestFunctions(exportTestFunctions);
     options.addWarningsGuard(warnings);
-    options.setModuleResolutionMode(ModuleLoader.ResolutionMode.BROWSER);
+    options.setModuleResolutionMode(ModuleLoader.ResolutionMode.NODE);
     return options;
   }
 }
