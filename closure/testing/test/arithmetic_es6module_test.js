@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import 'goog:goog.testing.asserts';
-import 'goog:goog.testing.jsunit';
+goog.require('goog.testing.asserts');
+goog.require('goog.testing.jsunit');
 
 import { add } from '/closure/testing/test/arithmetic_es6module.js';
 
