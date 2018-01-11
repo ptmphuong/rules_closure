@@ -33,7 +33,6 @@ closure_js_library(
     name = "soy_jssrc",
     srcs = ["@com_google_template_soy_jssrc"],
     suppress = [
-        "JSC_CONSTANT_WITHOUT_EXPLICIT_TYPE",
         "JSC_IMPLICITLY_NULLABLE_JSDOC",
         "JSC_NTI_INEXISTENT_PROPERTY",
         "JSC_NTI_NULLABLE_DEREFERENCE",

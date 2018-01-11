@@ -66,7 +66,6 @@ def closure_repositories(
     omit_org_ow2_asm_util=False,
     omit_phantomjs=False):
   """Imports dependencies for Closure Rules."""
-  _check_bazel_version("Closure Rules", "0.4.5")
   if not omit_aopalliance:
     aopalliance()
   if not omit_args4j:
@@ -159,30 +158,6 @@ def closure_repositories(
     org_ow2_asm_util()
   if not omit_phantomjs:
     phantomjs()
-
-def _check_bazel_version(project, bazel_version):
-  if "bazel_version" not in dir(native):
-    fail("%s requires Bazel >=%s but was <0.2.1" % (project, bazel_version))
-  elif not native.bazel_version:
-    pass  # user probably compiled Bazel from scratch
-  else:
-    current_bazel_version = _parse_bazel_version(native.bazel_version)
-    minimum_bazel_version = _parse_bazel_version(bazel_version)
-    if minimum_bazel_version > current_bazel_version:
-      fail("%s requires Bazel >=%s but was %s" % (
-          project, bazel_version, native.bazel_version))
-
-def _parse_bazel_version(bazel_version):
-  # Remove commit from version.
-  version = bazel_version.split(" ", 1)[0]
-  # Split into (release, date) parts and only return the release
-  # as a tuple of integers.
-  parts = version.split("-", 1)
-  # Turn "release" into a tuple of strings
-  version_tuple = ()
-  for number in parts[0].split("."):
-    version_tuple += (str(number),)
-  return version_tuple
 
 # BEGIN_DECLARATIONS
 
@@ -340,11 +315,10 @@ def com_google_closure_stylesheets():
       name = "com_google_closure_stylesheets",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/closure-stylesheets/closure-stylesheets/1.4.0/closure-stylesheets-1.4.0.jar",
-          "https://repo1.maven.org/maven2/com/google/closure-stylesheets/closure-stylesheets/1.4.0/closure-stylesheets-1.4.0.jar",
-          "http://maven.ibiblio.org/maven2/com/google/closure-stylesheets/closure-stylesheets/1.4.0/closure-stylesheets-1.4.0.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/closure-stylesheets/closure-stylesheets/1.5.0/closure-stylesheets-1.5.0.jar",
+          "https://repo1.maven.org/maven2/com/google/closure-stylesheets/closure-stylesheets/1.5.0/closure-stylesheets-1.5.0.jar",
       ],
-      jar_sha256 = "4038c17fa38a90983fe4030a63ff8a644ed53a48187f55f3c4c3487fe9ad9f97",
+      jar_sha256 = "fef768d4f7cead3c0c0783891118e7d3d6ecf17a3093557891f583d842362e2b",
       deps = [
           "@args4j",
           "@com_google_javascript_closure_compiler",
@@ -512,11 +486,10 @@ def com_google_guava():
       name = "com_google_guava",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/guava/guava/20.0/guava-20.0.jar",
-          "https://repo1.maven.org/maven2/com/google/guava/guava/20.0/guava-20.0.jar",
-          "http://maven.ibiblio.org/maven2/com/google/guava/guava/20.0/guava-20.0.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/guava/guava/21.0/guava-21.0.jar",
+          "https://repo1.maven.org/maven2/com/google/guava/guava/21.0/guava-21.0.jar",
       ],
-      jar_sha256 = "36a666e3b71ae7f0f0dca23654b67e086e6c93d192f60ba5dfd5519db6c288c8",
+      jar_sha256 = "972139718abc8a4893fa78cba8cf7b2c903f35c97aaf44fa3031b0669948b480",
       exports = [
           "@com_google_code_findbugs_jsr305",
           "@com_google_errorprone_error_prone_annotations",
@@ -581,10 +554,10 @@ def com_google_javascript_closure_compiler():
       name = "com_google_javascript_closure_compiler",
       licenses = ["reciprocal"],  # MPL v1.1 (Rhino AST), Apache 2.0 (JSCompiler)
       jar_urls = [
-          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20171023/closure-compiler-unshaded-v20171023.jar",
-          "http://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20171023/closure-compiler-unshaded-v20171023.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20180101/closure-compiler-unshaded-v20180101.jar",
+          "http://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/v20180101/closure-compiler-unshaded-v20180101.jar",
       ],
-      jar_sha256 = "90d274556466785adbf77b091e7acda17ffd1c17b01262573aa1723dc97cdba0",
+      jar_sha256 = "94eaa89df2eb672a747ec2ce3ed7c06ed4f12f5737c32eef981cb2661a199737",
       deps = [
           "@com_google_code_gson",
           "@com_google_guava",
@@ -611,11 +584,11 @@ def com_google_javascript_closure_library():
   native.new_http_archive(
       name = "com_google_javascript_closure_library",
       urls = [
-          "https://mirror.bazel.build/github.com/google/closure-library/archive/v20170910.tar.gz",
-          "https://github.com/google/closure-library/archive/v20170910.tar.gz",
+          "https://mirror.bazel.build/github.com/google/closure-library/archive/v20171203.tar.gz",
+          "https://github.com/google/closure-library/archive/v20171203.tar.gz",
       ],
-      sha256 = "2b98ddcc6171eb2350f4db9d3ae65169916ca375337e2475ec8dd92e8d3f89ee",
-      strip_prefix = "closure-library-20170910",
+      sha256 = "5320f10c53a7dc47fbb863a2d7f9344245889afe9fd4e8ff5e44bd89aabcefc7",
+      strip_prefix = "closure-library-20171203",
       build_file = str(Label("//closure/library:closure_library.BUILD")),
   )
 
@@ -684,10 +657,10 @@ def com_google_template_soy():
       name = "com_google_template_soy",
       licenses = ["notice"],  # Apache 2.0
       jar_urls = [
-          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22.jar",
-          "https://repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/template/soy/2018-01-03/soy-2018-01-03.jar",
+          "https://repo1.maven.org/maven2/com/google/template/soy/2018-01-03/soy-2018-01-03.jar",
       ],
-      jar_sha256 = "3c4e61234e9ee9f79411da997e23b201bcf281255469c76d162dac07a67dbb78",
+      jar_sha256 = "2952b430323a01070d73c7767e34c4030355b9e60c14b5165bebf69b2f6ad927",
       deps = [
           "@args4j",
           "@com_google_code_findbugs_jsr305",
@@ -724,10 +697,10 @@ def com_google_template_soy():
 def com_google_template_soy_jssrc():
   native.new_http_archive(
       name = "com_google_template_soy_jssrc",
-      sha256 = "604b363d00fc4712356f0ca37dded83062d46b6c39043fff4d1ae23f5661edac",
+      sha256 = "be98a356a30cb5af9905c62a89192906096356e4958b243ecd2d49d497c24ee3",
       urls = [
-          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22-jssrc_js.jar",
-          "https://repo1.maven.org/maven2/com/google/template/soy/2017-06-22/soy-2017-06-22-jssrc_js.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/template/soy/2018-01-03/soy-2018-01-03-jssrc_js.jar",
+          "https://repo1.maven.org/maven2/com/google/template/soy/2018-01-03/soy-2018-01-03-jssrc_js.jar",
       ],
       build_file = str(Label("//closure/templates:soy_jssrc.BUILD")),
       type = "zip",
@@ -868,11 +841,10 @@ def org_ow2_asm():
   java_import_external(
       name = "org_ow2_asm",
       jar_urls = [
-          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar",
-          "https://repo1.maven.org/maven2/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar",
-          "http://maven.ibiblio.org/maven2/org/ow2/asm/asm/5.0.3/asm-5.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm/6.0/asm-6.0.jar",
+          "https://repo1.maven.org/maven2/org/ow2/asm/asm/6.0/asm-6.0.jar",
       ],
-      jar_sha256 = "71c4f78e437b8fdcd9cc0dfd2abea8c089eb677005a6a5cff320206cc52b46cc",
+      jar_sha256 = "dd8971c74a4e697899a8e95caae4ea8760ea6c486dc6b97b1795e75760420461",
       licenses = ["notice"],  # BSD 3-clause
   )
 
@@ -880,11 +852,10 @@ def org_ow2_asm_analysis():
   java_import_external(
       name = "org_ow2_asm_analysis",
       jar_urls = [
-          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3.jar",
-          "https://repo1.maven.org/maven2/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3.jar",
-          "http://maven.ibiblio.org/maven2/org/ow2/asm/asm-analysis/5.0.3/asm-analysis-5.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-analysis/6.0/asm-analysis-6.0.jar",
+          "https://repo1.maven.org/maven2/org/ow2/asm/asm-analysis/6.0/asm-analysis-6.0.jar",
       ],
-      jar_sha256 = "e8fa2a63462c96557dcd36c25525e1264b77366ff851cf0b94eb7592b290849d",
+      jar_sha256 = "2f1a6387219c3a6cc4856481f221b03bd9f2408a326d416af09af5d6f608c1f4",
       licenses = ["notice"],  # BSD 3-clause
       exports = [
           "@org_ow2_asm",
@@ -897,11 +868,10 @@ def org_ow2_asm_commons():
       name = "org_ow2_asm_commons",
       licenses = ["notice"],  # BSD 3-clause
       jar_urls = [
-          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3.jar",
-          "https://repo1.maven.org/maven2/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3.jar",
-          "http://maven.ibiblio.org/maven2/org/ow2/asm/asm-commons/5.0.3/asm-commons-5.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-commons/6.0/asm-commons-6.0.jar",
+          "https://repo1.maven.org/maven2/org/ow2/asm/asm-commons/6.0/asm-commons-6.0.jar",
       ],
-      jar_sha256 = "18c1e092230233c9d29e46f21943d769bdb48130cc279e4b0e663f423948c2da",
+      jar_sha256 = "f1bce5c648a96a017bdcd01fe5d59af9845297fd7b79b81c015a6fbbd9719abf",
       exports = ["@org_ow2_asm_tree"],
   )
 
@@ -910,11 +880,10 @@ def org_ow2_asm_tree():
       name = "org_ow2_asm_tree",
       licenses = ["notice"],  # BSD 3-clause
       jar_urls = [
-          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3.jar",
-          "https://repo1.maven.org/maven2/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3.jar",
-          "http://maven.ibiblio.org/maven2/org/ow2/asm/asm-tree/5.0.3/asm-tree-5.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-tree/6.0/asm-tree-6.0.jar",
+          "https://repo1.maven.org/maven2/org/ow2/asm/asm-tree/6.0/asm-tree-6.0.jar",
       ],
-      jar_sha256 = "347a7a9400f9964e87c91d3980e48eebdc8d024bc3b36f7f22189c662853a51c",
+      jar_sha256 = "887998fb69727c8759e4d253f856822801e33f9fd4caa566b3ac58ee92106215",
       exports = ["@org_ow2_asm"],
   )
 
@@ -923,11 +892,10 @@ def org_ow2_asm_util():
       name = "org_ow2_asm_util",
       licenses = ["notice"],  # BSD 3-clause
       jar_urls = [
-          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar",
-          "https://repo1.maven.org/maven2/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar",
-          "http://maven.ibiblio.org/maven2/org/ow2/asm/asm-util/5.0.3/asm-util-5.0.3.jar",
+          "https://mirror.bazel.build/repo1.maven.org/maven2/org/ow2/asm/asm-util/6.0/asm-util-6.0.jar",
+          "https://repo1.maven.org/maven2/org/ow2/asm/asm-util/6.0/asm-util-6.0.jar",
       ],
-      jar_sha256 = "2768edbfa2681b5077f08151de586a6d66b916703cda3ab297e58b41ae8f2362",
+      jar_sha256 = "356afebdb0f870175262e5188f8709a3b17aa2a5a6a4b0340b04d4b449bca5f6",
       exports = [
           "@org_ow2_asm_analysis",
           "@org_ow2_asm_tree",

@@ -7,11 +7,10 @@ closure_repositories()
 
 java_import_external(
     name = "com_google_guava_testlib",
-    jar_sha256 = "a9f52f328ac024e420c8995a107ea0dbef3fc169ddf97b3426e634f28d6b3663",
+    jar_sha256 = "36ea0f68fe9c88b6ed5019e93e0e67078b60d636cfd7e26ef8c23bfa9ed8e944",
     jar_urls = [
-        "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/guava/guava-testlib/20.0/guava-testlib-20.0.jar",
-        "https://repo1.maven.org/maven2/com/google/guava/guava-testlib/20.0/guava-testlib-20.0.jar",
-        "http://maven.ibiblio.org/maven2/com/google/guava/guava-testlib/20.0/guava-testlib-20.0.jar",
+        "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/guava/guava-testlib/21.0/guava-testlib-21.0.jar",
+        "https://repo1.maven.org/maven2/com/google/guava/guava-testlib/21.0/guava-testlib-21.0.jar",
     ],
     licenses = ["notice"],  # Apache 2.0
     testonly_ = 1,
@@ -74,10 +73,10 @@ java_import_external(
 
 java_import_external(
     name = "com_google_truth",
-    jar_sha256 = "032eddc69652b0a1f8d458f999b4a9534965c646b8b5de0eba48ee69407051df",
+    jar_sha256 = "25ce04464511d4a7c05e1034477900a897228cba2f86110d2ed49c956d9a82af",
     jar_urls = [
-        "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/truth/truth/0.32/truth-0.32.jar",
-        "https://repo1.maven.org/maven2/com/google/truth/truth/0.32/truth-0.32.jar",
+        "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/truth/truth/0.39/truth-0.39.jar",
+        "https://repo1.maven.org/maven2/com/google/truth/truth/0.39/truth-0.39.jar",
     ],
     licenses = ["notice"],  # Apache 2.0
     testonly_ = 1,

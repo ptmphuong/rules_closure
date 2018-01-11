@@ -24,7 +24,6 @@ closure_js_library(
     srcs = ["@com_google_javascript_closure_library//:js_library_files"],
     suppress = [
         "JSC_ARRAY_PASSED_TO_GOOG_OBJECT",
-        "JSC_CONSTANT_WITHOUT_EXPLICIT_TYPE",
         "JSC_DEPRECATED_CLASS_REASON",
         "JSC_DEPRECATED_PROP",
         "JSC_DEPRECATED_PROP_REASON",

@@ -19,9 +19,7 @@ load("//closure:defs.bzl", "closure_js_library")
 closure_js_library(
     name = "incremental_dom",
     srcs = ["incremental-dom-closure.js"],
-    language = "ECMASCRIPT_2017",
     suppress = [
-        "JSC_CONSTANT_WITHOUT_EXPLICIT_TYPE",
         "JSC_IMPLICITLY_NULLABLE_JSDOC",
         "JSC_NTI_COULD_NOT_INFER_CONST_TYPE",
         "JSC_NTI_INEXISTENT_PROPERTY",
