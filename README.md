@@ -1,4 +1,5 @@
-# Closure Rules for Bazel (αlpha) ![Travis build status](https://travis-ci.org/bazelbuild/rules_closure.svg?branch=master)
+# Closure Rules for Bazel (αlpha) ![Travis build status](https://travis-ci.org/bazelbuild/rules_closure.svg?branch=master) [![Bazel CI build status](https://badge.buildkite.com/7569410e2a2661076591897283051b6d137f35102167253fed.svg)](https://buildkite.com/bazel/closure-compiler-rules-closure-postsubmit)
+
 
 JavaScript | Templating | Stylesheets | Miscellaneous
 --- | --- | --- | ---
