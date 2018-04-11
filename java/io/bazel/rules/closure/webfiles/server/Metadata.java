@@ -153,7 +153,7 @@ final class Metadata {
       manifestPaths.add(config.getPath());
       WebfilesServerInfo params = config.get();
       List<Webfiles> manifests = new ArrayList<>();
-      for (String longPath : Lists.reverse(params.getManifestList())) {
+      for (String longPath : params.getManifestList()) {
         Path manifestPath = runfiles.getPath(longPath);
         manifestPaths.add(manifestPath);
         Webfiles.Builder builder = Webfiles.newBuilder();
@@ -164,11 +164,14 @@ final class Metadata {
       for (AssetInfo asset : params.getExternalAssetList()) {
         assets.put(Webpath.get(asset.getWebpath()), runfiles.getPath(asset.getPath()));
       }
-      Set<Webpath> webpaths = new LinkedHashSet<>();
       for (Webfiles manifest : manifests) {
         for (WebfilesSource src : manifest.getSrcList()) {
-          Webpath webpath = Webpath.get(src.getWebpath());
-          assets.put(webpath, runfiles.getPath(src.getLongpath()));
+          assets.put(Webpath.get(src.getWebpath()), runfiles.getPath(src.getLongpath()));
+        }
+      }
+      Set<Webpath> webpaths = new LinkedHashSet<>();
+      for (Webfiles manifest : Lists.reverse(manifests)) {
+        for (WebfilesSource src : manifest.getSrcList()) {
           webpaths.add(Webpath.get(src.getWebpath()));
         }
       }

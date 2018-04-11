@@ -41,7 +41,7 @@ def _web_library(ctx):
   # process what came before
   deps = unfurl(ctx.attr.deps, provider="webfiles")
   webpaths = depset()
-  manifests = depset(order="topological")
+  manifests = depset(order="postorder")
   for dep in deps:
     webpaths += dep.webfiles.webpaths
     manifests += dep.webfiles.manifests
