@@ -75,11 +75,11 @@ file:
 ```python
 http_archive(
     name = "io_bazel_rules_closure",
-    sha256 = "d317365f46902cfc6cfb0aa032aa7f6e4063da8b8794a7c8398588af4df60deb",
-    strip_prefix = "rules_closure-0.6.1",
+    sha256 = "a80acb69c63d5f6437b099c111480a4493bad4592015af2127a2f49fb7512d8d",
+    strip_prefix = "rules_closure-0.7.0",
     urls = [
-        "https://mirror.bazel.build/github.com/bazelbuild/rules_closure/archive/0.6.1.tar.gz",
-        "https://github.com/bazelbuild/rules_closure/archive/0.6.1.tar.gz",
+        "https://mirror.bazel.build/github.com/bazelbuild/rules_closure/archive/0.7.0.tar.gz",
+        "https://github.com/bazelbuild/rules_closure/archive/0.7.0.tar.gz",
     ],
 )
 
