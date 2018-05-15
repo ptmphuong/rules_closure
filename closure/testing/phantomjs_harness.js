@@ -51,7 +51,7 @@ var url;
 
 
 /**
- * HTML for virtual test page, hosted under {@code index.html}.
+ * HTML for virtual test page, hosted under `index.html`.
  * @type {string}
  */
 var virtualPageHtml;
