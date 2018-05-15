@@ -182,7 +182,7 @@ def _soy__gen_file_list_arg_as_file(out_name, targets, flag,
 
 def _soy__GetJavaPackageForCurrentDirectory():
   """Returns the java package corresponding to the current directory."""
-  directory = PACKAGE_NAME
+  directory = native.package_name()
   for prefix in ("java/", "javatests/"):
     if directory.startswith(prefix):
       return ".".join(directory[len(prefix):].split("/"))
