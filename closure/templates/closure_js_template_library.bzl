@@ -20,29 +20,16 @@ load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:defs.bzl", "SOY_FILE_TYPE", "unfurl")
 
 _SOYTOJSSRCCOMPILER = "@com_google_template_soy//:SoyToJsSrcCompiler"
-_SOYTOINCREMENTALDOMSRCCOMPILER = "@com_google_template_soy//:SoyToIncrementalDomSrcCompiler"
 
 def _impl(ctx):
-  if ctx.attr.incremental_dom:
-    if not ctx.attr.should_provide_require_soy_namespaces:
-      fail('should_provide_require_soy_namespaces must be 1 ' +
-           'when using incremental_dom')
-    if ctx.attr.should_generate_soy_msg_defs:
-      fail('should_generate_soy_msg_defs must be 0 when using incremental_dom')
-    if ctx.attr.soy_msgs_are_external:
-      fail('soy_msgs_are_external must be 0 when using incremental_dom')
-    args = ["--outputPathFormat=%s/{INPUT_DIRECTORY}/{INPUT_FILE_NAME}_idom.js" %
-            ctx.configuration.genfiles_dir.path]
-  else:
-    args = ["--outputPathFormat=%s/{INPUT_DIRECTORY}/{INPUT_FILE_NAME}.js" %
-            ctx.configuration.genfiles_dir.path]
-  if not ctx.attr.incremental_dom:
-    if ctx.attr.soy_msgs_are_external:
-      args += ["--googMsgsAreExternal"]
-    if ctx.attr.should_provide_require_soy_namespaces:
-      args += ["--shouldProvideRequireSoyNamespaces"]
-    if ctx.attr.should_generate_soy_msg_defs:
-      args += ["--shouldGenerateGoogMsgDefs"]
+  args = ["--outputPathFormat=%s/{INPUT_DIRECTORY}/{INPUT_FILE_NAME}.js" %
+          ctx.configuration.genfiles_dir.path]
+  if ctx.attr.soy_msgs_are_external:
+    args += ["--googMsgsAreExternal"]
+  if ctx.attr.should_provide_require_soy_namespaces:
+    args += ["--shouldProvideRequireSoyNamespaces"]
+  if ctx.attr.should_generate_soy_msg_defs:
+    args += ["--shouldGenerateGoogMsgDefs"]
   if ctx.attr.plugin_modules:
     args += ["--pluginModules=%s" % ",".join(ctx.attr.plugin_modules)]
   inputs = []
@@ -80,7 +67,6 @@ _closure_js_template_library = rule(
         "should_provide_require_soy_namespaces": attr.bool(default=True),
         "should_generate_soy_msg_defs": attr.bool(),
         "soy_msgs_are_external": attr.bool(),
-        "incremental_dom": attr.bool(),
         "compiler": attr.label(cfg="host", executable=True, mandatory=True),
     },
 )
@@ -90,7 +76,6 @@ def closure_js_template_library(
     srcs,
     deps = [],
     suppress = [],
-    incremental_dom = False,
     testonly = None,
     globals = None,
     plugin_modules = None,
@@ -98,12 +83,8 @@ def closure_js_template_library(
     should_generate_soy_msg_defs = None,
     soy_msgs_are_external = None,
     **kwargs):
-  if incremental_dom:
-    compiler = str(Label(_SOYTOINCREMENTALDOMSRCCOMPILER))
-    js_srcs = [src + "_idom.js" for src in srcs]
-  else:
-    compiler = str(Label(_SOYTOJSSRCCOMPILER))
-    js_srcs = [src + ".js" for src in srcs]
+  compiler = str(Label(_SOYTOJSSRCCOMPILER))
+  js_srcs = [src + ".js" for src in srcs]
   _closure_js_template_library(
       name = name + "_soy_js",
       srcs = srcs,
@@ -116,7 +97,6 @@ def closure_js_template_library(
       should_provide_require_soy_namespaces = should_provide_require_soy_namespaces,
       should_generate_soy_msg_defs = should_generate_soy_msg_defs,
       soy_msgs_are_external = soy_msgs_are_external,
-      incremental_dom = incremental_dom,
       compiler = compiler,
   )
 
@@ -142,11 +122,6 @@ def closure_js_template_library(
       str(Label("//closure/library/uri")),
       str(Label("//closure/templates:soy_jssrc")),
   ]
-  if incremental_dom:
-    deps = deps + [
-        str(Label("//closure/templates:soy_jssrc_idom")),
-        str(Label("//third_party/javascript/incremental_dom")),
-    ]
 
   closure_js_library(
       name = name,

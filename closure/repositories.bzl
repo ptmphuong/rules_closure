@@ -43,7 +43,6 @@ def closure_repositories(
     omit_com_google_java_format=False,
     omit_com_google_javascript_closure_compiler=False,
     omit_com_google_javascript_closure_library=False,
-    omit_com_google_javascript_incremental_dom=False,
     omit_com_google_jsinterop_annotations=False,
     omit_com_google_protobuf=False,
     omit_com_google_protobuf_java=False,
@@ -119,8 +118,6 @@ def closure_repositories(
     com_google_javascript_closure_compiler()
   if not omit_com_google_javascript_closure_library:
     com_google_javascript_closure_library()
-  if not omit_com_google_javascript_incremental_dom:
-    com_google_javascript_incremental_dom()
   if not omit_com_google_jsinterop_annotations:
     com_google_jsinterop_annotations()
   if not omit_com_google_protobuf:
@@ -647,20 +644,6 @@ def com_google_javascript_closure_library():
       build_file = str(Label("//closure/library:closure_library.BUILD")),
   )
 
-def com_google_javascript_incremental_dom():
-  # To update Incremental DOM, one needs to update
-  # third_party/javascript/incremental_dom/build.sh to remain compatible with
-  # the upstream "js-closure" gulpfile.js target.
-  # https://github.com/google/incremental-dom/blob/master/gulpfile.js
-  native.http_file(
-      name = "com_google_javascript_incremental_dom",
-      urls = [
-          "https://mirror.bazel.build/github.com/google/incremental-dom/archive/0.5.2.tar.gz",
-          "https://github.com/google/incremental-dom/archive/0.5.2.tar.gz",
-      ],
-      sha256 = "554a778dff5cba561a98619b2f3de5061848744644c870f718e2cdcf9bf0dccf",
-  )
-
 def com_google_jsinterop_annotations():
   java_import_external(
       name = "com_google_jsinterop_annotations",
@@ -734,8 +717,7 @@ def com_google_template_soy():
           for name in ("SoyParseInfoGenerator",
                        "SoyToJbcSrcCompiler",
                        "SoyToJsSrcCompiler",
-                       "SoyToPySrcCompiler",
-                       "SoyToIncrementalDomSrcCompiler")
+                       "SoyToPySrcCompiler")
       ]),
   )
 

@@ -24,8 +24,3 @@ filegroup(
         "soyutils_usegoog.js",
     ],
 )
-
-filegroup(
-    name = "idom",
-    srcs = ["soyutils_idom.js"],
-)

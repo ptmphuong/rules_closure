@@ -57,21 +57,6 @@ closure_js_library(
     ],
 )
 
-closure_js_library(
-    name = "soy_jssrc_idom",
-    srcs = ["@com_google_template_soy_jssrc//:idom"],
-    suppress = [
-        "reportUnknownTypes",
-        "strictCheckTypes",
-    ],
-    deps = [
-        ":soy_jssrc",
-        "//closure/library/soy",
-        "//closure/library/soy:data",
-        "//third_party/javascript/incremental_dom",
-    ],
-)
-
 java_library(
     name = "safe_html_types",
     exports = ["@com_google_common_html_types"],
