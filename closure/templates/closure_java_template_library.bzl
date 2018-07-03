@@ -148,7 +148,8 @@ def _gen_soy_java_wrappers(name, java_package, srcs, deps, outs,
 def _soy__camel(str):
   last = '_'
   result = ''
-  for ch in str:
+  for index in range(len(str)):
+    ch = str[index]
     if ch != '_':
       if (last >= 'a' and last <= 'z') or (last >= 'A' and last <= 'Z'):
         result += ch
