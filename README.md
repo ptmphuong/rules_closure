@@ -91,14 +91,6 @@ closure_repositories()
 You are not required to install the Closure Tools, PhantomJS, or anything else
 for that matter; they will be fetched automatically by Bazel.
 
-### Tips
-
-Adding this to `~/.bazelrc` will make Protocol Buffers build 2x faster:
-
-```
-build --distinct_host_configuration=false
-```
-
 ### Overriding Dependency Versions
 
 When you call `closure_repositories()` in your `WORKSPACE` file, it causes a
