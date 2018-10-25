@@ -16,103 +16,112 @@
 """
 
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library_impl")
-load("//closure/private:defs.bzl",
-     "CLOSURE_WORKER_ATTR",
-     "CLOSURE_LIBRARY_BASE_ATTR",
-     "unfurl")
+load(
+    "//closure/private:defs.bzl",
+    "CLOSURE_LIBRARY_BASE_ATTR",
+    "CLOSURE_WORKER_ATTR",
+    "unfurl",
+)
 
 # This was borrowed from Rules Go, licensed under Apache 2.
 # https://github.com/bazelbuild/rules_go/blob/67f44035d84a352cffb9465159e199066ecb814c/proto/compiler.bzl#L72
 def _proto_path(proto):
-  path = proto.path
-  root = proto.root.path
-  ws = proto.owner.workspace_root
-  if path.startswith(root):
-    path = path[len(root):]
-  if path.startswith("/"):
-    path = path[1:]
-  if path.startswith(ws):
-    path = path[len(ws):]
-  if path.startswith("/"):
-    path = path[1:]
-  return path
+    path = proto.path
+    root = proto.root.path
+    ws = proto.owner.workspace_root
+    if path.startswith(root):
+        path = path[len(root):]
+    if path.startswith("/"):
+        path = path[1:]
+    if path.startswith(ws):
+        path = path[len(ws):]
+    if path.startswith("/"):
+        path = path[1:]
+    return path
 
 def _proto_include_path(proto):
-  path = proto.path[:-len(_proto_path(proto))]
-  if not path:
-    return '.'
-  if path.endswith("/"):
-    path = path[:-1]
-  return path
+    path = proto.path[:-len(_proto_path(proto))]
+    if not path:
+        return "."
+    if path.endswith("/"):
+        path = path[:-1]
+    return path
 
 def _proto_include_paths(protos):
-  return depset([_proto_include_path(proto) for proto in protos])
+    return depset([_proto_include_path(proto) for proto in protos])
 
 def _generate_closure_js_progress_message(name):
-  # TODO(yannic): Add a better message?
-  return 'Generating JavaScript Protocol Buffer %s' % name
+    # TODO(user): Add a better message?
+    return "Generating JavaScript Protocol Buffer %s" % name
 
 def _generate_closure_js(target, ctx):
-  # Support only `import_style=closure`, and always add
-  # |goog.require()| for enums.
-  js_out_options = [
-      'import_style=closure',
-      'library=%s' % ctx.label.name,
-      'add_require_for_enums',
-  ]
-  if getattr(ctx.rule.attr, 'testonly', False):
-    js_out_options.append('testonly')
-  js = ctx.actions.declare_file('%s.js' % ctx.label.name)
+    # Support only `import_style=closure`, and always add
+    # |goog.require()| for enums.
+    js_out_options = [
+        "import_style=closure",
+        "library=%s" % ctx.label.name,
+        "add_require_for_enums",
+    ]
+    if getattr(ctx.rule.attr, "testonly", False):
+        js_out_options.append("testonly")
+    js = ctx.actions.declare_file("%s.js" % ctx.label.name)
 
-  # Add include paths for all proto files,
-  # to avoid copying/linking the files for every target.
-  protos = target.proto.transitive_imports
-  args = ['-I%s' % p for p in _proto_include_paths(protos)]
+    # Add include paths for all proto files,
+    # to avoid copying/linking the files for every target.
+    protos = target.proto.transitive_imports
+    args = ["-I%s" % p for p in _proto_include_paths(protos)]
 
-  out_options = ','.join(js_out_options)
-  out_path = '/'.join(js.path.split('/')[:-1])
-  args += ['--js_out=%s:%s' % (out_options, out_path)]
+    out_options = ",".join(js_out_options)
+    out_path = "/".join(js.path.split("/")[:-1])
+    args += ["--js_out=%s:%s" % (out_options, out_path)]
 
-  # Add paths of protos we generate files for.
-  args += [file.path for file in target.proto.direct_sources]
+    # Add paths of protos we generate files for.
+    args += [file.path for file in target.proto.direct_sources]
 
-  ctx.actions.run(
-      inputs = protos,
-      outputs = [js],
-      executable = ctx.executable._protoc,
-      arguments = args,
-      progress_message =
-          _generate_closure_js_progress_message(ctx.rule.attr.name),
-  )
+    ctx.actions.run(
+        inputs = protos,
+        outputs = [js],
+        executable = ctx.executable._protoc,
+        arguments = args,
+        progress_message =
+            _generate_closure_js_progress_message(ctx.rule.attr.name),
+    )
 
-  return js
+    return js
 
 def _closure_proto_aspect_impl(target, ctx):
-  js = _generate_closure_js(target, ctx)
+    js = _generate_closure_js(target, ctx)
 
-  srcs = depset([js])
-  deps = unfurl(ctx.rule.attr.deps, provider="closure_js_library")
-  deps += [ctx.attr._closure_library, ctx.attr._closure_protobuf_jspb]
+    srcs = depset([js])
+    deps = unfurl(ctx.rule.attr.deps, provider = "closure_js_library")
+    deps += [ctx.attr._closure_library, ctx.attr._closure_protobuf_jspb]
 
-  suppress = [
-      "missingProperties",
-      "unusedLocalVariables",
-  ]
+    suppress = [
+        "missingProperties",
+        "unusedLocalVariables",
+    ]
 
-  library = closure_js_library_impl(
-      ctx.actions, ctx.label, ctx.workspace_name,
-      srcs, deps, ctx.rule.attr.testonly, suppress, True,
+    library = closure_js_library_impl(
+        ctx.actions,
+        ctx.label,
+        ctx.workspace_name,
+        srcs,
+        deps,
+        ctx.rule.attr.testonly,
+        suppress,
+        True,
+        ctx.files._closure_library_base,
+        ctx.executable._ClosureWorker,
+    )
+    return struct(
+        exports = library.exports,
+        closure_js_library = library.closure_js_library,
+        # The usual suspects are exported as runfiles, in addition to raw source.
+        runfiles = ctx.runfiles(files = [js]),
+    )
 
-      ctx.files._closure_library_base,
-      ctx.executable._ClosureWorker)
-  return struct(
-      exports = library.exports,
-      closure_js_library=library.closure_js_library,
-      # The usual suspects are exported as runfiles, in addition to raw source.
-      runfiles=ctx.runfiles(files=[js]))
-
-closure_proto_aspect = aspect(
-    attr_aspects = ['deps'],
+_closure_proto_aspect = aspect(
+    attr_aspects = ["deps"],
     attrs = {
         # internal only
         "_protoc": attr.label(
@@ -132,30 +141,30 @@ closure_proto_aspect = aspect(
     implementation = _closure_proto_aspect_impl,
 )
 
-_error_multiple_deps = ''.join([
-  "'deps' attribute must contain exactly one label ",
-  "(we didn't name it 'dep' for consistency). ",
-  "We may revisit this restriction later.",
+_error_multiple_deps = "".join([
+    "'deps' attribute must contain exactly one label ",
+    "(we didn't name it 'dep' for consistency). ",
+    "We may revisit this restriction later.",
 ])
 
 def _closure_proto_library_impl(ctx):
-  if len(ctx.attr.deps) > 1:
-    # TODO(yannic): Revisit this restriction.
-    fail(_error_multiple_deps, 'deps');
+    if len(ctx.attr.deps) > 1:
+        # TODO(user): Revisit this restriction.
+        fail(_error_multiple_deps, "deps")
 
-  dep = ctx.attr.deps[0]
-  return struct(
-      files=depset(),
-      exports=dep.exports,
-      closure_js_library=dep.closure_js_library,
-  )
+    dep = ctx.attr.deps[0]
+    return struct(
+        files = depset(),
+        exports = dep.exports,
+        closure_js_library = dep.closure_js_library,
+    )
 
 closure_proto_library = rule(
     attrs = {
-        'deps': attr.label_list(
+        "deps": attr.label_list(
             mandatory = True,
-            providers = ['proto'],
-            aspects = [closure_proto_aspect],
+            providers = ["proto"],
+            aspects = [_closure_proto_aspect],
         ),
     },
     implementation = _closure_proto_library_impl,

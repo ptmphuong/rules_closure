@@ -52,6 +52,7 @@ closure_js_library(
         "//closure/library/events:eventtype",
         "//closure/library/events:eventwrapper",
         "//closure/library/events:keycodes",
+        "//closure/library/useragent",
     ],
 )
 

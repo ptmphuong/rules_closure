@@ -54,7 +54,6 @@ closure_js_library(
         "//closure/library/asserts",
         "//closure/library/dom",
         "//closure/library/dom:nodetype",
-        "//closure/library/dom:safe",
         "//closure/library/dom:tagname",
         "//closure/library/html:legacyconversions",
         "//closure/library/soy:data",

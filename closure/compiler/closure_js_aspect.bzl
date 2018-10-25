@@ -12,27 +12,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-load("//closure/private:defs.bzl",
-     "CLOSURE_WORKER_ATTR",
-     "JS_FILE_TYPE",
-     "collect_js",
-     "collect_runfiles",
-     "convert_path_to_es6_module_name",
-     "create_argfile",
-     "find_js_module_roots",
-     "make_jschecker_progress_message",
-     "unfurl")
+load(
+    "//closure/private:defs.bzl",
+    "CLOSURE_WORKER_ATTR",
+    "JS_FILE_TYPE",
+    "collect_js",
+    "collect_runfiles",
+    "convert_path_to_es6_module_name",
+    "create_argfile",
+    "find_js_module_roots",
+    "make_jschecker_progress_message",
+    "unfurl",
+)
 
 def _closure_js_aspect_impl(target, ctx):
-  if hasattr(target, "closure_js_library"):
+    if hasattr(target, "closure_js_library"):
+        return struct()
+
+    # This aspect is currently a no-op in the open source world. We intend to add
+    # content to it in the future. It is still provided to ensure the Skylark API
+    # is well defined.
     return struct()
-  # This aspect is currently a no-op in the open source world. We intend to add
-  # content to it in the future. It is still provided to ensure the Skylark API
-  # is well defined.
-  return struct()
 
 
 closure_js_aspect = aspect(
-    implementation=_closure_js_aspect_impl,
-    attr_aspects=["deps", "sticky_deps", "exports"],
-    attrs={"_ClosureWorkerAspect": CLOSURE_WORKER_ATTR})
+    implementation = _closure_js_aspect_impl,
+    attr_aspects = ["deps", "sticky_deps", "exports"],
+    attrs = {"_ClosureWorkerAspect": CLOSURE_WORKER_ATTR},
+)

@@ -51,7 +51,6 @@ closure_js_library(
         "//closure/library/proto2:all_js",
         "//closure/library/pubsub:all_js",
         "//closure/library/reflect:all_js",
-        "//closure/library/result:all_js",
         "//closure/library/soy:all_js",
         "//closure/library/spell:all_js",
         "//closure/library/stats:all_js",
@@ -86,10 +85,8 @@ closure_js_library(
         "//closure/library/storage/mechanism:iterablemechanismtester",
         "//closure/library/storage/mechanism:mechanismseparationtester",
         "//closure/library/storage/mechanism:mechanismsharingtester",
-        "//closure/library/storage/mechanism:mechanismtestdefinition",
         "//closure/library/storage/mechanism:mechanismtester",
         "//closure/library/style:stylescrollbartester",
-        "//closure/library/testing:assertionfailure",
         "//closure/library/testing:asserts",
         "//closure/library/testing:asynctestcase",
         "//closure/library/testing:benchmark",
@@ -182,6 +179,7 @@ filegroup(
         "@com_google_javascript_closure_library//:closure/goog/base.js",
         "@com_google_javascript_closure_library//:closure/goog/transitionalforwarddeclarations.js",
     ],
+    visibility = ["//visibility:public"],
 )
 
 closure_js_library(
@@ -198,7 +196,9 @@ closure_js_library(
 
 closure_css_library(
     name = "css",
-    srcs = ["@com_google_javascript_closure_library//:css_files"],
+    srcs = [
+        "@com_google_javascript_closure_library//:css_files",
+    ],
 )
 
 py_binary(

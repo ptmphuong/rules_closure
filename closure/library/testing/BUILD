@@ -36,7 +36,6 @@ closure_js_library(
     srcs = ["@com_google_javascript_closure_library//:closure/goog/testing/asynctestcase.js"],
     lenient = True,
     deps = [
-        "//closure/library/asserts",
         "//closure/library/testing:asserts",
         "//closure/library/testing:testcase",
     ],
@@ -64,7 +63,6 @@ closure_js_library(
     deps = [
         "//closure/library/array",
         "//closure/library/events:eventhandler",
-        "//closure/library/events:eventtarget",
         "//closure/library/testing:asserts",
         "//closure/library/testing:testcase",
     ],
@@ -78,7 +76,6 @@ closure_js_library(
     deps = [
         "//closure/library/testing:asynctestcase",
         "//closure/library/testing:testcase",
-        "//third_party/closure/library/mochikit/async:deferred",
     ],
 )
 
@@ -91,7 +88,6 @@ closure_js_library(
         "//closure/library/array",
         "//closure/library/asserts",
         "//closure/library/dom",
-        "//closure/library/dom:abstractrange",
         "//closure/library/dom:classlist",
         "//closure/library/dom:inputtype",
         "//closure/library/dom:nodeiterator",
@@ -451,6 +447,7 @@ closure_js_library(
         "//closure/library/asserts",
         "//closure/library/dom",
         "//closure/library/dom:tagname",
+        "//closure/library/json",
         "//closure/library/object",
         "//closure/library/promise",
         "//closure/library/promise:thenable",
@@ -475,7 +472,6 @@ closure_js_library(
         "//closure/library/dom",
         "//closure/library/dom:safe",
         "//closure/library/dom:tagname",
-        "//closure/library/json",
         "//closure/library/testing:testcase",
         "//closure/library/useragent",
     ],

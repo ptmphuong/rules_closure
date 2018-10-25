@@ -29,6 +29,7 @@ closure_js_library(
         "//closure/library/array",
         "//closure/library/dom:xml",
         "//closure/library/events",
+        "//closure/library/events:eventtarget",
         "//closure/library/net:errorcode",
         "//closure/library/net:eventtype",
         "//closure/library/net:httpstatus",
@@ -38,7 +39,6 @@ closure_js_library(
         "//closure/library/structs",
         "//closure/library/structs:map",
         "//closure/library/testing:testqueue",
-        "//closure/library/uri",
         "//closure/library/uri:utils",
     ],
 )

@@ -35,10 +35,7 @@ closure_js_library(
     name = "avltree",
     srcs = ["@com_google_javascript_closure_library//:closure/goog/structs/avltree.js"],
     lenient = True,
-    deps = [
-        "//closure/library/asserts",
-        "//closure/library/structs:collection",
-    ],
+    deps = ["//closure/library/structs:collection"],
 )
 
 closure_js_library(
