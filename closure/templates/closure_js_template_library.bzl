@@ -29,7 +29,7 @@ def _impl(ctx):
         args += ["--googMsgsAreExternal"]
 
     if ctx.attr.should_provide_require_soy_namespaces:
-    args += ["--shouldProvideRequireSoyNamespaces"]
+        args += ["--shouldProvideRequireSoyNamespaces"]
     if ctx.attr.should_generate_soy_msg_defs:
         args += ["--shouldGenerateGoogMsgDefs"]
     if ctx.attr.plugin_modules:
