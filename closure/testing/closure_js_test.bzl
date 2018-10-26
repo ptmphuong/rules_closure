@@ -19,69 +19,70 @@ load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:defs.bzl", "JS_LANGUAGE_DEFAULT")
 load("//closure/testing:phantomjs_test.bzl", "phantomjs_test")
 
-def closure_js_test(
-        name,
-        srcs,
-        data = None,
-        deps = None,
-        compilation_level = None,
-        css = None,
-        defs = None,
-        entry_points = None,
-        html = None,
-        language = None,
-        suppress = None,
-        visibility = None,
-        **kwargs):
-    if not srcs:
-        fail("closure_js_test rules can not have an empty 'srcs' list")
-    if language:
-        print("closure_js_test 'language' is removed and now always ES6 strict")
-    for src in srcs:
-        if not src.endswith("_test.js"):
-            fail("closure_js_test srcs must be files ending with _test.js")
-    if len(srcs) == 1:
-        work = [(name, srcs)]
-    else:
-        work = [(name + _make_suffix(src), [src]) for src in srcs]
-    for shard, sauce in work:
-        closure_js_library(
-            name = "%s_lib" % shard,
-            srcs = sauce,
-            data = data,
-            deps = deps,
-            suppress = suppress,
-            visibility = visibility,
-            testonly = True,
-        )
+def closure_js_test(name,
+                    srcs,
+                    data=None,
+                    deps=None,
+                    compilation_level=None,
+                    css=None,
+                    defs=None,
+                    entry_points=None,
+                    html=None,
+                    language=None,
+                    suppress=None,
+                    visibility=None,
+                    **kwargs):
+  if not srcs:
+    fail("closure_js_test rules can not have an empty 'srcs' list")
+  if language:
+    print("closure_js_test 'language' is removed and now always ES6 strict")
+  for src in srcs:
+    if not src.endswith('_test.js'):
+      fail("closure_js_test srcs must be files ending with _test.js")
+  if len(srcs) == 1:
+    work = [(name, srcs)]
+  else:
+    work = [(name + _make_suffix(src), [src]) for src in srcs]
+  for shard, sauce in work:
 
-        closure_js_binary(
-            name = "%s_bin" % shard,
-            deps = [":%s_lib" % shard],
-            compilation_level = compilation_level,
-            css = css,
-            debug = True,
-            defs = defs,
-            entry_points = entry_points,
-            formatting = "PRETTY_PRINT",
-            visibility = visibility,
-            testonly = True,
-        )
+    closure_js_library(
+        name = "%s_lib" % shard,
+        srcs = sauce,
+        data = data,
+        deps = deps,
+        suppress = suppress,
+        visibility = visibility,
+        testonly = True,
+    )
 
-        phantomjs_test(
-            name = shard,
-            runner = str(Label("//closure/testing:phantomjs_jsunit_runner")),
-            deps = [":%s_bin" % shard],
-            html = html,
-            visibility = visibility,
-            **kwargs
-        )
+    closure_js_binary(
+        name = "%s_bin" % shard,
+        deps = [":%s_lib" % shard],
+        compilation_level = compilation_level,
+        css = css,
+        debug = True,
+        defs = defs,
+        entry_points = entry_points,
+        formatting = "PRETTY_PRINT",
+        visibility = visibility,
+        testonly = True,
+    )
 
-    if len(srcs) > 1:
-        native.test_suite(
-            name = name,
-            tests = [":" + shard for shard, _ in work],
-        )
+    phantomjs_test(
+        name = shard,
+        runner = str(Label("//closure/testing:phantomjs_jsunit_runner")),
+        deps = [":%s_bin" % shard],
+        html = html,
+        visibility = visibility,
+        **kwargs
+    )
+
+  if len(srcs) > 1:
+    native.test_suite(
+        name = name,
+        tests = [":" + shard for shard, _ in work],
+    )
+
 
 def _make_suffix(path):
-    return "_" + path.replace("_test.js", "").replace("-", "_").replace("/", "_")
+  return '_' + path.replace('_test.js', '').replace('-', '_').replace('/', '_')

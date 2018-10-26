@@ -14,40 +14,34 @@
 
 """Build definitions for Closure Stylesheet libraries."""
 
-load(
-    "//closure/private:defs.bzl",
-    "CSS_FILE_TYPE",
-    "collect_css",
-    "collect_runfiles",
-    "unfurl",
-)
+load("//closure/private:defs.bzl",
+     "CSS_FILE_TYPE",
+     "collect_css",
+     "collect_runfiles",
+     "unfurl")
 
 def _closure_css_library(ctx):
-    deps = unfurl(ctx.attr.deps, provider = "closure_css_library")
-    css = collect_css(deps, ctx.attr.orientation)
-    return struct(
-        files = depset(),
-        exports = unfurl(ctx.attr.exports),
-        closure_js_library = struct(),
-        closure_css_library = struct(
-            srcs = css.srcs + ctx.files.srcs,
-            labels = css.labels + [ctx.label],
-            orientation = ctx.attr.orientation,
-        ),
-        runfiles = ctx.runfiles(
-            files = ctx.files.srcs + ctx.files.data,
-            transitive_files = (collect_runfiles(deps) |
-                                collect_runfiles(ctx.attr.data)),
-        ),
-    )
+  deps = unfurl(ctx.attr.deps, provider="closure_css_library")
+  css = collect_css(deps, ctx.attr.orientation)
+  return struct(
+      files=depset(),
+      exports=unfurl(ctx.attr.exports),
+      closure_js_library=struct(),
+      closure_css_library=struct(
+          srcs=css.srcs + ctx.files.srcs,
+          labels=css.labels + [ctx.label],
+          orientation=ctx.attr.orientation),
+      runfiles=ctx.runfiles(
+          files=ctx.files.srcs + ctx.files.data,
+          transitive_files=(collect_runfiles(deps) |
+                            collect_runfiles(ctx.attr.data))))
 
 closure_css_library = rule(
-    implementation = _closure_css_library,
-    attrs = {
-        "srcs": attr.label_list(allow_files = CSS_FILE_TYPE),
-        "data": attr.label_list(allow_files = True),
-        "deps": attr.label_list(providers = ["closure_css_library"]),
+    implementation=_closure_css_library,
+    attrs={
+        "srcs": attr.label_list(allow_files=CSS_FILE_TYPE),
+        "data": attr.label_list(allow_files=True),
+        "deps": attr.label_list(providers=["closure_css_library"]),
         "exports": attr.label_list(),
-        "orientation": attr.string(default = "LTR"),
-    },
-)
+        "orientation": attr.string(default="LTR"),
+    })

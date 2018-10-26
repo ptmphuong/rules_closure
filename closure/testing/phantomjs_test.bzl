@@ -17,82 +17,67 @@
 # XXX: Loading a nontrivial number of external resources into PhantomJS will
 #      cause it to freeze: https://github.com/ariya/phantomjs/issues/14028
 
-load(
-    "//closure/private:defs.bzl",
-    "HTML_FILE_TYPE",
-    "JS_FILE_TYPE",
-    "collect_runfiles",
-    "long_path",
-    "unfurl",
-)
+load("//closure/private:defs.bzl",
+     "HTML_FILE_TYPE",
+     "JS_FILE_TYPE",
+     "collect_runfiles",
+     "long_path",
+     "unfurl")
 
 def _impl(ctx):
-    if not ctx.attr.deps:
-        fail("phantomjs_rule needs at least one dep")
-    files = [ctx.outputs.executable]
-    srcs = depset()
-    deps = unfurl(ctx.attr.deps, provider = "closure_js_library")
-    deps.append(ctx.attr.runner)
-    for dep in deps:
-        if hasattr(dep, "closure_js_binary"):
-            srcs += [dep.closure_js_binary.bin]
-        else:
-            srcs += dep.closure_js_library.srcs
-    args = [
-        "#!/bin/sh\nexec " + ctx.executable._phantomjs.short_path,
-        ctx.attr.harness.closure_js_binary.bin.short_path,
-        ctx.file.html.short_path,
-    ]
-    args += [long_path(ctx, src) for src in srcs]
-    ctx.file_action(
-        executable = True,
-        output = ctx.outputs.executable,
-        content = " \\\n  ".join(args),
-    )
-    return struct(
-        files = depset(files),
-        runfiles = ctx.runfiles(
-            files = files + ctx.attr.data + [ctx.file.html],
-            transitive_files = (collect_runfiles(deps) |
-                                collect_runfiles(ctx.attr.data) |
-                                collect_runfiles([
-                                    ctx.attr._phantomjs,
-                                    ctx.attr.runner,
-                                    ctx.attr.harness,
-                                ])),
-        ),
-    )
+  if not ctx.attr.deps:
+    fail("phantomjs_rule needs at least one dep")
+  files = [ctx.outputs.executable]
+  srcs = depset()
+  deps = unfurl(ctx.attr.deps, provider="closure_js_library")
+  deps.append(ctx.attr.runner)
+  for dep in deps:
+    if hasattr(dep, 'closure_js_binary'):
+      srcs += [dep.closure_js_binary.bin]
+    else:
+      srcs += dep.closure_js_library.srcs
+  args = ["#!/bin/sh\nexec " + ctx.executable._phantomjs.short_path,
+          ctx.attr.harness.closure_js_binary.bin.short_path,
+          ctx.file.html.short_path]
+  args += [long_path(ctx, src) for src in srcs]
+  ctx.file_action(
+      executable=True,
+      output=ctx.outputs.executable,
+      content=" \\\n  ".join(args))
+  return struct(
+      files=depset(files),
+      runfiles=ctx.runfiles(
+          files=files + ctx.attr.data + [ctx.file.html],
+          transitive_files=(collect_runfiles(deps) |
+                            collect_runfiles(ctx.attr.data) |
+                            collect_runfiles([ctx.attr._phantomjs,
+                                              ctx.attr.runner,
+                                              ctx.attr.harness]))))
 
 _phantomjs_test = rule(
-    test = True,
-    implementation = _impl,
-    attrs = {
-        "deps": attr.label_list(providers = ["closure_js_library"]),
-        "runner": attr.label(providers = ["closure_js_library"]),
+    test=True,
+    implementation=_impl,
+    attrs={
+        "deps": attr.label_list(providers=["closure_js_library"]),
+        "runner": attr.label(providers=["closure_js_library"]),
         "harness": attr.label(
-            providers = ["closure_js_binary"],
-            default = Label("//closure/testing:phantomjs_harness_bin"),
-        ),
+            providers=["closure_js_binary"],
+            default=Label("//closure/testing:phantomjs_harness_bin")),
         "html": attr.label(
-            single_file = True,
-            allow_files = HTML_FILE_TYPE,
-            default = Label("//closure/testing:empty.html"),
-        ),
-        "data": attr.label_list(allow_files = True),
+            allow_single_file=HTML_FILE_TYPE,
+            default=Label("//closure/testing:empty.html")),
+        "data": attr.label_list(allow_files=True),
         "_phantomjs": attr.label(
-            default = Label("//third_party/phantomjs"),
-            executable = True,
-            cfg = "host",
-        ),
-    },
-)
+            default=Label("//third_party/phantomjs"),
+            executable=True,
+            cfg="host"),
+    })
 
 # Workaround https://github.com/ariya/phantomjs/issues/13876 by setting
 # phantomjs_test to local.
 # TODO(user): Remove when https://github.com/ariya/phantomjs/issues/13876
 # is fixed.
 def phantomjs_test(**kwargs):
-    tags = kwargs.pop("tags", [])
-
-    tags = ["local"] + tags
-    _phantomjs_test(tags = tags, **kwargs)
+  tags = kwargs.pop("tags", [])
+  tags = ["local"] + tags
+  _phantomjs_test(tags=tags, **kwargs)

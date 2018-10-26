@@ -17,7 +17,6 @@ load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
 load("//closure/compiler:closure_js_deps.bzl", "closure_js_deps")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/private:files_equal_test.bzl", "files_equal_test")
-
 load("//closure/private:java_import_external.bzl", "java_import_external")
 load("//closure/protobuf:closure_js_proto_library.bzl", "closure_js_proto_library")
 load("//closure/protobuf:closure_proto_library.bzl", "closure_proto_library")
@@ -27,9 +26,7 @@ load("//closure/templates:closure_java_template_library.bzl", "closure_java_temp
 load("//closure/templates:closure_js_template_library.bzl", "closure_js_template_library")
 load("//closure/testing:closure_js_test.bzl", "closure_js_test")
 load("//closure/testing:phantomjs_test.bzl", "phantomjs_test")
-
 load("//closure:filegroup_external.bzl", "filegroup_external")
-
 load("//closure:repositories.bzl", "closure_repositories")
 load("//closure:webfiles/web_library.bzl", "web_library")
 load("//closure:webfiles/web_library_external.bzl", "web_library_external")

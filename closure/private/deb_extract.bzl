@@ -13,22 +13,22 @@
 # limitations under the License.
 
 def deb_extract(name, src, outs, **kwargs):
-    """Extracts data files from Debian archive."""
-    native.genrule(
-        name = name,
-        srcs = [src],
-        outs = outs.values(),
-        cmd = "\n".join([
-            "set -e",
-            "DIR=$$(pwd)",
-            "IN=$$DIR/$<",
-            "TMP=$$(mktemp -d $${TMPDIR:-/tmp}/genrule.XXXXXXXXXX)",
-            "cd $$TMP",
-            "ar x $$IN data.tar.xz",
-            "tar -xJf data.tar.xz",
-            "cd $$DIR",
-        ] + ["mv $$TMP/%s $(location %s)" % (k, v) for k, v in outs.items()] + [
-            "rm -rf $$TMP",
-        ]),
-        **kwargs
-    )
+  """Extracts data files from Debian archive."""
+  native.genrule(
+      name = name,
+      srcs = [src],
+      outs = outs.values(),
+      cmd = "\n".join([
+          "set -e",
+          "DIR=$$(pwd)",
+          "IN=$$DIR/$<",
+          "TMP=$$(mktemp -d $${TMPDIR:-/tmp}/genrule.XXXXXXXXXX)",
+          "cd $$TMP",
+          "ar x $$IN data.tar.xz",
+          "tar -xJf data.tar.xz",
+          "cd $$DIR",
+      ] + ["mv $$TMP/%s $(location %s)" % (k, v) for k, v in outs.items()] + [
+          "rm -rf $$TMP",
+      ]),
+      **kwargs
+  )

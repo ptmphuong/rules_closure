@@ -18,6 +18,7 @@ licenses(["notice"])  # Apache 2.0
 
 load("//closure:defs.bzl", "closure_js_library")
 load("//closure:defs.bzl", "closure_js_test")
+load("//closure:defs.bzl", "files_equal_test")
 
 closure_js_library(
     name = "arithmetic_lib",
@@ -100,8 +101,6 @@ genrule(
 # very hight chance of being flaky.
 # https://github.com/bazelbuild/rules_closure/issues/247
 # https://github.com/bazelbuild/rules_closure/pull/186#issuecomment-279115018
-#
-# load("//closure:defs.bzl", "files_equal_test")
 #
 # files_equal_test(
 #     name = "noto_fonts_render_as_expected",
