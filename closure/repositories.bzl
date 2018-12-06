@@ -675,14 +675,12 @@ def com_google_jsinterop_annotations():
     )
 
 def com_google_protobuf():
-    # Note: Protobuf 3.6.0+ is going to use C++11
     http_archive(
         name = "com_google_protobuf",
-        strip_prefix = "protobuf-3.5.1",
-        sha256 = "826425182ee43990731217b917c5c3ea7190cfda141af4869e6d4ad9085a740f",
+        strip_prefix = "protobuf-3.6.1.2",
+        sha256 = "2244b0308846bb22b4ff0bcc675e99290ff9f1115553ae9671eba1030af31bc0",
         urls = [
-            "https://mirror.bazel.build/github.com/google/protobuf/archive/v3.5.1.tar.gz",
-            "https://github.com/google/protobuf/archive/v3.5.1.tar.gz",
+            "https://github.com/protocolbuffers/protobuf/archive/v3.6.1.2.tar.gz",
         ],
     )
 
@@ -690,11 +688,10 @@ def com_google_protobuf_js():
     http_archive(
         name = "com_google_protobuf_js",
         urls = [
-            "https://mirror.bazel.build/github.com/google/protobuf/archive/v3.5.1.tar.gz",
-            "https://github.com/google/protobuf/archive/v3.5.1.tar.gz",
+            "https://github.com/google/protobuf/archive/7b28271a61a3da0a37f6fda399b0c4c86464e5b3.tar.gz",
         ],
-        sha256 = "826425182ee43990731217b917c5c3ea7190cfda141af4869e6d4ad9085a740f",
-        strip_prefix = "protobuf-3.5.1/js",
+        sha256 = "9dac7d7cf6e2c88bf92915f9338a26950531c00c05bf86764ab978344b69a45a",
+        strip_prefix = "protobuf-7b28271a61a3da0a37f6fda399b0c4c86464e5b3/js",
         build_file = str(Label("//closure/protobuf:protobuf_js.BUILD")),
     )
 
