@@ -36,7 +36,7 @@ script:
       --worker_verbose \
       --verbose_failures \
       --test_output=errors \
-      --genrule_strategy=sandboxed \
+      --strategy=Genrule=sandboxed \
       --spawn_strategy=sandboxed \
       --worker_sandboxing \
       --local_resources=400,2,1.0 \
