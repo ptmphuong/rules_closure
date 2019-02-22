@@ -97,6 +97,21 @@ def _filegroup_external(ctx):
             lines.append("")
     ctx.file("BUILD", "\n".join(lines))
 
+def _linux_arch_value(repository_ctx):
+    """Returns the name of the Linux arch.
+
+    Args:
+      repository_ctx: The repository context.
+
+    Returns:
+      A string containing the name of the Linux arch.
+    """
+    os_name = repository_ctx.os.name.lower()
+    if (os_name.startswith("mac os") or os_name.find("windows") != -1):
+        return ""
+    result = repository_ctx.execute(["uname", "-m"])
+    return result.stdout.strip()
+
 def _get_downloads(ctx):
     os_name = ctx.os.name.lower()
     if (os_name.startswith("mac os") and
@@ -113,14 +128,23 @@ def _get_downloads(ctx):
             ctx.attr.sha256_urls_windows,
             ctx.attr.sha256_urls_extract_windows,
         )
-    elif (ctx.attr.sha256_urls or
-          ctx.attr.sha256_urls_extract):
-        return _merge(
-            ctx.attr.sha256_urls,
-            ctx.attr.sha256_urls_extract,
-        )
     else:
-        fail("No URLs are available for downloading %s" % ctx.name)
+        arch = _linux_arch_value(ctx) 
+        if (arch == "ppc64le" and
+            (ctx.attr.sha256_urls_ppc64le or
+             ctx.attr.sha256_urls_extract_ppc64le)):
+          return _merge(
+              ctx.attr.sha256_urls_ppc64le,
+              ctx.attr.sha256_urls_extract_ppc64le,
+          )
+        elif (ctx.attr.sha256_urls or
+              ctx.attr.sha256_urls_extract):
+          return _merge(
+              ctx.attr.sha256_urls,
+              ctx.attr.sha256_urls_extract,
+          )
+        else:
+          fail("No URLs are available for downloading %s" % ctx.name)
 
 def _merge(file_urls, archive_urls):
     result = []
@@ -165,9 +189,11 @@ filegroup_external = repository_rule(
         "sha256_urls": attr.string_list_dict(),
         "sha256_urls_macos": attr.string_list_dict(),
         "sha256_urls_windows": attr.string_list_dict(),
+        "sha256_urls_ppc64le": attr.string_list_dict(),
         "sha256_urls_extract": attr.string_list_dict(),
         "sha256_urls_extract_macos": attr.string_list_dict(),
         "sha256_urls_extract_windows": attr.string_list_dict(),
+        "sha256_urls_extract_ppc64le": attr.string_list_dict(),
         "strip_prefix": attr.string_dict(),
         "rename": attr.string_dict(),
         "executable": attr.string_list(),
