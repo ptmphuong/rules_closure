@@ -443,7 +443,7 @@ This rule can be referenced as though it were the following:
 
 - **suppress:** Passed to [closure_js_library].
 
-- **entry_points:** Passed to [closure_js_binary].
+- **entry_points:** If a dict, the source file is looked up for the value to pass to [closure_js_binary].  Otherwise, passed directly to [closure_js_binary].
 
 - **defs:** Passed to [closure_js_binary].
 

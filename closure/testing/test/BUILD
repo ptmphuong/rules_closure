@@ -83,6 +83,17 @@ closure_js_test(
     ],
 )
 
+closure_js_test(
+    name = "dict_entry_point_test",
+    srcs = ["dict_entry_point_test.js"],
+    entry_points = {
+        "dict_entry_point_test.js": ["rules_closure.DictEntryPointTest"],
+    },
+    deps = [
+        "//closure/library:testing",
+    ],
+)
+
 genrule(
     name = "fontdemo",
     srcs = [
