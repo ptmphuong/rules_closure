@@ -552,14 +552,17 @@ def com_google_errorprone_javac_shaded():
     )
 
 def com_google_guava():
+    version = "25.1"
+    sha256 = "6db0c3a244c397429c2e362ea2837c3622d5b68bb95105d37c21c36e5bc70abf"
+
     java_import_external(
         name = "com_google_guava",
         licenses = ["notice"],  # Apache 2.0
         jar_urls = [
-            "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/guava/guava/24.1-jre/guava-24.1-jre.jar",
-            "https://repo1.maven.org/maven2/com/google/guava/guava/24.1-jre/guava-24.1-jre.jar",
+            "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/guava/guava/%s-jre/guava-%s-jre.jar" % (version, version),
+            "https://repo1.maven.org/maven2/com/google/guava/guava/%s-jre/guava-%s-jre.jar" % (version, version),
         ],
-        jar_sha256 = "31bfe27bdf9cba00cb4f3691136d3bc7847dfc87bfe772ca7a9eb68ff31d79f5",
+        jar_sha256 = sha256,
         exports = [
             "@com_google_code_findbugs_jsr305",
             "@com_google_errorprone_error_prone_annotations",
