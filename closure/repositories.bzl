@@ -637,7 +637,7 @@ def com_google_java_format():
     )
 
 def com_google_javascript_closure_compiler():
-    version = "v20190528"
+    version = "v20190819"
     jar = "closure-compiler-unshaded-%s.jar" % version
     java_import_external(
         name = "com_google_javascript_closure_compiler",
@@ -646,7 +646,7 @@ def com_google_javascript_closure_compiler():
             "https://mirror.bazel.build/repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/%s/%s" % (version, jar),
             "http://repo1.maven.org/maven2/com/google/javascript/closure-compiler-unshaded/%s/%s" % (version, jar),
         ],
-        jar_sha256 = "5e8262a9208e3acf22cf1109928355e6d6c0b4bfe44fbf42e3ef537084353fe5",
+        jar_sha256 = "d8e74a9b26ada0bd190c7946fcdbcc2e342c5144d7fe37a9278688ff3a36241d",
         deps = [
             "@com_google_code_gson",
             "@com_google_guava",
