@@ -87,7 +87,6 @@ final class Diagnostics {
           "es5Strict",
           "externsValidation",
           "extraRequire",
-          "fileoverviewTags",
           "globalThis",
           "invalidCasts",
           "lateProvide",
