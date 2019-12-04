@@ -68,10 +68,10 @@ java_library(
     name = "ExampleModule",
     srcs = ["ExampleModule.java"],
     deps = [
-        "@com_google_guava//jar",
-        "@com_google_inject_extensions_guice_multibindings//jar",
-        "@com_google_inject_guice//jar",
-        "@com_google_template_soy//jar",
+        "@com_google_guava",
+        "@com_google_inject_extensions_guice_multibindings",
+        "@com_google_inject_guice",
+        "@com_google_template_soy",
     ],
 )
 
