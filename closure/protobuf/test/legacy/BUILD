@@ -28,6 +28,10 @@ closure_js_proto_library(
 closure_js_library(
     name = "example_lib",
     srcs = ["example.js"],
+    suppress = [
+        "lintChecks",
+        "superfluousSuppress",
+    ],  # use of goog.provide
     deps = [
         ":example_proto",
     ],
