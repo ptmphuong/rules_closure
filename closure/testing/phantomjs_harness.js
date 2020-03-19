@@ -189,6 +189,14 @@ function onLoadFinished(status) {
   }
 }
 
+/**
+ * Callback when a script fails to load in time.
+ * @param {!phantomjs.Server.ResourceError} resource
+ */
+function onResourceTimeout(resource) {
+    system.stderr.writeLine('Resource timed out: ' + resource.url);
+    retry();
+}
 
 /**
  * Callback when webpage shows an alert dialog.
@@ -246,7 +254,6 @@ function retry() {
   main();
 }
 
-
 /**
  * Attempts to run the test.
  */
@@ -288,6 +295,8 @@ function main() {
   page.onConsoleMessage = onConsoleMessage;
   page.onError = onError;
   page.onLoadFinished = onLoadFinished;
+  page.onResourceTimeout = onResourceTimeout;
+
   // XXX: If PhantomJS croaks, fail sooner rather than later.
   //      https://github.com/ariya/phantomjs/issues/10652
   page.settings.resourceTimeout = 2000;

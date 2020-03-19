@@ -230,6 +230,12 @@ phantomjs.Page = class {
    * @return {void}
    */
   onLoadStarted() {}
+
+
+  /**
+   * @param {!phantomjs.Server.ResourceError} resource
+   */
+  onResourceTimeout(resource) {}
 };
 
 /**
@@ -278,7 +284,6 @@ phantomjs.Server.Request = class {};
  */
 phantomjs.Server.Request.prototype.url;
 
-
 /**
  * @record
  * @see http://phantomjs.org/api/webserver/method/listen.html
@@ -314,6 +319,31 @@ phantomjs.Server.Response = class {
    */
   closeGracefully() {}
 };
+
+
+/**
+ * @record
+ * @see https://phantomjs.org/api/webpage/handler/on-resource-error.html
+ */
+phantomjs.Server.ResourceError = class {};
+
+/**
+ * @type {string}
+ * @const
+ */
+phantomjs.Server.ResourceError.prototype.url;
+
+/**
+ * @type {number}
+ * @const
+ */
+phantomjs.Server.ResourceError.prototype.errorCode;
+
+/**
+ * @type {string}
+ * @const
+ */
+phantomjs.Server.ResourceError.prototype.errorString;
 
 
 /**

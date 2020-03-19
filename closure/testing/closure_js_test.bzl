@@ -33,6 +33,7 @@ def closure_js_test(
         suppress = None,
         visibility = None,
         tags = [],
+        debug = False,
         **kwargs):
     if not srcs:
         fail("closure_js_test rules can not have an empty 'srcs' list")
@@ -81,6 +82,7 @@ def closure_js_test(
             name = shard,
             runner = str(Label("//closure/testing:phantomjs_jsunit_runner")),
             deps = [":%s_bin" % shard],
+            debug = debug,
             html = html,
             visibility = visibility,
             tags = tags,
