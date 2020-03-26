@@ -36,6 +36,7 @@ closure_templates_plugin = rule(
             doc = "java_library rules providing the specified class name",
             providers = [JavaInfo],
             mandatory = True,
+            cfg = "exec",
         ),
     },
     provides = [SoyPluginInfo],
