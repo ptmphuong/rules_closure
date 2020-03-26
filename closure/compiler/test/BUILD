@@ -171,6 +171,18 @@ file_test(
     file = "hello_output_wrapper_dash_dash_space_bin.js",
 )
 
+closure_js_binary(
+    name = "multiline_output_wrapper_bin",
+    output_wrapper = "%output%\n//# sourceMappingURL=/app.js.map",
+    deps = [":empty_lib"],
+)
+
+file_test(
+    name = "multiline_output_wrapper_test",
+    content = "\n//# sourceMappingURL=/app.js.map\n",
+    file = "multiline_output_wrapper_bin.js",
+)
+
 ################################################################################
 # External definitions work
 

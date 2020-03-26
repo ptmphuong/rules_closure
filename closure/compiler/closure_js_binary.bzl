@@ -198,9 +198,13 @@ def _impl(ctx):
         args.append("--use_types_for_optimization")
 
     if ctx.attr.output_wrapper:
-        args.append("--output_wrapper=" + ctx.attr.output_wrapper)
+        output_wrapper_file = ctx.actions.declare_file(ctx.attr.name + "_output_wrapper_file")
+        ctx.actions.write(output = output_wrapper_file, content = ctx.attr.output_wrapper)
+        inputs.append(output_wrapper_file)
+        args.append("--output_wrapper_file=" + output_wrapper_file.path)
         if ctx.attr.output_wrapper == "(function(){%output%}).call(this);":
             args.append("--assume_function_wrapper")
+
     if ctx.outputs.property_renaming_report:
         report = ctx.outputs.property_renaming_report
         files.append(report)
