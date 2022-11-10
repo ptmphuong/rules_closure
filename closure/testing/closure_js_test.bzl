@@ -17,6 +17,7 @@
 load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/testing:phantomjs_test.bzl", "phantomjs_test")
+load("@io_bazel_rules_webtesting//web:web.bzl", "web_test_suite")
 
 def closure_js_test(
         name,
@@ -34,6 +35,8 @@ def closure_js_test(
         visibility = None,
         tags = [],
         debug = False,
+        browsers = None,
+        webtest = False,
         **kwargs):
     if not srcs:
         fail("closure_js_test rules can not have an empty 'srcs' list")
@@ -78,16 +81,37 @@ def closure_js_test(
             tags = tags,
         )
 
-        phantomjs_test(
-            name = shard,
-            runner = str(Label("//closure/testing:phantomjs_jsunit_runner")),
-            deps = [":%s_bin" % shard],
-            debug = debug,
-            html = html,
-            visibility = visibility,
-            tags = tags,
-            **kwargs
-        )
+        if webtest:
+            gen_test_html(
+                name = "gen_%s" % shard,
+                test_file_js = "%s_bin.js" % shard,
+            )
+            html = "gen_%s" % shard
+
+            if not browsers:
+                browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"]
+
+            web_test_suite(
+                name = shard,
+                data = [":%s_bin" % shard, html],
+                test = "//closure/testing:webtest",
+                args = ["--test_url", "$(location %s)" % html],
+                browsers = browsers,
+                tags = ["no-sandbox", "native"],
+                visibility = visibility,
+                **kwargs
+            )
+        else :
+            phantomjs_test(
+                name = shard,
+                runner = str(Label("//closure/testing:phantomjs_jsunit_runner")),
+                deps = [":%s_bin" % shard],
+                debug = debug,
+                html = html,
+                visibility = visibility,
+                tags = tags,
+                **kwargs
+            )
 
     if len(srcs) > 1:
         native.test_suite(
@@ -98,3 +122,31 @@ def closure_js_test(
 
 def _make_suffix(path):
     return "_" + path.replace("_test.js", "").replace("-", "_").replace("/", "_")
+
+def _gen_test_html_impl(ctx):
+    """Implementation of the gen_test_html rule."""
+    ctx.actions.expand_template(
+        template = ctx.file._template,
+        output = ctx.outputs.html_file,
+        substitutions = {
+            "{{TEST_FILE_JS}}": ctx.attr.test_file_js,
+        },
+    )
+    runfiles = ctx.runfiles(files = [ctx.outputs.html_file], collect_default = True)
+    return [DefaultInfo(runfiles = runfiles)]
+
+# Used to generate default test.html file for running Closure-based JS tests.
+# The test_file_js argument specifies the name of the JS file containing tests,
+# typically created with closure_js_binary.
+# The output is created from gen_test_html.template file.
+gen_test_html = rule(
+    implementation = _gen_test_html_impl,
+    attrs = {
+        "test_file_js": attr.string(mandatory = True),
+        "_template": attr.label(
+            default = Label("//closure/testing:gen_webtest_html.template"),
+            allow_single_file = True,
+        ),
+    },
+    outputs = {"html_file": "%{name}.html"},
+)
