@@ -37,6 +37,7 @@ class WebTestRunner {
     log("testURL is: " + testURL);
 
     // START CUSTOM SERVER
+    // int port = 6006;
     int port = PortProber.findFreePort();
     String currentDir = System.getProperty("user.dir");
     log("currentDir is: " + currentDir);
@@ -80,7 +81,9 @@ class WebTestRunner {
     if (!allTestsPassed) {
       System.exit(1);
     }
-    System.exit(1);
+
+    // fail on purpose to check log
+    // System.exit(1);
   }
 
   private static void log(String s) {
