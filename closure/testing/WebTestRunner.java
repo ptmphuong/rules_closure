@@ -36,19 +36,24 @@ class WebTestRunner {
     }
     log("testURL is: " + testURL);
 
+    // START CUSTOM SERVER
     int port = PortProber.findFreePort();
     String currentDir = System.getProperty("user.dir");
+    log("currentDir is: " + currentDir);
+    log ("fulldir is: " + currentDir + testURL);
     HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
     HttpContext context = server.createContext("/", new FileServerHandler(currentDir));
     server.start();
 
-    WebDriver driver = new WebTest().newWebDriverSession();
-    driver.manage().timeouts().setScriptTimeout(60, SECONDS);
-
     String runURL = "http://localhost:" + port + testURL;
     log("RunURL is: " + runURL);
+
+    // START WEBDRIVER
+    WebDriver driver = new WebTest().newWebDriverSession();
+    driver.manage().timeouts().setScriptTimeout(60, SECONDS);
     driver.get(runURL);
 
+    // WAIT FOR TESTS TO FINISH
     new FluentWait<>((JavascriptExecutor) driver)
         .pollingEvery(Duration.ofMillis(100))
         .withTimeout(Duration.ofSeconds(5))
@@ -60,19 +65,22 @@ class WebTestRunner {
           }
           return true;
         }
-        );
+    );
 
+    // LOG TEST REPORT
     String testReport = ((JavascriptExecutor) driver).executeScript("return window.top.G_testRunner.getReport();").toString();
     log(testReport);
 
     boolean allTestsPassed = (boolean) ((JavascriptExecutor) driver).executeScript("return window.top.G_testRunner.isSuccess();");
 
+    // CLEAN UP
     driver.quit();
     server.stop(0);
 
     if (!allTestsPassed) {
       System.exit(1);
     }
+    System.exit(1);
   }
 
   private static void log(String s) {
