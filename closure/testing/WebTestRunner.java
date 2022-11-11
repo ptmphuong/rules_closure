@@ -95,7 +95,7 @@ class WebTestRunner {
                     .build())
             .build();
 
-    FileSystem fs = Jimfs.newFileSystem(Configuration.unix());
+    FileSystem fs = Jimfs.newFileSystem(Configuration.forCurrentPlatform());
     Files.write(fs.getPath("/manifest.pbtxt"), MANIFEST.toString().getBytes(UTF_8));
     Files.write(fs.getPath("/config.pbtxt"), CONFIG.toString().getBytes(UTF_8));
     Files.write(fs.getPath("/webfile.html"), "anybody in there?".getBytes(UTF_8));
