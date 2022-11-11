@@ -52,6 +52,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 class WebTestRunner {
   public static void main(String args[]) throws Exception {
+    String testFile = args[0];
     String testURL = args[1];
     if (!testURL.startsWith("/")) {
       testURL = "/" + testURL;
@@ -60,8 +61,8 @@ class WebTestRunner {
 
     int webFilePort = 6006;
     int customPort = PortProber.findFreePort();
-    int port = customPort;
-    // int port = webFilePort;
+    // int port = customPort;
+    int port = webFilePort;
 
     // START CUSTOM SERVER
     String currentDir = System.getProperty("user.dir");
@@ -88,17 +89,32 @@ class WebTestRunner {
             .addSrc(
                 WebfilesSource.newBuilder()
                     .setWebpath(testURL)
-                    .setPath(currentDir)
-                    .setLongpath(testURL)
-                    // .setPath("webfile.html")
-                    // .setLongpath("/webfile.html")
+                    // .setPath(currentDir)
+                    // .setLongpath(testURL)
+                    .setPath("webfile.html")
+                    .setLongpath("/webfile.html")
                     .build())
             .build();
+
+    StringBuilder sb = new StringBuilder("");
+
+    sb.append("<!doctype html>");
+    sb.append("<html><head></head>");
+    sb.append("<body>");
+    sb.append("<script>");
+    sb.append("var CLOSURE_NO_DEPS = true; ");
+    sb.append("var CLOSURE_UNCOMPILED_DEFINES = {}; ");
+    sb.append("</script>");
+    sb.append("<script src=\"" + testFile + "\"></script>");
+    sb.append("</body>");
+    sb.append("</html>");
+
+    String html = sb.toString();
 
     FileSystem fs = Jimfs.newFileSystem(Configuration.forCurrentPlatform());
     Files.write(fs.getPath("/manifest.pbtxt"), MANIFEST.toString().getBytes(UTF_8));
     Files.write(fs.getPath("/config.pbtxt"), CONFIG.toString().getBytes(UTF_8));
-    Files.write(fs.getPath("/webfile.html"), "anybody in there?".getBytes(UTF_8));
+    Files.write(fs.getPath("/webfile.html"), html.getBytes(UTF_8));
 
     ExecutorService serverExecutor = Executors.newCachedThreadPool();
     WebfilesServer wfserver =

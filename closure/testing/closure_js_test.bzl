@@ -95,7 +95,7 @@ def closure_js_test(
                 name = shard,
                 data = [":%s_bin" % shard, html],
                 test = "//closure/testing:webtest",
-                args = ["--test_url", "$(location %s)" % html],
+                args = ["%s_bin.js" % shard, "$(location %s)" % html],
                 browsers = browsers,
                 tags = ["no-sandbox", "native"],
                 visibility = visibility,
