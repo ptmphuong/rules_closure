@@ -18,6 +18,7 @@ load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/testing:phantomjs_test.bzl", "phantomjs_test")
 load("//closure:webfiles/web_library.bzl", "web_library")
+load("//closure:webfiles/web_library_test.bzl", "web_library_test")
 load("@io_bazel_rules_webtesting//web:web.bzl", "web_test_suite")
 
 def closure_js_test(
@@ -95,16 +96,27 @@ def closure_js_test(
             if not browsers:
                 browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"]
 
-            web_library(
-                name = "%s_debug_lib" % shard,
-                srcs = ["%s_bin" % shard],
-                path = "/",
-            )
+            # web_library(
+            #     name = "%s_debug_lib" % shard,
+            #     srcs = ["%s_bin" % shard],
+            #     path = "/",
+            # )
 
-            web_library(
+            # web_library(
+            #     name = "%s_debug" % shard,
+            #     srcs = [html],
+            #     deps = [":%s_debug_lib" % shard,],
+            #     port = "8080",
+            #     host = "localhost",
+            #     path = "/",
+            # )
+
+            web_library_test(
                 name = "%s_debug" % shard,
-                srcs = [html],
-                deps = [":%s_debug_lib" % shard,],
+                srcs = [
+                    html,
+                    ":%s_bin.js" % shard,
+                ],
                 port = "8080",
                 host = "localhost",
                 path = "/",
@@ -113,8 +125,9 @@ def closure_js_test(
             web_test_suite(
                 name = shard,
                 data = [":%s_bin" % shard, html],
-                test = "//closure/testing:webtest",
-                args = ["%s_bin.js" % shard, "$(location %s)" % html],
+                # test = "//closure/testing:webtest",
+                test = "//closure/testing:driver",
+                args = ["%s_bin.js" % shard, "$(location %s)" % html, html],
                 browsers = browsers,
                 tags = ["no-sandbox", "native"],
                 visibility = visibility,

@@ -119,3 +119,31 @@ java_binary(
         # "@org_mockito_core",
     ],
 )
+
+java_binary(
+    name = "driver",
+    testonly = 1,
+    srcs = ["Driver.java"],
+    main_class = "rules_closure.closure.testing.Driver",
+    visibility = ["//visibility:public"],
+    deps = [
+        "@org_seleniumhq_selenium_selenium_api",
+        "@org_seleniumhq_selenium_selenium_support",
+        "@org_seleniumhq_selenium_selenium_remote_driver",
+        "@io_bazel_rules_webtesting//java/com/google/testing/web:web",
+
+        "//java/io/bazel/rules/closure:webpath",
+        "//java/io/bazel/rules/closure/http",
+        "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
+        "//java/io/bazel/rules/closure/webfiles/server",
+        "//java/io/bazel/rules/closure/webfiles/server:build_info_java_proto",
+        # "@com_google_code_findbugs_jsr305",
+        "@com_google_dagger",
+        "@com_google_guava",
+        # "@com_google_guava_testlib",
+        "@com_google_jimfs",
+        # "@com_google_truth",
+        # "@junit",
+        # "@org_mockito_core",
+    ],
+)
