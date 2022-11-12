@@ -17,6 +17,7 @@
 load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/testing:phantomjs_test.bzl", "phantomjs_test")
+load("//closure:webfiles/web_library.bzl", "web_library")
 load("@io_bazel_rules_webtesting//web:web.bzl", "web_test_suite")
 
 def closure_js_test(
@@ -50,6 +51,7 @@ def closure_js_test(
     else:
         work = [(name + _make_suffix(src), [src]) for src in srcs]
     for shard, sauce in work:
+
         closure_js_library(
             name = "%s_lib" % shard,
             srcs = sauce,
@@ -66,6 +68,8 @@ def closure_js_test(
             ep = entry_points.get(sauce[0])
         else:
             ep = entry_points
+
+
 
         closure_js_binary(
             name = "%s_bin" % shard,
@@ -90,6 +94,21 @@ def closure_js_test(
 
             if not browsers:
                 browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"]
+
+            web_library(
+                name = "%s_debug_lib" % shard,
+                srcs = ["%s_bin" % shard],
+                path = "/",
+            )
+
+            web_library(
+                name = "%s_debug" % shard,
+                srcs = [html],
+                deps = [":%s_debug_lib" % shard,],
+                port = "8080",
+                host = "localhost",
+                path = "/",
+            )
 
             web_test_suite(
                 name = shard,

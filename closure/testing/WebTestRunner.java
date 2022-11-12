@@ -61,8 +61,8 @@ class WebTestRunner {
 
     int webFilePort = 6006;
     int customPort = PortProber.findFreePort();
-    // int port = customPort;
-    int port = webFilePort;
+    int port = customPort;
+    // int port = webFilePort;
 
     // START CUSTOM SERVER
     String currentDir = System.getProperty("user.dir");
