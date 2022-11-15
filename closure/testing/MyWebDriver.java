@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-class MyWebDriver {
+public class MyWebDriver {
   private WebDriver driver;
   private String runURL;
 

@@ -34,7 +34,9 @@ java_library(
         "@com_google_guava",
         "@com_google_protobuf//:protobuf_java",
         "@com_google_template_soy",
+        "//closure/testing:webdriver_lib",
     ],
+    testonly = 1,
 )
 
 java_binary(

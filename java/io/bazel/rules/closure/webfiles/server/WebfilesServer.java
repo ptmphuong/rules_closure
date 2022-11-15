@@ -51,6 +51,8 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
 import javax.net.ServerSocketFactory;
 
+import rules_closure.closure.testing.MyWebDriver;
+
 /** Development web server for a single webfiles() rule. */
 public final class WebfilesServer implements Runnable {
 
@@ -77,6 +79,11 @@ public final class WebfilesServer implements Runnable {
     } finally {
       executor.shutdownNow();
     }
+
+    // RUN WEBDRIVER
+    String runURL = "http://localhost:8080/gen_simple_test.html";
+    MyWebDriver driver = new MyWebDriver(runURL);
+    driver.run();
   }
 
   private final Executor executor;
