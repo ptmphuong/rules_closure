@@ -76,6 +76,11 @@ def _web_library(ctx):
             longpath = long_path(ctx, src),
             webpath = webpath,
         ))
+
+        print("path is = " + src.path)
+        print("longpath = " + long_path(ctx, src))
+        print("webpath = " + webpath)
+
     webpaths += [depset(new_webpaths)]
     manifest = ctx.actions.declare_file("%s.pbtxt" % ctx.label.name)
     ctx.actions.write(

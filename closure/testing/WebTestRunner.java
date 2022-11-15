@@ -7,12 +7,7 @@ package rules_closure.closure.testing;
  *  Library repeatedly to check if the tests are finished, and logs results.
  */
 
-import com.google.testing.web.WebTest;
-
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.net.PortProber;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.support.ui.FluentWait;
 
 import com.sun.net.httpserver.HttpServer;
 import com.sun.net.httpserver.HttpContext;
@@ -27,6 +22,7 @@ import java.time.Duration;
 import java.io.IOException;
 
 import rules_closure.closure.testing.FileServerHandler;
+import rules_closure.closure.testing.MyWebDriver;
 
 import com.google.common.jimfs.Configuration;
 import com.google.common.jimfs.Jimfs;
@@ -61,11 +57,13 @@ class WebTestRunner {
 
     int webFilePort = 6006;
     int customPort = PortProber.findFreePort();
+
     int port = customPort;
     // int port = webFilePort;
 
     // START CUSTOM SERVER
     String currentDir = System.getProperty("user.dir");
+    log("currentDir is: " + currentDir);
     String fullDir = currentDir + testURL;
     log("currentDir is: " + currentDir);
     log ("fulldir is: " + fullDir);
@@ -88,33 +86,27 @@ class WebTestRunner {
         Webfiles.newBuilder()
             .addSrc(
                 WebfilesSource.newBuilder()
+                    .setPath("bazel-out/k8-fastbuild/bin/closure/testing/test/simple_test_bin.js")
+                    .setLongpath(currentDir + "/closure/testing/test/simple_test_bin.js")
+                    .setWebpath("/simple_test_bin.js")
+                    .build())
+            .addSrc(
+                WebfilesSource.newBuilder()
+                    .setPath("bazel-out/k8-fastbuild/bin/closure/testing/test/simple_test_bin.js.map")
+                    .setLongpath(currentDir + "/closure/testing/test/simple_test_bin.js.map")
+                    .setWebpath("/simple_test_bin.js.map")
+                    .build())
+            .addSrc(
+                WebfilesSource.newBuilder()
+                    .setPath(fullDir)
+                    .setLongpath(fullDir)
                     .setWebpath(testURL)
-                    // .setPath(currentDir)
-                    // .setLongpath(testURL)
-                    .setPath("webfile.html")
-                    .setLongpath("/webfile.html")
                     .build())
             .build();
-
-    StringBuilder sb = new StringBuilder("");
-
-    sb.append("<!doctype html>");
-    sb.append("<html><head></head>");
-    sb.append("<body>");
-    sb.append("<script>");
-    sb.append("var CLOSURE_NO_DEPS = true; ");
-    sb.append("var CLOSURE_UNCOMPILED_DEFINES = {}; ");
-    sb.append("</script>");
-    sb.append("<script src=\"" + testFile + "\"></script>");
-    sb.append("</body>");
-    sb.append("</html>");
-
-    String html = sb.toString();
 
     FileSystem fs = Jimfs.newFileSystem(Configuration.forCurrentPlatform());
     Files.write(fs.getPath("/manifest.pbtxt"), MANIFEST.toString().getBytes(UTF_8));
     Files.write(fs.getPath("/config.pbtxt"), CONFIG.toString().getBytes(UTF_8));
-    Files.write(fs.getPath("/webfile.html"), html.getBytes(UTF_8));
 
     ExecutorService serverExecutor = Executors.newCachedThreadPool();
     WebfilesServer wfserver =
@@ -131,48 +123,15 @@ class WebTestRunner {
         log("webfile server running at: " + address.toString());
     }
 
-    // START WEBDRIVER
-    WebDriver driver = new WebTest().newWebDriverSession();
-    driver.manage().timeouts().setScriptTimeout(60, SECONDS);
+    // RUN WEBDRIVER
     String runURL = "http://localhost:" + port + testURL;
-    log("RunURL is: " + runURL);
-    driver.get(runURL);
+    MyWebDriver driver = new MyWebDriver(runURL);
+    driver.run();
 
-    if (driver.getPageSource().contains("500")) {
-      log("cannot find file");
-      System.exit(1);
-    }
-
-    // WAIT FOR TESTS TO FINISH
-    new FluentWait<>((JavascriptExecutor) driver)
-        .pollingEvery(Duration.ofMillis(100))
-        .withTimeout(Duration.ofSeconds(5))
-        .until(executor -> {
-          boolean finishedSuccessfully = (boolean) executor.executeScript("return window.top.G_testRunner.isFinished()");
-          if (!finishedSuccessfully) {
-            log("G_testRunner has not finished successfully");
-            System.exit(1);
-          }
-          return true;
-        }
-    );
-
-    // LOG TEST REPORT
-    String testReport = ((JavascriptExecutor) driver).executeScript("return window.top.G_testRunner.getReport();").toString();
-    log(testReport);
-
-    boolean allTestsPassed = (boolean) ((JavascriptExecutor) driver).executeScript("return window.top.G_testRunner.isSuccess();");
-
-    // CLEAN UP
-    driver.quit();
     if (port == customPort) {
       server.stop(0);
     } else {
       serverExecutor.shutdownNow();
-    }
-
-    if (!allTestsPassed) {
-      System.exit(1);
     }
   }
 

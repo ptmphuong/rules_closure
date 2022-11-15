@@ -96,38 +96,37 @@ def closure_js_test(
             if not browsers:
                 browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"]
 
-            # web_library(
-            #     name = "%s_debug_lib" % shard,
-            #     srcs = ["%s_bin" % shard],
-            #     path = "/",
-            # )
+            web_library(
+                name = "%s_debug_lib" % shard,
+                srcs = ["%s_bin" % shard],
+                path = "/",
+            )
 
-            # web_library(
-            #     name = "%s_debug" % shard,
-            #     srcs = [html],
-            #     deps = [":%s_debug_lib" % shard,],
-            #     port = "8080",
-            #     host = "localhost",
-            #     path = "/",
-            # )
-
-            web_library_test(
+            web_library(
                 name = "%s_debug" % shard,
-                srcs = [
-                    html,
-                    ":%s_bin.js" % shard,
-                ],
+                srcs = [html],
+                deps = [":%s_debug_lib" % shard,],
                 port = "8080",
                 host = "localhost",
                 path = "/",
             )
 
+            # web_library_test(
+            #     name = "%s_test_debug" % shard,
+            #     srcs = [
+            #         html,
+            #         ":%s_bin.js" % shard,
+            #     ],
+            #     port = "8080",
+            #     host = "localhost",
+            #     path = "/",
+            # )
+
             web_test_suite(
                 name = shard,
                 data = [":%s_bin" % shard, html],
-                # test = "//closure/testing:webtest",
-                test = "//closure/testing:driver",
-                args = ["%s_bin.js" % shard, "$(location %s)" % html, html],
+                test = "//closure/testing:webtest",
+                args = ["--test_url", "$(location %s)" % html],
                 browsers = browsers,
                 tags = ["no-sandbox", "native"],
                 visibility = visibility,

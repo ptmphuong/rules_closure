@@ -14,47 +14,28 @@ import org.openqa.selenium.net.PortProber;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.support.ui.FluentWait;
 
-import com.sun.net.httpserver.HttpServer;
-import com.sun.net.httpserver.HttpContext;
-
 import java.util.logging.Logger;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
-import java.net.ServerSocket;
-import java.net.InetSocketAddress;
 import java.time.Duration;
 import java.io.IOException;
 
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-class Driver {
-  public static void main(String args[]) throws Exception {
-    String testFile = args[0];
-    String testURL = args[1];
-    String html = args[2];
-    html = html + ".html";
-    if (!testURL.startsWith("/")) {
-      testURL = "/" + testURL;
-    }
-    if (!html.startsWith("/")) {
-      html = "/" + html;
-    }
-    log("html is: " + html);
+class MyWebDriver {
+  private WebDriver driver;
+  private String runURL;
 
+  public MyWebDriver(String runURL) {
+    this.driver = new WebTest().newWebDriverSession();
+    this.runURL = runURL;
+  }
+
+  public void run() {
     int port = 8080;
 
     // START WEBDRIVER
-    WebDriver driver = new WebTest().newWebDriverSession();
     driver.manage().timeouts().setScriptTimeout(60, SECONDS);
-    String runURL = "http://localhost:" + port + html;
-    log("RunURL is: " + runURL);
-    driver.get(runURL);
+    log("RunURL is: " + this.runURL);
+    driver.get(this.runURL);
 
     if (driver.getPageSource().contains("500")) {
       log("cannot find file");
@@ -88,7 +69,7 @@ class Driver {
       System.exit(1);
     }
 
-    System.exit(1); // error on purpose to get log
+    // System.exit(1); // error on purpose to get log
   }
 
   private static void log(String s) {
