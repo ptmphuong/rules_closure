@@ -67,20 +67,13 @@ exports_files(["LICENSE", "gen_webtest_html.template"])
 java_binary(
     name = "webtest",
     testonly = 1,
-    srcs = ["WebTestRunner.java", "FileServerHandler.java"],
+    srcs = ["WebTestRunner.java"],
     main_class = "rules_closure.closure.testing.WebTestRunner",
     visibility = ["//visibility:public"],
     deps = [
         ":webdriver_lib",
-        "@org_seleniumhq_selenium_selenium_remote_driver",
-
-        "//java/io/bazel/rules/closure:webpath",
-        "//java/io/bazel/rules/closure/http",
-        "//java/io/bazel/rules/closure/webfiles:build_info_java_proto",
         "//java/io/bazel/rules/closure/webfiles/server",
-        "//java/io/bazel/rules/closure/webfiles/server:build_info_java_proto",
         "@com_google_guava",
-        "@com_google_jimfs",
     ],
 )
 

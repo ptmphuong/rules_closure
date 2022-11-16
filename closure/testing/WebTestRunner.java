@@ -7,7 +7,6 @@ package rules_closure.closure.testing;
  *  Library repeatedly to check if the tests are finished, and logs results.
  */
 
-import org.openqa.selenium.net.PortProber;
 import java.util.logging.Logger;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -50,7 +49,7 @@ class WebTestRunner {
     driver.run();
 
     serverExecutor.shutdownNow();
-    System.exit(0;
+    System.exit(0);
   }
 
   private static void log(String s) {
