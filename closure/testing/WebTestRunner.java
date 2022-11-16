@@ -44,13 +44,13 @@ class WebTestRunner {
     String address = hostAndPort.toString();
     log("webfile server running at: " + address);
 
-    String runURL = "http://" + address + html + ".html";
+    String runURL = "http://" + address + html;
     log("runURL: " + runURL);
     MyWebDriver driver = new MyWebDriver(runURL);
     driver.run();
 
     serverExecutor.shutdownNow();
-    System.exit(0);
+    System.exit(0;
   }
 
   private static void log(String s) {

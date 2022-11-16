@@ -69,8 +69,6 @@ def closure_js_test(
         else:
             ep = entry_points
 
-
-
         closure_js_binary(
             name = "%s_bin" % shard,
             deps = [":%s_lib" % shard],
@@ -86,11 +84,16 @@ def closure_js_test(
         )
 
         if webtest:
+            html = "gen_html_%s" % shard
             gen_test_html(
-                name = "gen_%s" % shard,
+                name = html,
                 test_file_js = "%s_bin.js" % shard,
             )
-            html = "gen_%s" % shard
+
+            host = "localhost"
+            port = "8080"
+            path = "/"
+            html_webpath = "%s%s.html" % (path, html)
 
             if not browsers:
                 browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"]
@@ -98,25 +101,25 @@ def closure_js_test(
             web_library(
                 name = "%s_debug" % shard,
                 srcs = [html, "%s_bin" % shard],
-                port = "8080",
-                host = "localhost",
-                path = "/",
+                port = port,
+                host = host,
+                path = path,
             )
 
             web_library(
-                name = "%s_testrunner" % shard,
+                name = "%s_test_runner" % shard,
                 srcs = [html, "%s_bin" % shard],
-                port = "8080",
-                host = "localhost",
-                path = "/",
+                port = port,
+                host = host,
+                path = path,
                 webfilesServer = Label("//closure/testing:webtest"),
             )
 
             web_test_suite(
                 name = shard,
                 data = [":%s_bin" % shard, html],
-                test = "%s_testrunner" % shard,
-                args = [html],
+                test = "%s_test_runner" % shard,
+                args = [html_webpath],
                 browsers = browsers,
                 tags = ["no-sandbox", "native"],
                 visibility = visibility,

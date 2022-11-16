@@ -51,6 +51,8 @@ import javax.annotation.concurrent.GuardedBy;
 import javax.inject.Inject;
 import javax.net.ServerSocketFactory;
 
+import java.util.Arrays;
+
 /** Development web server for a single webfiles() rule. */
 public final class WebfilesServer implements Runnable {
 
@@ -64,6 +66,7 @@ public final class WebfilesServer implements Runnable {
   private static final String RESET = WANT_COLOR ? "\u001b[0m" : "";
 
   public static void main(String[] args) throws Exception {
+    logger.info("args are: " + Arrays.toString(args));
     ExecutorService executor = Executors.newCachedThreadPool();
     try {
       DaggerWebfilesServer_Server.builder()
