@@ -77,10 +77,6 @@ def _web_library(ctx):
             webpath = webpath,
         ))
 
-        print("path is = " + src.path)
-        print("longpath = " + long_path(ctx, src))
-        print("webpath = " + webpath)
-
     webpaths += [depset(new_webpaths)]
     manifest = ctx.actions.declare_file("%s.pbtxt" % ctx.label.name)
     ctx.actions.write(
@@ -146,13 +142,13 @@ def _web_library(ctx):
         is_executable = True,
         output = ctx.outputs.executable,
         content = "#!/bin/sh\nexec %s %s \"$@\"" % (
-            ctx.executable._WebfilesServer.short_path,
+            ctx.executable.webfilesServer.short_path,
             long_path(ctx, params_file),
         ),
     )
 
     transitive_runfiles = depset(
-        transitive = [ctx.attr._WebfilesServer.data_runfiles.files] +
+        transitive = [ctx.attr.webfilesServer.data_runfiles.files] +
                      [dep.data_runfiles.files for dep in deps],
     )
 
@@ -228,7 +224,7 @@ web_library = rule(
             executable = True,
             cfg = "host",
         ),
-        "_WebfilesServer": attr.label(
+        "webfilesServer": attr.label(
             default = Label(
                 "//java/io/bazel/rules/closure/webfiles/server:WebfilesServer",
             ),
