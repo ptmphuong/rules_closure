@@ -121,9 +121,7 @@ def closure_js_test(
                 data = [":%s_bin" % shard, html, web_config],
                 main_class = "rules_closure.closure.testing.WebtestRunner",
                 jvm_flags = [
-                    # TODO: update location with rlocationpath
-                    # "-Dserver_config_path=$(rlocationpath :%s)" % web_config,
-                    "-Dserver_config_path=io_bazel_rules_closure/$(location :%s)" % web_config,
+                    "-Dserver_config_path=$(location :%s)" % web_config,
                     "-Dhtml_web_path=%s" % html_webpath,
                 ],
                 runtime_deps = [str(Label("//closure/testing:testrunner_lib"))],
