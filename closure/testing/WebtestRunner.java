@@ -10,7 +10,6 @@ package rules_closure.closure.testing;
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HostAndPort;
 
-import java.util.logging.Logger;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.io.IOException;
@@ -19,21 +18,20 @@ import javax.net.ServerSocketFactory;
 
 import io.bazel.rules.closure.webfiles.server.WebfilesServer;
 import io.bazel.rules.closure.webfiles.server.DaggerWebfilesServer_Server;
-import rules_closure.closure.testing.MyWebDriver;
+import rules_closure.closure.testing.WebtestDriver;
 
-class WebTestRunner {
+class WebtestRunner {
+
   public static void main(String args[]) throws Exception {
 
-    String configPath = System.getProperty("server_config_path", "no web_config_path");
-    String html = System.getProperty("html_web_path", "no html_web_path");
-    log("configPath is: " + configPath);
-    log("html is: " + html);
+    String serverConfig = System.getProperty("server_config_path");
+    String htmlWebpath = System.getProperty("html_web_path");
 
     // Start the server
     ExecutorService serverExecutor = Executors.newCachedThreadPool();
     WebfilesServer server =
         DaggerWebfilesServer_Server.builder()
-            .args(ImmutableList.of(configPath))
+            .args(ImmutableList.of(serverConfig))
             .executor(serverExecutor)
             .fs(FileSystems.getDefault())
             .serverSocketFactory(ServerSocketFactory.getDefault())
@@ -42,20 +40,14 @@ class WebTestRunner {
 
     HostAndPort hostAndPort = server.spawn();
     String address = hostAndPort.toString();
-    log("webfile server running at: " + address);
 
     // Start the driver
-    String runURL = "http://" + address + html;
-    log("runURL: " + runURL);
-    MyWebDriver driver = new MyWebDriver(runURL);
+    String runURL = "http://" + address + htmlWebpath;
+    WebtestDriver driver = new WebtestDriver(runURL);
     driver.run();
 
     // Clean up
     serverExecutor.shutdownNow();
     System.exit(0);
-  }
-
-  private static void log(String s) {
-    Logger.getGlobal().info(s);
   }
 }

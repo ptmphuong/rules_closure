@@ -107,24 +107,26 @@ def closure_js_test(
                 path = path,
             )
 
+            web_config = "%s_server_config" % shard
             gen_web_config(
-                name = "%s_server_config" % shard,
+                name = web_config,
                 srcs = [html, "%s_bin" % shard],
                 port = port,
                 host = host,
                 path = path,
             )
-            web_config = "%s_server_config" % shard
 
             native.java_binary(
                 name = "%s_testrunner" % shard,
                 data = [":%s_bin" % shard, html, web_config],
-                main_class = "rules_closure.closure.testing.WebTestRunner",
+                main_class = "rules_closure.closure.testing.WebtestRunner",
                 jvm_flags = [
+                    # TODO: update location with rlocationpath
+                    # "-Dserver_config_path=$(rlocationpath :%s)" % web_config,
                     "-Dserver_config_path=io_bazel_rules_closure/$(location :%s)" % web_config,
                     "-Dhtml_web_path=%s" % html_webpath,
                 ],
-                runtime_deps = [str(Label("//closure/testing:webtest_library"))],
+                runtime_deps = [str(Label("//closure/testing:testrunner_lib"))],
                 testonly = 1,
             )
 
