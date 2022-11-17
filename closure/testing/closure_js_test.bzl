@@ -99,7 +99,6 @@ def closure_js_test(
             if not browsers:
                 browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"]
 
-            # for running the server only. usage: bazel run :simple_test_debug
             web_library(
                 name = "%s_debug" % shard,
                 srcs = [html, "%s_bin" % shard],
@@ -108,58 +107,31 @@ def closure_js_test(
                 path = path,
             )
 
-            # running the server and the webdriver. used as test in webtest suite.
-            # what it does:
-            #   generate manifest+config files
-            #   generate a .sh file with script to run the :webtest java_binary
-            #   and the path to the config file as an argument.
-            # need to add html_webpath as another argument for the webdriver to use.
-            web_library(
-                name = "%s_test_runner" % shard,
-                srcs = [html, "%s_bin" % shard],
-                port = port,
-                host = host,
-                path = path,
-                webfilesServer = Label("//closure/testing:webtest"),
-            )
-
-            # generate manifest+config files for the webserver
             gen_web_config(
-                name = "%s_config" % shard,
+                name = "%s_server_config" % shard,
                 srcs = [html, "%s_bin" % shard],
                 port = port,
                 host = host,
                 path = path,
             )
-            web_config = "%s_config" % shard
+            web_config = "%s_server_config" % shard
 
-            # run the server + webdriver using the path to the generated config file.
             native.java_binary(
-                name = "%s_java_test_runner" % shard,
+                name = "%s_testrunner" % shard,
                 data = [":%s_bin" % shard, html, web_config],
                 main_class = "rules_closure.closure.testing.WebTestRunner",
                 jvm_flags = [
-                    "-Dweb_config_path=io_bazel_rules_closure/$(location :%s)" % web_config,
+                    "-Dserver_config_path=io_bazel_rules_closure/$(location :%s)" % web_config,
                     "-Dhtml_web_path=%s" % html_webpath,
                 ],
-                runtime_deps = [
-                    str(Label("//closure/testing:webtest_library")),
-                ],
+                runtime_deps = [str(Label("//closure/testing:webtest_library"))],
                 testonly = 1,
             )
 
             web_test_suite(
                 name = shard,
                 data = [":%s_bin" % shard, html, web_config],
-                #
-                # test = "%s_test_runner" % shard,
-                # args = [
-                #     html_webpath,
-                #     "$(location %s)" % web_config,
-                # ],
-                #
-                test = ":%s_java_test_runner" % shard,
-                #
+                test = ":%s_testrunner" % shard,
                 browsers = browsers,
                 tags = ["no-sandbox", "native"],
                 visibility = visibility,

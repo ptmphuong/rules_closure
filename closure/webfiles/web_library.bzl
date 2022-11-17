@@ -152,6 +152,8 @@ def _web_library(ctx):
                      [dep.data_runfiles.files for dep in deps],
     )
 
+    print("params_file path is: " + long_path(ctx, params_file))
+
     return struct(
         files = depset([ctx.outputs.executable, ctx.outputs.dummy]),
         exports = unfurl(ctx.attr.exports),

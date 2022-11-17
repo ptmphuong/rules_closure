@@ -100,11 +100,9 @@ def _impl(ctx):
     params_file = ctx.actions.declare_file("%s_server_params.pbtxt" % ctx.label.name)
     ctx.actions.write(output = params_file, content = params.to_proto())
 
-    config_file_path = long_path(ctx, params_file)
-    print("config_file_path is: " + config_file_path)
-
-    return DefaultInfo(files = depset([params_file]))
-
+    runfiles = ctx.runfiles(
+    files = [ctx.outputs.config_file, manifest], collect_default = True)
+    return [DefaultInfo(runfiles = runfiles)]
 
 def _fail(ctx, message):
     if ctx.attr.suppress == ["*"]:
@@ -141,7 +139,6 @@ def _get_strip(ctx):
 
 gen_web_config = rule(
     implementation = _impl,
-    # executable = True,
     attrs = {
         "path": attr.string(),
         "host": attr.string(default = "0.0.0.0"),
@@ -154,8 +151,7 @@ gen_web_config = rule(
         "strip_prefix": attr.string(),
         "external_assets": attr.string_dict(default = {"/_/runfiles": "."}),
     },
-    # outputs = {
-    #     "dummy": "%{name}.ignoreme",
-    # },
-    # outputs = {"config_file": "%{name}.html"},
+    outputs = {
+        "config_file": "%{name}_server_params.pbtxt",
+    },
 )
