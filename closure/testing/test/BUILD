@@ -32,7 +32,6 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_library(
@@ -51,7 +50,6 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_test(
@@ -64,7 +62,6 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_library(
@@ -83,7 +80,6 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 # Note that this is also validating Closure Library integration.
@@ -98,7 +94,6 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_library(
@@ -117,7 +112,6 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_test(
@@ -128,6 +122,45 @@ closure_js_test(
     },
     deps = [
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
+    ],
+)
+
+# Webtest examples
+closure_js_test(
+    name = "simple_webtest_test",
+    timeout = "short",
+    srcs = ["simple_test.js"],
+    deps = [
+        "@com_google_javascript_closure_library//closure/goog/testing:asserts",
+        "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
+    ],
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+)
+
+closure_js_test(
+    name = "arithmetic_module_webtest_test",
+    timeout = "short",
+    srcs = ["arithmetic_module_test.js"],
+    entry_points = ["goog:arithmetic_module_test"],
+    deps = [
+        ":arithmetic_module_lib",
+        "@com_google_javascript_closure_library//closure/goog/testing:asserts",
+        "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
+        "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
+    ],
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+)
+
+closure_js_test(
+    name = "dom_webtest_test",
+    timeout = "short",
+    srcs = ["dom_test.js"],
+    deps = [
+        "@com_google_javascript_closure_library//closure/goog/dom",
+        "@com_google_javascript_closure_library//closure/goog/dom:tagname",
+        "@com_google_javascript_closure_library//closure/goog/html:safehtml",
+        "@com_google_javascript_closure_library//closure/goog/testing:asserts",
+        "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
     ],
     browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
@@ -166,3 +199,4 @@ closure_js_test(
 #     name = "darwin",
 #     values = {"cpu": "darwin"},
 # )
+

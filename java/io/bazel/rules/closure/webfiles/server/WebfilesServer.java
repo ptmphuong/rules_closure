@@ -63,19 +63,23 @@ public final class WebfilesServer implements Runnable {
   private static final String BOLD = WANT_COLOR ? "\u001b[1m" : "";
   private static final String RESET = WANT_COLOR ? "\u001b[0m" : "";
 
-  public static void main(String[] args) throws Exception {
+  public static WebfilesServer create(ImmutableList args) throws Exception {
     ExecutorService executor = Executors.newCachedThreadPool();
-    try {
-      DaggerWebfilesServer_Server.builder()
-          .args(ImmutableList.copyOf(args))
+    return DaggerWebfilesServer_Server.builder()
+          .args(args)
           .executor(executor)
           .fs(FileSystems.getDefault())
           .serverSocketFactory(ServerSocketFactory.getDefault())
           .build()
-          .server()
-          .run();
+          .server();
+  }
+
+  public static void main(String[] args) throws Exception {
+    WebfilesServer server = create(ImmutableList.copyOf(args));
+    try {
+      server.run();
     } finally {
-      executor.shutdownNow();
+      server.shutdown();
     }
   }
 
@@ -115,6 +119,13 @@ public final class WebfilesServer implements Runnable {
         wait();
       }
       return actualAddress;
+    }
+  }
+
+  /** Shuts down the server. */
+  public void shutdown() {
+    if (executor instanceof ExecutorService) {
+      ((ExecutorService) executor).shutdownNow();
     }
   }
 
@@ -192,7 +203,7 @@ public final class WebfilesServer implements Runnable {
 
   @ServerScope
   @Component
-  public interface Server
+  interface Server
       extends HttpServerComponent<
           Transmitter<Processor>, Connection, Connection.Builder, Request, Request.Builder> {
     WebfilesServer server();

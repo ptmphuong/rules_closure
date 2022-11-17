@@ -89,9 +89,9 @@ final class Metadata {
     private final String args;
 
     @Inject
-    Config(FileSystem fs, @Args ImmutableList<String> args) {
+    Config(Runfiles runfiles, @Args ImmutableList<String> args) {
       Iterator<String> i = args.iterator();
-      this.path = fs.getPath(i.next());
+      this.path = runfiles.getPath(i.next());
       this.args = Joiner.on(' ').join(i);
     }
 

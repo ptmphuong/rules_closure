@@ -22,7 +22,10 @@ licenses(["notice"])  # Apache 2.0
 load("//closure:defs.bzl", "closure_js_binary", "closure_js_library")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
-# html place holder used by PhantomJS.
+# html template used by webdriver_test.
+exports_files(["gen_webtest_html.template"])
+
+# html place holder used by phantomjs_test.
 exports_files(["empty.html"])
 
 closure_js_library(
@@ -61,23 +64,3 @@ bzl_library(
     ],
 )
 
-# html template used by webtest runner.
-exports_files(["LICENSE", "gen_webtest_html.template"])
-
-java_library(
-    name = "testrunner_lib",
-    testonly = 1,
-    srcs = [
-        "WebtestDriver.java",
-        "WebtestRunner.java",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-        "@org_seleniumhq_selenium_selenium_api",
-        "@org_seleniumhq_selenium_selenium_support",
-        "@org_seleniumhq_selenium_selenium_remote_driver",
-        "@io_bazel_rules_webtesting//java/com/google/testing/web:web",
-        "//java/io/bazel/rules/closure/webfiles/server",
-        "@com_google_guava",
-    ],
-)

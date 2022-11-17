@@ -17,8 +17,7 @@
 load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/testing:phantomjs_test.bzl", "phantomjs_test")
-load("//closure:webfiles/web_library.bzl", "web_library", "get_web_library_config")
-load("@io_bazel_rules_webtesting//web:web.bzl", "web_test_suite")
+load("//closure/testing:webdriver_test.bzl", "webdriver_test")
 
 def closure_js_test(
         name,
@@ -50,7 +49,6 @@ def closure_js_test(
     else:
         work = [(name + _make_suffix(src), [src]) for src in srcs]
     for shard, sauce in work:
-
         closure_js_library(
             name = "%s_lib" % shard,
             srcs = sauce,
@@ -85,7 +83,7 @@ def closure_js_test(
         if not browsers:
             phantomjs_test(
                 name = shard,
-                runner = str(Label("//closure/testing:phantomjs_jsunit_runner")),
+                runner = Label("//closure/testing:phantomjs_jsunit_runner"),
                 deps = [":%s_bin" % shard],
                 debug = debug,
                 html = html,
@@ -95,54 +93,12 @@ def closure_js_test(
             )
 
         else:
-            html = "gen_html_%s" % shard
-            gen_test_html(
-                name = html,
-                test_file_js = "%s_bin.js" % shard,
-            )
-
-            host = "localhost"
-            port = "8080"
-            path = "/"
-            html_webpath = "%s%s.html" % (path, html)
-
-            web_library(
-                name = "%s_debug" % shard,
-                srcs = [html, "%s_bin" % shard],
-                port = port,
-                host = host,
-                path = path,
-            )
-
-            web_config = "%s_server_config" % shard
-            get_web_library_config(
-                name = web_config,
-                srcs = [html, "%s_bin" % shard],
-                port = port,
-                host = host,
-                path = path,
-            )
-
-            native.java_binary(
-                name = "%s_testrunner" % shard,
-                data = [":%s_bin" % shard, html, web_config],
-                main_class = "rules_closure.closure.testing.WebtestRunner",
-                jvm_flags = [
-                    "-Dserver_config_path=$(location :%s)" % web_config,
-                    "-Dhtml_webpath=%s" % html_webpath,
-                ],
-                runtime_deps = [str(Label("//closure/testing:testrunner_lib"))],
-                testonly = 1,
-            )
-
-            web_test_suite(
+            webdriver_test(
                 name = shard,
-                data = [":%s_bin" % shard, html, web_config],
-                test = ":%s_testrunner" % shard,
+                test_file_js = "%s_bin.js" % shard,
                 browsers = browsers,
-                tags = ["no-sandbox", "native"],
                 visibility = visibility,
-                **kwargs
+                tags = tags,
             )
 
     if len(srcs) > 1:
@@ -155,30 +111,3 @@ def closure_js_test(
 def _make_suffix(path):
     return "_" + path.replace("_test.js", "").replace("-", "_").replace("/", "_")
 
-def _gen_test_html_impl(ctx):
-    """Implementation of the gen_test_html rule."""
-    ctx.actions.expand_template(
-        template = ctx.file._template,
-        output = ctx.outputs.html_file,
-        substitutions = {
-            "{{TEST_FILE_JS}}": ctx.attr.test_file_js,
-        },
-    )
-    runfiles = ctx.runfiles(files = [ctx.outputs.html_file], collect_default = True)
-    return [DefaultInfo(runfiles = runfiles)]
-
-# Used to generate default test.html file for running Closure-based JS tests.
-# The test_file_js argument specifies the name of the JS file containing tests,
-# typically created with closure_js_binary.
-# The output is created from gen_test_html.template file.
-gen_test_html = rule(
-    implementation = _gen_test_html_impl,
-    attrs = {
-        "test_file_js": attr.string(mandatory = True),
-        "_template": attr.label(
-            default = Label("//closure/testing:gen_webtest_html.template"),
-            allow_single_file = True,
-        ),
-    },
-    outputs = {"html_file": "%{name}.html"},
-)
