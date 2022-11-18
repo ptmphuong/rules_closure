@@ -131,7 +131,7 @@ def closure_js_test(
                 main_class = "rules_closure.closure.testing.WebtestRunner",
                 jvm_flags = [
                     "-Dserver_config_path=$(location :%s)" % web_config,
-                    "-Dhtml_web_path=%s" % html_webpath,
+                    "-Dhtml_webpath=%s" % html_webpath,
                 ],
                 runtime_deps = [str(Label("//closure/testing:testrunner_lib"))],
                 testonly = 1,

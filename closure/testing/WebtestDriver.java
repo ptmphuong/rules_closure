@@ -40,8 +40,6 @@ public class WebtestDriver {
   }
 
   public void run() {
-    int port = 8080;
-
     driver.manage().timeouts().setScriptTimeout(60, SECONDS);
     logger.info("RunURL is: " + this.runURL);
     driver.get(this.runURL);

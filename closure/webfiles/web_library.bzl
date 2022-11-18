@@ -23,6 +23,116 @@ load(
 )
 
 def _web_library(ctx):
+
+    (webpaths, manifest, manifests, params_file) = _generate_server_params(ctx)
+
+    ctx.actions.write(
+        is_executable = True,
+        output = ctx.outputs.executable,
+        content = "#!/bin/sh\nexec %s %s \"$@\"" % (
+            ctx.executable._WebfilesServer.short_path,
+            params_file.short_path,
+        ),
+    )
+
+    deps = unfurl(ctx.attr.deps, provider = "webfiles")
+    transitive_runfiles = depset(
+        transitive = [ctx.attr._WebfilesServer.data_runfiles.files] +
+                     [dep.data_runfiles.files for dep in deps],
+    )
+
+    # perform strict dependency checking
+    inputs = [manifest]
+    direct_manifests = [manifest]
+    args = [
+        "WebfilesValidator",
+        "--dummy",
+        ctx.outputs.dummy.path,
+        "--target",
+        manifest.path,
+    ]
+    for category in ctx.attr.suppress:
+        args.append("--suppress")
+        args.append(category)
+    inputs.extend(ctx.files.srcs)
+    for dep in deps:
+        inputs.append(dep.webfiles.dummy)
+        for f in dep.files.to_list():
+            inputs.append(f)
+        direct_manifests += [dep.webfiles.manifest]
+        inputs.append(dep.webfiles.manifest)
+        args.append("--direct_dep")
+        args.append(dep.webfiles.manifest.path)
+    for man in difference(manifests, depset(direct_manifests)):
+        inputs.append(man)
+        args.append("--transitive_dep")
+        args.append(man.path)
+    argfile = create_argfile(ctx.actions, ctx.label.name, args)
+    inputs.append(argfile)
+    ctx.actions.run(
+        inputs = inputs,
+        outputs = [ctx.outputs.dummy],
+        executable = ctx.executable._ClosureWorker,
+        arguments = ["@@" + argfile.path],
+        mnemonic = "Closure",
+        execution_requirements = {"supports-workers": "1"},
+        progress_message = "Checking webfiles in %s" % ctx.label,
+    )
+
+    return struct(
+        files = depset([ctx.outputs.executable, ctx.outputs.dummy]),
+        exports = unfurl(ctx.attr.exports),
+        webfiles = struct(
+            manifest = manifest,
+            manifests = manifests,
+            webpaths = depset(transitive = webpaths),
+            dummy = ctx.outputs.dummy,
+        ),
+        runfiles = ctx.runfiles(
+            files = ctx.files.srcs + ctx.files.data + [
+                manifest,
+                params_file,
+                ctx.outputs.executable,
+                ctx.outputs.dummy,
+            ],
+            transitive_files = transitive_runfiles,
+        ),
+    )
+
+def _fail(ctx, message):
+    if ctx.attr.suppress == ["*"]:
+        print(message)
+    else:
+        fail(message)
+
+def _get_path_relative_to_package(artifact):
+    """Returns file path relative to the package that declared it."""
+    path = artifact.path
+    for prefix in (
+        artifact.root.path,
+        artifact.owner.workspace_root if artifact.owner else "",
+        artifact.owner.package if artifact.owner else "",
+    ):
+        if prefix:
+            prefix = prefix + "/"
+            if not path.startswith(prefix):
+                fail("Path %s doesn't start with %s" % (path, prefix))
+            path = path[len(prefix):]
+    return path
+
+def _get_strip(ctx):
+    strip = ctx.attr.strip_prefix
+    if strip:
+        if strip.startswith("/"):
+            _fail(ctx, "strip_prefix should not end with /")
+            strip = strip[1:]
+        if strip.endswith("/"):
+            _fail(ctx, "strip_prefix should not end with /")
+        else:
+            strip += "/"
+    return strip
+
+def _generate_server_params(ctx):
     if not ctx.attr.srcs:
         if ctx.attr.deps:
             fail("deps can not be set when srcs is not")
@@ -87,44 +197,6 @@ def _web_library(ctx):
     )
     manifests = depset([manifest], transitive = manifests, order = "postorder")
 
-    # perform strict dependency checking
-    inputs = [manifest]
-    direct_manifests = [manifest]
-    args = [
-        "WebfilesValidator",
-        "--dummy",
-        ctx.outputs.dummy.path,
-        "--target",
-        manifest.path,
-    ]
-    for category in ctx.attr.suppress:
-        args.append("--suppress")
-        args.append(category)
-    inputs.extend(ctx.files.srcs)
-    for dep in deps:
-        inputs.append(dep.webfiles.dummy)
-        for f in dep.files.to_list():
-            inputs.append(f)
-        direct_manifests += [dep.webfiles.manifest]
-        inputs.append(dep.webfiles.manifest)
-        args.append("--direct_dep")
-        args.append(dep.webfiles.manifest.path)
-    for man in difference(manifests, depset(direct_manifests)):
-        inputs.append(man)
-        args.append("--transitive_dep")
-        args.append(man.path)
-    argfile = create_argfile(ctx.actions, ctx.label.name, args)
-    inputs.append(argfile)
-    ctx.actions.run(
-        inputs = inputs,
-        outputs = [ctx.outputs.dummy],
-        executable = ctx.executable._ClosureWorker,
-        arguments = ["@@" + argfile.path],
-        mnemonic = "Closure",
-        execution_requirements = {"supports-workers": "1"},
-        progress_message = "Checking webfiles in %s" % ctx.label,
-    )
-
     # define development web server that only applies to this transitive closure
     params = struct(
         label = str(ctx.label),
@@ -137,72 +209,9 @@ def _web_library(ctx):
     )
     params_file = ctx.actions.declare_file("%s_server_params.pbtxt" % ctx.label.name)
     ctx.actions.write(output = params_file, content = params.to_proto())
-    ctx.actions.write(
-        is_executable = True,
-        output = ctx.outputs.executable,
-        content = "#!/bin/sh\nexec %s %s \"$@\"" % (
-            ctx.executable._WebfilesServer.short_path,
-            params_file.short_path,
-        ),
-    )
 
-    transitive_runfiles = depset(
-        transitive = [ctx.attr._WebfilesServer.data_runfiles.files] +
-                     [dep.data_runfiles.files for dep in deps],
-    )
+    return (webpaths, manifest, manifests, params_file)
 
-    return struct(
-        files = depset([ctx.outputs.executable, ctx.outputs.dummy]),
-        exports = unfurl(ctx.attr.exports),
-        webfiles = struct(
-            manifest = manifest,
-            manifests = manifests,
-            webpaths = depset(transitive = webpaths),
-            dummy = ctx.outputs.dummy,
-        ),
-        runfiles = ctx.runfiles(
-            files = ctx.files.srcs + ctx.files.data + [
-                manifest,
-                params_file,
-                ctx.outputs.executable,
-                ctx.outputs.dummy,
-            ],
-            transitive_files = transitive_runfiles,
-        ),
-    )
-
-def _fail(ctx, message):
-    if ctx.attr.suppress == ["*"]:
-        print(message)
-    else:
-        fail(message)
-
-def _get_path_relative_to_package(artifact):
-    """Returns file path relative to the package that declared it."""
-    path = artifact.path
-    for prefix in (
-        artifact.root.path,
-        artifact.owner.workspace_root if artifact.owner else "",
-        artifact.owner.package if artifact.owner else "",
-    ):
-        if prefix:
-            prefix = prefix + "/"
-            if not path.startswith(prefix):
-                fail("Path %s doesn't start with %s" % (path, prefix))
-            path = path[len(prefix):]
-    return path
-
-def _get_strip(ctx):
-    strip = ctx.attr.strip_prefix
-    if strip:
-        if strip.startswith("/"):
-            _fail(ctx, "strip_prefix should not end with /")
-            strip = strip[1:]
-        if strip.endswith("/"):
-            _fail(ctx, "strip_prefix should not end with /")
-        else:
-            strip += "/"
-    return strip
 
 web_library = rule(
     implementation = _web_library,
