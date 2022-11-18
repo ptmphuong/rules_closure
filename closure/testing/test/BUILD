@@ -32,7 +32,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
     ],
-    webtest = True,
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_library(
@@ -51,7 +51,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    webtest = True,
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_test(
@@ -64,7 +64,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    webtest = True,
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_library(
@@ -83,7 +83,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
     ],
-    webtest = True,
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 # Note that this is also validating Closure Library integration.
@@ -98,7 +98,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
     ],
-    webtest = True,
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_library(
@@ -117,7 +117,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    webtest = True,
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_test(
@@ -129,7 +129,7 @@ closure_js_test(
     deps = [
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    webtest = True,
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 # This test shows how to write tests to verify rendered output from phantomjs.

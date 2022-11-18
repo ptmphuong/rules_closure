@@ -84,7 +84,19 @@ def closure_js_test(
             tags = tags,
         )
 
-        if webtest:
+        if not browsers:
+            phantomjs_test(
+                name = shard,
+                runner = str(Label("//closure/testing:phantomjs_jsunit_runner")),
+                deps = [":%s_bin" % shard],
+                debug = debug,
+                html = html,
+                visibility = visibility,
+                tags = tags,
+                **kwargs
+            )
+
+        else:
             html = "gen_html_%s" % shard
             gen_test_html(
                 name = html,
@@ -95,9 +107,6 @@ def closure_js_test(
             port = "8080"
             path = "/"
             html_webpath = "%s%s.html" % (path, html)
-
-            if not browsers:
-                browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"]
 
             web_library(
                 name = "%s_debug" % shard,
@@ -135,17 +144,6 @@ def closure_js_test(
                 browsers = browsers,
                 tags = ["no-sandbox", "native"],
                 visibility = visibility,
-                **kwargs
-            )
-        else :
-            phantomjs_test(
-                name = shard,
-                runner = str(Label("//closure/testing:phantomjs_jsunit_runner")),
-                deps = [":%s_bin" % shard],
-                debug = debug,
-                html = html,
-                visibility = visibility,
-                tags = tags,
                 **kwargs
             )
 
