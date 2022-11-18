@@ -37,7 +37,6 @@ def closure_js_test(
         tags = [],
         debug = False,
         browsers = None,
-        webtest = False,
         **kwargs):
     if not srcs:
         fail("closure_js_test rules can not have an empty 'srcs' list")
