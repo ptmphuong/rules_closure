@@ -23,8 +23,7 @@ load(
 )
 
 def _web_library(ctx):
-
-    (webpaths, manifest, manifests, params_file) = _generate_server_params(ctx)
+    (webpaths, manifest, manifests, params_file) = _web_library_common(ctx)
 
     ctx.actions.write(
         is_executable = True,
@@ -132,7 +131,7 @@ def _get_strip(ctx):
             strip += "/"
     return strip
 
-def _generate_server_params(ctx):
+def _verify_attributes(ctx):
     if not ctx.attr.srcs:
         if ctx.attr.deps:
             fail("deps can not be set when srcs is not")
@@ -149,6 +148,10 @@ def _generate_server_params(ctx):
         fail("path must be set when srcs is set")
     if "*" in ctx.attr.suppress and len(ctx.attr.suppress) != 1:
         fail("when \"*\" is suppressed no other items should be present")
+
+
+def _web_library_common(ctx):
+    _verify_attributes(ctx)
 
     # process what came before
     deps = unfurl(ctx.attr.deps, provider = "webfiles")
@@ -244,3 +247,30 @@ web_library = rule(
         "dummy": "%{name}.ignoreme",
     },
 )
+
+def _get_web_library_config_impl(ctx):
+    (webpaths, manifest, manifests, params_file) = _web_library_common(ctx)
+
+    runfiles = ctx.runfiles(
+    files = [ctx.outputs.config_file, manifest], collect_default = True)
+    return [DefaultInfo(runfiles = runfiles)]
+
+get_web_library_config = rule(
+    implementation = _get_web_library_config_impl,
+    attrs = {
+        "path": attr.string(),
+        "host": attr.string(default = "0.0.0.0"),
+        "port": attr.string(default = "6006"),
+        "srcs": attr.label_list(allow_files = True),
+        "deps": attr.label_list(providers = ["webfiles"]),
+        "exports": attr.label_list(),
+        "data": attr.label_list(allow_files = True),
+        "suppress": attr.string_list(),
+        "strip_prefix": attr.string(),
+        "external_assets": attr.string_dict(default = {"/_/runfiles": "."}),
+    },
+    outputs = {
+        "config_file": "%{name}_server_params.pbtxt",
+    },
+)
+

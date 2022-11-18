@@ -17,8 +17,7 @@
 load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/testing:phantomjs_test.bzl", "phantomjs_test")
-load("//closure:webfiles/web_library.bzl", "web_library")
-load("//closure:webfiles/gen_web_config.bzl", "gen_web_config")
+load("//closure:webfiles/web_library.bzl", "web_library", "get_web_library_config")
 load("@io_bazel_rules_webtesting//web:web.bzl", "web_test_suite")
 
 def closure_js_test(
@@ -117,7 +116,7 @@ def closure_js_test(
             )
 
             web_config = "%s_server_config" % shard
-            gen_web_config(
+            get_web_library_config(
                 name = web_config,
                 srcs = [html, "%s_bin" % shard],
                 port = port,
