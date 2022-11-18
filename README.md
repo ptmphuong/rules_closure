@@ -85,6 +85,12 @@ http_archive(
 load("@io_bazel_rules_closure//closure:repositories.bzl", "rules_closure_dependencies", "rules_closure_toolchains")
 rules_closure_dependencies()
 rules_closure_toolchains()
+
+# Only needed if you want to run your tests on headless Chrome
+load("@io_bazel_rules_closure//closure:defs.bzl", "setup_web_test_repositories")
+setup_web_test_repositories(
+    chromium = True,
+)
 ```
 
 You are not required to install the Closure Tools, PhantomJS, or anything else

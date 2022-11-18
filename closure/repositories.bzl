@@ -79,6 +79,7 @@ def rules_closure_dependencies(
         omit_rules_jvm_external = False,
         omit_rules_proto = False,
         omit_rules_python = False,
+        omit_rules_webtesting = False,
         omit_zlib = False):
     """Imports dependencies for Closure Rules."""
     if not omit_aopalliance:
@@ -189,6 +190,8 @@ def rules_closure_dependencies(
         rules_proto()
     if not omit_rules_python:
         rules_python()
+    if not omit_rules_webtesting:
+        rules_webtesting()
     if not omit_zlib:
         zlib()
 
@@ -1071,6 +1074,33 @@ def rules_python():
             "https://mirror.bazel.build/github.com/bazelbuild/rules_python/archive/4b84ad270387a7c439ebdccfd530e2339601ef27.tar.gz",
             "https://github.com/bazelbuild/rules_python/archive/4b84ad270387a7c439ebdccfd530e2339601ef27.tar.gz",
         ],
+    )
+
+def rules_webtesting():
+    # TODO: Please remove the two following dependencies when rules_webtesting is pinned to an official release (>0.3.5).
+    http_archive(
+        name = "io_bazel_rules_go",
+        sha256 = "099a9fb96a376ccbbb7d291ed4ecbdfd42f6bc822ab77ae6f1b5cb9e914e94fa",
+        urls = [
+            "https://mirror.bazel.build/github.com/bazelbuild/rules_go/releases/download/v0.35.0/rules_go-v0.35.0.zip",
+            "https://github.com/bazelbuild/rules_go/releases/download/v0.35.0/rules_go-v0.35.0.zip",
+        ],
+    )
+
+    http_archive(
+        name = "bazel_gazelle",
+        sha256 = "62ca106be173579c0a167deb23358fdfe71ffa1e4cfdddf5582af26520f1c66f",
+        urls = [
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.23.0/bazel-gazelle-v0.23.0.tar.gz",
+            "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.23.0/bazel-gazelle-v0.23.0.tar.gz",
+        ],
+    )
+
+    http_archive(
+        name = "io_bazel_rules_webtesting",
+        sha256 = "72355642d053b5df75f33d6e950d089c313677cebb97b373ad125ed2e4f32119",
+        strip_prefix = "rules_webtesting-d8c4843cdb44cadae1fb43a1f64e17492697de7f",
+        urls = ["https://github.com/bazelbuild/rules_webtesting/archive/d8c4843cdb44cadae1fb43a1f64e17492697de7f.tar.gz"],
     )
 
 def zlib():

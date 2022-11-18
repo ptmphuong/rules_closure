@@ -22,6 +22,11 @@ licenses(["notice"])  # Apache 2.0
 load("//closure:defs.bzl", "closure_js_binary", "closure_js_library")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
+# TODO: Consider sharing this with phantomjs.
+# html template used by webdriver_test.
+exports_files(["gen_webtest_html.template"])
+
+# html place holder used by phantomjs_test.
 exports_files(["empty.html"])
 
 closure_js_library(

@@ -131,3 +131,8 @@ java_import_external(
     testonly_ = 1,
     deps = ["@com_google_guava"],
 )
+
+load("//closure:defs.bzl", "setup_web_test_repositories")
+setup_web_test_repositories(
+    chromium = True,
+)

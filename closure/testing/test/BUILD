@@ -125,6 +125,49 @@ closure_js_test(
     ],
 )
 
+# Webtest examples
+closure_js_test(
+    name = "simple_webtest_test",
+    timeout = "short",
+    srcs = ["simple_test.js"],
+    deps = [
+        "@com_google_javascript_closure_library//closure/goog/testing:asserts",
+        "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
+    ],
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+    tags = ["local", "manual"],
+)
+
+closure_js_test(
+    name = "arithmetic_module_webtest_test",
+    timeout = "short",
+    srcs = ["arithmetic_module_test.js"],
+    entry_points = ["goog:arithmetic_module_test"],
+    deps = [
+        ":arithmetic_module_lib",
+        "@com_google_javascript_closure_library//closure/goog/testing:asserts",
+        "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
+        "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
+    ],
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+    tags = ["local", "manual"],
+)
+
+closure_js_test(
+    name = "dom_webtest_test",
+    timeout = "short",
+    srcs = ["dom_test.js"],
+    deps = [
+        "@com_google_javascript_closure_library//closure/goog/dom",
+        "@com_google_javascript_closure_library//closure/goog/dom:tagname",
+        "@com_google_javascript_closure_library//closure/goog/html:safehtml",
+        "@com_google_javascript_closure_library//closure/goog/testing:asserts",
+        "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
+    ],
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+    tags = ["local", "manual"],
+)
+
 # This test shows how to write tests to verify rendered output from phantomjs.
 # However, you shouln't do this because the output image depends on a lot of
 # external factors like operating system, GPU, ..., and therefore has a
@@ -159,3 +202,4 @@ closure_js_test(
 #     name = "darwin",
 #     values = {"cpu": "darwin"},
 # )
+

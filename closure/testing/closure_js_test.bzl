@@ -17,6 +17,7 @@
 load("//closure/compiler:closure_js_binary.bzl", "closure_js_binary")
 load("//closure/compiler:closure_js_library.bzl", "closure_js_library")
 load("//closure/testing:phantomjs_test.bzl", "phantomjs_test")
+load("//closure/testing:webdriver_test.bzl", "webdriver_test")
 
 def closure_js_test(
         name,
@@ -34,6 +35,7 @@ def closure_js_test(
         visibility = None,
         tags = [],
         debug = False,
+        browsers = None,
         **kwargs):
     if not srcs:
         fail("closure_js_test rules can not have an empty 'srcs' list")
@@ -78,16 +80,26 @@ def closure_js_test(
             tags = tags,
         )
 
-        phantomjs_test(
-            name = shard,
-            runner = str(Label("//closure/testing:phantomjs_jsunit_runner")),
-            deps = [":%s_bin" % shard],
-            debug = debug,
-            html = html,
-            visibility = visibility,
-            tags = tags,
-            **kwargs
-        )
+        if not browsers:
+            phantomjs_test(
+                name = shard,
+                runner = Label("//closure/testing:phantomjs_jsunit_runner"),
+                deps = [":%s_bin" % shard],
+                debug = debug,
+                html = html,
+                visibility = visibility,
+                tags = tags,
+                **kwargs
+            )
+
+        else:
+            webdriver_test(
+                name = shard,
+                test_file_js = "%s_bin.js" % shard,
+                browsers = browsers,
+                visibility = visibility,
+                tags = tags,
+            )
 
     if len(srcs) > 1:
         native.test_suite(
@@ -98,3 +110,4 @@ def closure_js_test(
 
 def _make_suffix(path):
     return "_" + path.replace("_test.js", "").replace("-", "_").replace("/", "_")
+
