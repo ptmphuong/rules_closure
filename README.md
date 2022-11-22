@@ -85,10 +85,16 @@ http_archive(
 load("@io_bazel_rules_closure//closure:repositories.bzl", "rules_closure_dependencies", "rules_closure_toolchains")
 rules_closure_dependencies()
 rules_closure_toolchains()
+
+load("@io_bazel_rules_closure//closure:defs.bzl", "web_test_repositories")
+web_test_repositories()
 ```
 
 You are not required to install the Closure Tools, PhantomJS, or anything else
 for that matter; they will be fetched automatically by Bazel.
+
+`web_test_repositories()` is needed if you want to test with headless Chrome using
+[rules_webtesting](https://github.com/bazelbuild/rules_webtesting).
 
 ### Overriding Dependency Versions
 
