@@ -30,6 +30,8 @@ load("//closure:filegroup_external.bzl", _filegroup_external = "filegroup_extern
 load("//closure:webfiles/web_library.bzl", _web_library = "web_library")
 load("//closure:webfiles/web_library_external.bzl", _web_library_external = "web_library_external")
 
+load("//closure/testing:web_test_repositories.bzl", _setup_web_test_repositories = "setup_web_test_repositories")
+
 closure_js_aspect = _closure_js_aspect
 closure_js_binary = _closure_js_binary
 closure_js_library = _closure_js_library
@@ -48,3 +50,4 @@ phantomjs_test = _phantomjs_test
 filegroup_external = _filegroup_external
 web_library = _web_library
 web_library_external = _web_library_external
+setup_web_test_repositories = _setup_web_test_repositories

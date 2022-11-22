@@ -62,7 +62,7 @@ bzl_library(
 )
 
 # html template used by webtest runner.
-exports_files(["LICENSE", "gen_webtest_html.template"])
+exports_files(["gen_webtest_html.template"])
 
 java_library(
     name = "testrunner_lib",
