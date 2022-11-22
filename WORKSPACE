@@ -7,9 +7,6 @@ load("@io_bazel_rules_closure//closure:repositories.bzl", "rules_closure_depende
 rules_closure_dependencies()
 rules_closure_toolchains()
 
-load("//closure:defs.bzl", "setup_web_test_repositories")
-setup_web_test_repositories()
-
 http_archive(
     name = "bazel_skylib",
     sha256 = "7ac0fa88c0c4ad6f5b9ffb5e09ef81e235492c873659e6bb99efb89d11246bcb",
@@ -134,3 +131,6 @@ java_import_external(
     testonly_ = 1,
     deps = ["@com_google_guava"],
 )
+
+load("//closure:defs.bzl", "setup_web_test_repositories")
+setup_web_test_repositories()
