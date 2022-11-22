@@ -29,7 +29,6 @@ load("//closure/testing:phantomjs_test.bzl", _phantomjs_test = "phantomjs_test")
 load("//closure:filegroup_external.bzl", _filegroup_external = "filegroup_external")
 load("//closure:webfiles/web_library.bzl", _web_library = "web_library")
 load("//closure:webfiles/web_library_external.bzl", _web_library_external = "web_library_external")
-
 load("//closure/testing:web_test_repositories.bzl", _setup_web_test_repositories = "setup_web_test_repositories")
 
 closure_js_aspect = _closure_js_aspect
