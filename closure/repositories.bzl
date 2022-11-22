@@ -79,6 +79,7 @@ def rules_closure_dependencies(
         omit_rules_jvm_external = False,
         omit_rules_proto = False,
         omit_rules_python = False,
+        omit_rules_webtesting = False,
         omit_zlib = False):
     """Imports dependencies for Closure Rules."""
     if not omit_aopalliance:
@@ -189,6 +190,8 @@ def rules_closure_dependencies(
         rules_proto()
     if not omit_rules_python:
         rules_python()
+    if not omit_rules_webtesting:
+        rules_webtesting()
     if not omit_zlib:
         zlib()
 
@@ -1071,6 +1074,13 @@ def rules_python():
             "https://mirror.bazel.build/github.com/bazelbuild/rules_python/archive/4b84ad270387a7c439ebdccfd530e2339601ef27.tar.gz",
             "https://github.com/bazelbuild/rules_python/archive/4b84ad270387a7c439ebdccfd530e2339601ef27.tar.gz",
         ],
+    )
+
+def rules_webtesting():
+    http_archive(
+        name = "io_bazel_rules_webtesting",
+        sha256 = "e9abb7658b6a129740c0b3ef6f5a2370864e102a5ba5ffca2cea565829ed825a",
+        urls = ["https://github.com/bazelbuild/rules_webtesting/releases/download/0.3.5/rules_webtesting.tar.gz"],
     )
 
 def zlib():
