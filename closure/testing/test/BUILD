@@ -32,7 +32,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+    # browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_library(
@@ -51,7 +51,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+    # browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_test(
@@ -64,7 +64,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+    # browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_library(
@@ -83,7 +83,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+    # browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 # Note that this is also validating Closure Library integration.
@@ -98,7 +98,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+    # browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_library(
@@ -117,7 +117,7 @@ closure_js_test(
         "@com_google_javascript_closure_library//closure/goog/testing:asserts",
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+    # browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
 closure_js_test(
@@ -129,9 +129,24 @@ closure_js_test(
     deps = [
         "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
     ],
-    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+    # browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
 )
 
+closure_js_test(
+    name = "multiple_dict_entry_point_test",
+    srcs = ["dict_entry_point_test.js", "arithmetic_module_test.js"],
+    entry_points = {
+        "dict_entry_point_test.js": ["rules_closure.DictEntryPointTest"],
+        "arithmetic_module_test.js": ["arithmetic_module_test"],
+    },
+    deps = [
+        ":arithmetic_module_lib",
+        "@com_google_javascript_closure_library//closure/goog/testing:jsunit",
+        "@com_google_javascript_closure_library//closure/goog/testing:asserts",
+        "@com_google_javascript_closure_library//closure/goog/testing:testsuite",
+    ],
+    browsers = ["@io_bazel_rules_webtesting//browsers:chromium-local"],
+)
 # This test shows how to write tests to verify rendered output from phantomjs.
 # However, you shouln't do this because the output image depends on a lot of
 # external factors like operating system, GPU, ..., and therefore has a
