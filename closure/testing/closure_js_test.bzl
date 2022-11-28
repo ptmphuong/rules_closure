@@ -124,21 +124,21 @@ def closure_js_test(
             )
 
             native.java_binary(
-                name = "%s_testrunner" % shard,
+                name = "%s_test_runner" % shard,
                 data = [":%s_bin" % shard, html, web_config],
                 main_class = "rules_closure.closure.testing.WebtestRunner",
                 jvm_flags = [
                     "-Dserver_config_path=$(location :%s)" % web_config,
                     "-Dhtml_webpath=%s" % html_webpath,
                 ],
-                runtime_deps = [str(Label("//closure/testing:testrunner_lib"))],
+                runtime_deps = [str(Label("//closure/testing:test_runner_lib"))],
                 testonly = 1,
             )
 
             web_test_suite(
                 name = shard,
                 data = [":%s_bin" % shard, html, web_config],
-                test = ":%s_testrunner" % shard,
+                test = ":%s_test_runner" % shard,
                 browsers = browsers,
                 tags = ["no-sandbox", "native"],
                 visibility = visibility,
