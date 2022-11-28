@@ -73,7 +73,7 @@ def closure_js_test(
             deps = [":%s_lib" % shard],
             compilation_level = compilation_level,
             css = css,
-            debug = True,
+            debug = debug,
             defs = defs,
             entry_points = ep,
             formatting = "PRETTY_PRINT",
@@ -104,6 +104,7 @@ def closure_js_test(
             path = "/"
             html_webpath = "%s%s.html" % (path, html)
 
+            # set up a development web server that links to the test for debugging purposes.
             web_library(
                 name = "%s_debug" % shard,
                 srcs = [html, "%s_bin" % shard],
