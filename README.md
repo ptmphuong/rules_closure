@@ -93,7 +93,7 @@ web_test_repositories()
 You are not required to install the Closure Tools, PhantomJS, or anything else
 for that matter; they will be fetched automatically by Bazel.
 
-`web_test_repositories()` is needed if you want to test with headless Chrome using
+`web_test_repositories()` is needed if you want to run your tests on headless Chrome using
 [rules_webtesting](https://github.com/bazelbuild/rules_webtesting).
 
 ### Overriding Dependency Versions
