@@ -53,8 +53,8 @@ class WebtestRunner {
     HostAndPort hostAndPort = server.spawn();
     String address = hostAndPort.toString();
 
-    String runURL = "http://" + address + htmlWebpath;
-    WebtestDriver driver = new WebtestDriver(runURL);
+    String htmlURL = "http://" + address + htmlWebpath;
+    WebtestDriver driver = new WebtestDriver(htmlURL);
     driver.run();
 
     // TODO: Find out how to shutdown the server

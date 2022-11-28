@@ -101,16 +101,12 @@ def closure_js_test(
                 test_file_js = "%s_bin.js" % shard,
             )
 
-            host = "localhost"
-            port = "8080"
             path = "/"
             html_webpath = "%s%s.html" % (path, html)
 
             web_library(
                 name = "%s_debug" % shard,
                 srcs = [html, "%s_bin" % shard],
-                port = port,
-                host = host,
                 path = path,
             )
 
@@ -118,27 +114,25 @@ def closure_js_test(
             get_web_library_config(
                 name = web_config,
                 srcs = [html, "%s_bin" % shard],
-                port = port,
-                host = host,
                 path = path,
             )
 
             native.java_binary(
-                name = "%s_testrunner" % shard,
+                name = "%s_webtest_runner" % shard,
                 data = [":%s_bin" % shard, html, web_config],
                 main_class = "rules_closure.closure.testing.WebtestRunner",
                 jvm_flags = [
                     "-Dserver_config_path=$(location :%s)" % web_config,
                     "-Dhtml_webpath=%s" % html_webpath,
                 ],
-                runtime_deps = [str(Label("//closure/testing:testrunner_lib"))],
+                runtime_deps = [Label("//closure/testing:testrunner_lib")],
                 testonly = 1,
             )
 
             web_test_suite(
                 name = shard,
                 data = [":%s_bin" % shard, html, web_config],
-                test = ":%s_testrunner" % shard,
+                test = ":%s_webtest_runner" % shard,
                 browsers = browsers,
                 tags = ["no-sandbox", "native"],
                 visibility = visibility,

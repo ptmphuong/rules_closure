@@ -32,17 +32,17 @@ public class WebtestDriver {
   private static final Logger logger = Logger.getLogger(WebtestDriver.class.getName());
 
   private WebDriver driver;
-  private String runURL;
+  private String htmlURL;
 
-  public WebtestDriver(String runURL) {
+  public WebtestDriver(String htmlURL) {
     this.driver = new WebTest().newWebDriverSession();
-    this.runURL = runURL;
+    this.htmlURL = htmlURL;
   }
 
   public void run() {
     driver.manage().timeouts().setScriptTimeout(60, SECONDS);
-    logger.info("RunURL is: " + this.runURL);
-    driver.get(this.runURL);
+    logger.info("Webdriver running on: " + this.htmlURL);
+    driver.get(this.htmlURL);
 
     new FluentWait<>((JavascriptExecutor) driver)
         .pollingEvery(Duration.ofMillis(100))
