@@ -64,7 +64,7 @@ public class WebtestDriver {
     driver.quit();
 
     if (!allTestsPassed) {
-      logger.log(Level.SEVERE, "Test failed");
+      logger.log(Level.SEVERE, "Test(s) failed");
     }
   }
 }

@@ -85,7 +85,7 @@ def closure_js_test(
         if not browsers:
             phantomjs_test(
                 name = shard,
-                runner = str(Label("//closure/testing:phantomjs_jsunit_runner")),
+                runner = Label("//closure/testing:phantomjs_jsunit_runner"),
                 deps = [":%s_bin" % shard],
                 debug = debug,
                 html = html,
