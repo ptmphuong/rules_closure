@@ -65,7 +65,7 @@ bzl_library(
 exports_files(["gen_webtest_html.template"])
 
 java_library(
-    name = "testrunner_lib",
+    name = "test_runner_lib",
     testonly = 1,
     srcs = [
         "WebtestDriver.java",
