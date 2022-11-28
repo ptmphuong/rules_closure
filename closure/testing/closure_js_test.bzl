@@ -125,7 +125,7 @@ def closure_js_test(
                     "-Dserver_config_path=$(location :%s)" % web_config,
                     "-Dhtml_webpath=%s" % html_webpath,
                 ],
-                runtime_deps = [Label("//closure/testing:testrunner_lib")],
+                runtime_deps = [Label("//closure/testing:test_runner_lib")],
                 testonly = 1,
             )
 
