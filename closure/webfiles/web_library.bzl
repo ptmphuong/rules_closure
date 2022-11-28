@@ -249,7 +249,7 @@ web_library = rule(
 )
 
 def _get_web_library_config_impl(ctx):
-    (webpaths, manifest, manifests, params_file) = _web_library_common(ctx)
+    (_webpaths, manifest, _manifests, _params_file) = _web_library_common(ctx)
 
     runfiles = ctx.runfiles(
     files = [ctx.outputs.config_file, manifest], collect_default = True)
