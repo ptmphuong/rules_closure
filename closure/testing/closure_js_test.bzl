@@ -73,7 +73,7 @@ def closure_js_test(
             deps = [":%s_lib" % shard],
             compilation_level = compilation_level,
             css = css,
-            debug = debug,
+            debug = True,
             defs = defs,
             entry_points = ep,
             formatting = "PRETTY_PRINT",
