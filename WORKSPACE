@@ -132,5 +132,5 @@ java_import_external(
     deps = ["@com_google_guava"],
 )
 
-load("//closure:defs.bzl", "web_test_repositories")
-web_test_repositories()
+load("//closure:defs.bzl", "setup_web_test_repositories")
+setup_web_test_repositories()

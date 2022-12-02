@@ -16,20 +16,21 @@
 
 package rules_closure.closure.testing;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
+
 import com.google.testing.web.WebTest;
-import java.io.IOException;
 import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openqa.selenium.net.PortProber;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.support.ui.FluentWait;
 import org.openqa.selenium.WebDriver;
-import static java.util.concurrent.TimeUnit.SECONDS;
+import org.openqa.selenium.support.ui.FluentWait;
 
 public class WebtestDriver {
 
   private static final Logger logger = Logger.getLogger(WebtestDriver.class.getName());
+  private static final long POLL_INTERVAL = 100;
+  private static final long TEST_TIMEOUT = 60;
 
   private WebDriver driver;
   private String htmlURL;
@@ -40,31 +41,41 @@ public class WebtestDriver {
   }
 
   public void run() {
-    driver.manage().timeouts().setScriptTimeout(60, SECONDS);
-    logger.info("Webdriver running on: " + this.htmlURL);
+    driver.manage().timeouts().setScriptTimeout(TEST_TIMEOUT, SECONDS);
+    logger.info("WebDriver is running on: " + this.htmlURL);
     driver.get(this.htmlURL);
 
     new FluentWait<>((JavascriptExecutor) driver)
-        .pollingEvery(Duration.ofMillis(100))
-        .withTimeout(Duration.ofSeconds(5))
-        .until(executor -> {
-          boolean finishedSuccessfully = (boolean) executor.executeScript("return window.top.G_testRunner.isFinished()");
-          if (!finishedSuccessfully) {
-            logger.log(Level.SEVERE, "G_testRunner has not finished successfully");
-          }
-          return true;
-        }
-    );
+        .pollingEvery(Duration.ofMillis(POLL_INTERVAL))
+        .withTimeout(Duration.ofSeconds(TEST_TIMEOUT))
+        .until(
+            executor -> {
+              boolean finishedSuccessfully =
+                  (boolean) executor.executeScript("return window.top.G_testRunner.isFinished()");
+              if (!finishedSuccessfully) {
+                logger.log(Level.SEVERE, "G_testRunner has not finished successfully");
+              }
+              return true;
+            });
 
-    String testReport = ((JavascriptExecutor) driver).executeScript("return window.top.G_testRunner.getReport();").toString();
+    String testReport =
+        ((JavascriptExecutor) driver)
+            .executeScript("return window.top.G_testRunner.getReport();")
+            .toString();
     logger.info(testReport);
 
-    boolean allTestsPassed = (boolean) ((JavascriptExecutor) driver).executeScript("return window.top.G_testRunner.isSuccess();");
+    boolean allTestsPassed =
+        (boolean)
+            ((JavascriptExecutor) driver)
+                .executeScript("return window.top.G_testRunner.isSuccess();");
 
     driver.quit();
 
     if (!allTestsPassed) {
       logger.log(Level.SEVERE, "Test(s) failed");
+    } else {
+      logger.info("All tests passed");
     }
   }
 }
+
