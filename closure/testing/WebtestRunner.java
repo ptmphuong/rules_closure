@@ -21,19 +21,18 @@ import com.google.common.net.HostAndPort;
 import io.bazel.rules.closure.webfiles.server.DaggerWebfilesServer_Server;
 import io.bazel.rules.closure.webfiles.server.WebfilesServer;
 import java.nio.file.FileSystems;
-import java.io.IOException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.net.ServerSocketFactory;
-import rules_closure.closure.testing.WebtestDriver;
 
+/**
+ * The test runner to run test against browsers.
+ *
+ * <p>This program starts an HTTP server that serves runfiles. It uses a webdriver to load the
+ * generated test runner HTML file on the browser. Once the page is loaded, it polls the Closure
+ * Library repeatedly to check if the tests are finished, and logs results.
+ */
 class WebtestRunner {
-  /*
-   *  This program starts an HTTP server that serves runfiles.
-   *  It uses a webdriver to load the generated test runner HTML file
-   *  on the browser. Once the page is loaded, it polls the Closure
-   *  Library repeatedly to check if the tests are finished, and logs results.
-   */
 
   public static void main(String args[]) throws InterruptedException {
 
@@ -62,3 +61,4 @@ class WebtestRunner {
     System.exit(0);
   }
 }
+
