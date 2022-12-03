@@ -36,8 +36,11 @@ class WebtestRunner {
 
   public static void main(String args[]) throws InterruptedException {
 
-    String serverConfig = System.getProperty("server_config_path");
-    String htmlWebpath = System.getProperty("html_webpath");
+    String serverConfig = args[0];
+    String htmlWebpath = args[1];
+    if (!htmlWebpath.startsWith("/")) {
+      htmlWebpath = "/" + htmlWebpath;
+    }
 
     ExecutorService serverExecutor = Executors.newCachedThreadPool();
     WebfilesServer server =

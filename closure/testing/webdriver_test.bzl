@@ -14,7 +14,7 @@
 
 """Build rule for running a webtest."""
 
-load("//closure:webfiles/web_library.bzl", "web_library", "get_web_library_config")
+load("//closure:webfiles/web_library.bzl", "web_library")
 load("@io_bazel_rules_webtesting//web:web.bzl", "web_test_suite")
 
 def webdriver_test(
@@ -40,32 +40,25 @@ def webdriver_test(
     web_library(
         name = "%s_debug" % name,
         srcs = [html, test_file_js],
+        host = host,
+        port = port,
         path = path,
     )
 
-    web_config = "%s_server_config" % name
-    get_web_library_config(
-        name = web_config,
+    web_library(
+        name = "%s_test_runner" % name,
         srcs = [html, test_file_js],
+        host = host,
+        port = port,
         path = path,
-    )
-
-    native.java_binary(
-        name = "%s_webtest_runner" % name,
-        data = [test_file_js, html, web_config],
-        main_class = "rules_closure.closure.testing.WebtestRunner",
-        jvm_flags = [
-            "-Dserver_config_path=$(location :%s)" % web_config,
-            "-Dhtml_webpath=%s" % html_webpath,
-        ],
-        runtime_deps = [Label("//closure/testing:test_runner_lib")],
-        testonly = 1,
+        webfilesServer = Label("//closure/testing:webdriver_test_bin"),
     )
 
     web_test_suite(
         name = name,
-        data = [test_file_js, html, web_config],
-        test = ":%s_webtest_runner" % name,
+        data = [test_file_js, html],
+        test = ":%s_test_runner" % name,
+        args = [html_webpath],
         browsers = browsers,
         tags = ["no-sandbox", "native"],
         visibility = visibility,
