@@ -222,14 +222,14 @@ web_library = rule(
         "_ClosureWorker": attr.label(
             default = Label("//java/io/bazel/rules/closure:ClosureWorker"),
             executable = True,
-            cfg = "host",
+            cfg = "exec",
         ),
         "webfilesServer": attr.label(
             default = Label(
                 "//java/io/bazel/rules/closure/webfiles/server:WebfilesServer",
             ),
             executable = True,
-            cfg = "host",
+            cfg = "exec",
         ),
     },
     outputs = {
