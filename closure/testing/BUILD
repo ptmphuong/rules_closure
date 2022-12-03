@@ -61,17 +61,16 @@ bzl_library(
     ],
 )
 
-# html template used by webtest runner.
+# html template used by WebDriver.
 exports_files(["gen_webtest_html.template"])
 
-java_library(
-    name = "test_runner_lib",
-    testonly = 1,
+java_binary(
+    name = "webdriver_test_bin",
     srcs = [
         "WebtestDriver.java",
         "WebtestRunner.java",
     ],
-    visibility = ["//visibility:public"],
+    main_class = "rules_closure.closure.testing.WebtestRunner",
     deps = [
         "@org_seleniumhq_selenium_selenium_api",
         "@org_seleniumhq_selenium_selenium_support",
@@ -80,4 +79,5 @@ java_library(
         "//java/io/bazel/rules/closure/webfiles/server",
         "@com_google_guava",
     ],
+    testonly = 1,
 )
