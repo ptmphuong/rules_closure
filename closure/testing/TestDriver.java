@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.TimeoutException;
 
 public class TestDriver {
 
@@ -45,18 +46,22 @@ public class TestDriver {
     logger.info("WebDriver is running on: " + this.htmlURL);
     driver.get(this.htmlURL);
 
-    new FluentWait<>((JavascriptExecutor) driver)
-        .pollingEvery(Duration.ofMillis(POLL_INTERVAL))
-        .withTimeout(Duration.ofSeconds(TEST_TIMEOUT))
-        .until(
-            executor -> {
-              boolean finishedSuccessfully =
-                  (boolean) executor.executeScript("return window.top.G_testRunner.isFinished()");
-              if (!finishedSuccessfully) {
-                logger.log(Level.SEVERE, "G_testRunner has not finished successfully");
-              }
-              return true;
-            });
+    try {
+      new FluentWait<>((JavascriptExecutor) driver)
+          .pollingEvery(Duration.ofMillis(POLL_INTERVAL))
+          .withTimeout(Duration.ofSeconds(TEST_TIMEOUT))
+          .until(
+              executor -> {
+                boolean finishedSuccessfully =
+                    (boolean) executor.executeScript("return window.top.G_testRunner.isFinished()");
+                if (!finishedSuccessfully) {
+                  failTest("G_testRunner has not finished successfully");
+                }
+                return true;
+              });
+    } catch (TimeoutException e) {
+      failTest(String.format("Test timeout after %s seconds", TEST_TIMEOUT));
+    }
 
     String testReport =
         ((JavascriptExecutor) driver)
@@ -72,10 +77,15 @@ public class TestDriver {
     driver.quit();
 
     if (!allTestsPassed) {
-      logger.log(Level.SEVERE, "Test(s) failed");
+      failTest("Test(s) failed");
     } else {
       logger.info("All tests passed");
     }
+  }
+
+  private static void failTest(String error) {
+    logger.log(Level.SEVERE, error);
+    System.exit(1);
   }
 }
 
