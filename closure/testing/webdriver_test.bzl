@@ -51,7 +51,7 @@ def webdriver_test(
         host = host,
         port = port,
         path = path,
-        webfilesServer = Label("//closure/testing:webdriver_test_bin"),
+        webfilesServer = Label("//java/io/bazel/rules/closure/testing:webdriver_test_bin"),
     )
 
     web_test_suite(
