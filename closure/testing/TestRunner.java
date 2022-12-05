@@ -32,7 +32,7 @@ import javax.net.ServerSocketFactory;
  * generated test runner HTML file on the browser. Once the page is loaded, it polls the Closure
  * Library repeatedly to check if the tests are finished, and logs results.
  */
-class WebtestRunner {
+class TestRunner {
 
   public static void main(String args[]) throws InterruptedException {
 
@@ -56,7 +56,7 @@ class WebtestRunner {
     String address = hostAndPort.toString();
 
     String htmlURL = "http://" + address + htmlWebpath;
-    WebtestDriver driver = new WebtestDriver(htmlURL);
+    TestDriver driver = new TestDriver(htmlURL);
     driver.run();
 
     // TODO(phpham): Find out how to shutdown the server
