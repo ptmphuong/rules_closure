@@ -26,16 +26,16 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
 
-public class WebtestDriver {
+public class TestDriver {
 
-  private static final Logger logger = Logger.getLogger(WebtestDriver.class.getName());
+  private static final Logger logger = Logger.getLogger(TestDriver.class.getName());
   private static final long POLL_INTERVAL = 100;
-  private static final long TEST_TIMEOUT = 60;
+  private static final long TEST_TIMEOUT = 300;
 
   private WebDriver driver;
   private String htmlURL;
 
-  public WebtestDriver(String htmlURL) {
+  public TestDriver(String htmlURL) {
     this.driver = new WebTest().newWebDriverSession();
     this.htmlURL = htmlURL;
   }
