@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package rules_closure.closure.testing;
+package io.bazel.rules.closure.testing;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HostAndPort;
