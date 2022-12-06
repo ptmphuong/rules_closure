@@ -1077,7 +1077,6 @@ def rules_python():
     )
 
 def rules_webtesting():
-
     http_archive(
         name = "io_bazel_rules_go",
         sha256 = "099a9fb96a376ccbbb7d291ed4ecbdfd42f6bc822ab77ae6f1b5cb9e914e94fa",
@@ -1096,9 +1095,12 @@ def rules_webtesting():
         ],
     )
 
+    # TODO: This downloads the rules_webtesting repository by pinning to a commit.
+    # Update to download when rules_webtesting has a newer release (>=0.3.6).
+    # The 2 targets above: 'io_bazel_rules_go' and 'bazel_gazelle' will be included in the release,
+    # please delete the downloading of the targets and their use in //closure/testing/web_test_repositories.bzl.
     http_archive(
         name = "io_bazel_rules_webtesting",
-        sha256 = "72355642d053b5df75f33d6e950d089c313677cebb97b373ad125ed2e4f32119",
         strip_prefix = "rules_webtesting-d8c4843cdb44cadae1fb43a1f64e17492697de7f",
         urls = ["https://github.com/bazelbuild/rules_webtesting/archive/d8c4843cdb44cadae1fb43a1f64e17492697de7f.tar.gz"],
     )
