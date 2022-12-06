@@ -19,9 +19,6 @@ package(
 
 licenses(["notice"])  # Apache 2.0
 
-load("//closure:defs.bzl", "closure_js_binary", "closure_js_library")
-load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-
 java_binary(
     name = "webdriver_test_bin",
     srcs = [
