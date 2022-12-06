@@ -1101,6 +1101,7 @@ def rules_webtesting():
     # please delete the downloading of the targets and their use in //closure/testing/web_test_repositories.bzl.
     http_archive(
         name = "io_bazel_rules_webtesting",
+        sha256 = "72355642d053b5df75f33d6e950d089c313677cebb97b373ad125ed2e4f32119",
         strip_prefix = "rules_webtesting-d8c4843cdb44cadae1fb43a1f64e17492697de7f",
         urls = ["https://github.com/bazelbuild/rules_webtesting/archive/d8c4843cdb44cadae1fb43a1f64e17492697de7f.tar.gz"],
     )
