@@ -23,9 +23,9 @@ import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
+import org.openqa.selenium.TimeoutException;
 
 public class TestDriver {
 
@@ -77,7 +77,7 @@ public class TestDriver {
     driver.quit();
 
     if (!allTestsPassed) {
-      failTest("Test(s) failed.\nTIP: Debug your tests interactively on a browser using 'bazel run :<tagetname>_debug'");
+      failTest("Test(s) failed");
     } else {
       logger.info("All tests passed");
     }
