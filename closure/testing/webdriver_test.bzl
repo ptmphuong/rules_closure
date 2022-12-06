@@ -22,8 +22,6 @@ def webdriver_test(
     browsers,
     test_file_js,
     tags = [],
-    host = None,
-    port = None,
     visibility = None,
     **kwargs):
 
@@ -40,18 +38,14 @@ def webdriver_test(
     web_library(
         name = "%s_debug" % name,
         srcs = [html, test_file_js],
-        host = host,
-        port = port,
         path = path,
     )
 
     web_library(
         name = "%s_test_runner" % name,
         srcs = [html, test_file_js],
-        host = host,
-        port = port,
         path = path,
-        webfilesServer = Label("//java/io/bazel/rules/closure/testing:webdriver_test_bin"),
+        server = Label("//java/io/bazel/rules/closure/testing:webdriver_test_bin"),
     )
 
     web_test_suite(

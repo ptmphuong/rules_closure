@@ -142,13 +142,13 @@ def _web_library(ctx):
         is_executable = True,
         output = ctx.outputs.executable,
         content = "#!/bin/sh\nexec %s %s \"$@\"" % (
-            ctx.executable.webfilesServer.short_path,
+            ctx.executable.server.short_path,
             long_path(ctx, params_file),
         ),
     )
 
     transitive_runfiles = depset(
-        transitive = [ctx.attr.webfilesServer.data_runfiles.files] +
+        transitive = [ctx.attr.server.data_runfiles.files] +
                      [dep.data_runfiles.files for dep in deps],
     )
 
@@ -224,7 +224,7 @@ web_library = rule(
             executable = True,
             cfg = "exec",
         ),
-        "webfilesServer": attr.label(
+        "server": attr.label(
             default = Label(
                 "//java/io/bazel/rules/closure/webfiles/server:WebfilesServer",
             ),
