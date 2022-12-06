@@ -207,7 +207,7 @@ public final class WebfilesServer implements Runnable {
 
   @ServerScope
   @Component
-  public interface Server
+  interface Server
       extends HttpServerComponent<
           Transmitter<Processor>, Connection, Connection.Builder, Request, Request.Builder> {
     WebfilesServer server();

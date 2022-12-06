@@ -18,7 +18,6 @@ package io.bazel.rules.closure.testing;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HostAndPort;
-import io.bazel.rules.closure.webfiles.server.DaggerWebfilesServer_Server;
 import io.bazel.rules.closure.webfiles.server.WebfilesServer;
 import java.nio.file.FileSystems;
 import java.util.concurrent.ExecutorService;
