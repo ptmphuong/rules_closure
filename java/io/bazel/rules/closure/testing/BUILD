@@ -21,10 +21,7 @@ licenses(["notice"])  # Apache 2.0
 
 java_binary(
     name = "webdriver_test_bin",
-    srcs = [
-        "TestDriver.java",
-        "TestRunner.java",
-    ],
+    srcs = glob(["*.java"]),
     main_class = "io.bazel.rules.closure.testing.TestRunner",
     deps = [
         "@org_seleniumhq_selenium_selenium_api",
