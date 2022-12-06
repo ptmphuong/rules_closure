@@ -77,7 +77,7 @@ public class TestDriver {
     driver.quit();
 
     if (!allTestsPassed) {
-      failTest("Test(s) failed");
+      failTest("Test(s) failed.\nTIPS: Debug your tests interactively on a browser using 'bazel run :<targetname>_debug'");
     } else {
       logger.info("All tests passed");
     }
