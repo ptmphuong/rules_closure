@@ -34,7 +34,6 @@ import javax.net.ServerSocketFactory;
  */
 class TestRunner {
 
-  // public static void main(String args[]) throws InterruptedException {
   public static void main(String args[]) throws Exception {
 
     String serverConfig = args[0];
