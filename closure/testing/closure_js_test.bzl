@@ -35,6 +35,8 @@ def closure_js_test(
         visibility = None,
         tags = [],
         debug = False,
+        port = None,
+        host = None,
         browsers = None,
         **kwargs):
     if not srcs:
@@ -97,6 +99,8 @@ def closure_js_test(
             webdriver_test(
                 name = shard,
                 test_file_js = "%s_bin.js" % shard,
+                port = port,
+                host = host,
                 browsers = browsers,
                 visibility = visibility,
                 tags = tags,

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package rules_closure.closure.testing;
+package io.bazel.rules.closure.testing;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HostAndPort;
@@ -32,9 +32,9 @@ import javax.net.ServerSocketFactory;
  * generated test runner HTML file on the browser. Once the page is loaded, it polls the Closure
  * Library repeatedly to check if the tests are finished, and logs results.
  */
-class WebtestRunner {
+class TestRunner {
 
-  public static void main(String args[]) throws InterruptedException {
+  public static void main(String args[]) throws Exception {
 
     String serverConfig = args[0];
     String htmlWebpath = args[1];
@@ -42,25 +42,16 @@ class WebtestRunner {
       htmlWebpath = "/" + htmlWebpath;
     }
 
-    ExecutorService serverExecutor = Executors.newCachedThreadPool();
-    WebfilesServer server =
-        DaggerWebfilesServer_Server.builder()
-            .args(ImmutableList.of(serverConfig))
-            .executor(serverExecutor)
-            .fs(FileSystems.getDefault())
-            .serverSocketFactory(ServerSocketFactory.getDefault())
-            .build()
-            .server();
-
+    WebfilesServer server = WebfilesServer.create(ImmutableList.of(serverConfig));
     HostAndPort hostAndPort = server.spawn();
     String address = hostAndPort.toString();
 
     String htmlURL = "http://" + address + htmlWebpath;
-    WebtestDriver driver = new WebtestDriver(htmlURL);
+    TestDriver driver = new TestDriver(htmlURL);
     driver.run();
 
     // TODO(phpham): Find out how to shutdown the server
-    serverExecutor.shutdownNow();
+    server.shutdown();
     System.exit(0);
   }
 }
