@@ -19,5 +19,5 @@ goog.require('goog.testing.jsunit');
 
 
 function testAddition_realityHasntFallenApart() {
-  assertEquals(2, 1 + 1);
+  assertEquals(5, 1 + 1);
 }
