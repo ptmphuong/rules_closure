@@ -34,7 +34,8 @@ import javax.net.ServerSocketFactory;
  */
 class TestRunner {
 
-  public static void main(String args[]) throws InterruptedException {
+  // public static void main(String args[]) throws InterruptedException {
+  public static void main(String args[]) throws Exception {
 
     String serverConfig = args[0];
     String htmlWebpath = args[1];
@@ -42,16 +43,7 @@ class TestRunner {
       htmlWebpath = "/" + htmlWebpath;
     }
 
-    ExecutorService serverExecutor = Executors.newCachedThreadPool();
-    WebfilesServer server =
-        DaggerWebfilesServer_Server.builder()
-            .args(ImmutableList.of(serverConfig))
-            .executor(serverExecutor)
-            .fs(FileSystems.getDefault())
-            .serverSocketFactory(ServerSocketFactory.getDefault())
-            .build()
-            .server();
-
+    WebfilesServer server = WebfilesServer.create(ImmutableList.of(serverConfig));
     HostAndPort hostAndPort = server.spawn();
     String address = hostAndPort.toString();
 
@@ -60,7 +52,7 @@ class TestRunner {
     driver.run();
 
     // TODO(phpham): Find out how to shutdown the server
-    serverExecutor.shutdownNow();
+    server.shutdown();
     System.exit(0);
   }
 }
