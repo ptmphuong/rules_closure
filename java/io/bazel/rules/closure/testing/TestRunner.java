@@ -49,9 +49,7 @@ class TestRunner {
     TestDriver driver = new TestDriver(htmlURL);
     driver.run();
 
-    // TODO(phpham): Find out how to shutdown the server
     server.shutdown();
-    System.exit(0);
   }
 }
 
