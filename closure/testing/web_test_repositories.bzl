@@ -12,6 +12,7 @@ def setup_web_test_repositories():
     go_rules_dependencies()
 
     go_register_toolchains(version = "1.16.5")
+
     gazelle_dependencies()
 
     web_test_repositories()
