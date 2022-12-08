@@ -23,7 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * The test runner to run test against browsers.
+ * The test runner to run tests against browsers.
  *
  * <p>This program starts an HTTP server that serves runfiles. It uses a webdriver to load the
  * generated test runner HTML file on the browser. Once the page is loaded, it polls the Closure
@@ -31,24 +31,33 @@ import java.util.logging.Logger;
  */
 class TestRunner {
 
-  private static final Logger logger = Logger.getLogger(TestDriver.class.getName());
+  private static final Logger logger = Logger.getLogger(TestRunner.class.getName());
 
   public static void main(String args[]) throws Exception {
-
     String serverConfig = args[0];
     String htmlWebpath = args[1];
     if (!htmlWebpath.startsWith("/")) {
       htmlWebpath = "/" + htmlWebpath;
     }
 
-    WebfilesServer server = WebfilesServer.create(ImmutableList.of(serverConfig));
-    HostAndPort hostAndPort = server.spawn();
+    WebfilesServer server = null;
+    TestDriver driver = null;
+    boolean allTestsPassed = false;
 
-    TestDriver driver = new TestDriver("http://" + hostAndPort + htmlWebpath);
-    boolean allTestsPassed = driver.run();
+    try {
+      server = WebfilesServer.create(ImmutableList.of(serverConfig));
+      HostAndPort hostAndPort = server.spawn();
 
-    driver.quit();
-    server.shutdown();
+      driver = new TestDriver("http://" + hostAndPort + htmlWebpath);
+      allTestsPassed = driver.run();
+    } finally {
+      if (driver != null) {
+        driver.quit();
+      }
+      if (server != null) {
+        server.shutdown();
+      }
+    }
 
     if (allTestsPassed) {
       logger.info("All tests passed");
