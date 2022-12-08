@@ -47,7 +47,6 @@ public class TestDriver {
     logger.info("WebDriver is running on: " + this.htmlURL);
     driver.get(this.htmlURL);
 
-    boolean finishedSuccessfully = false;
     try {
       new FluentWait<>((JavascriptExecutor) driver)
           .pollingEvery(Duration.ofMillis(POLL_INTERVAL))
