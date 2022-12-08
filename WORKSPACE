@@ -133,4 +133,6 @@ java_import_external(
 )
 
 load("//closure:defs.bzl", "setup_web_test_repositories")
-setup_web_test_repositories()
+setup_web_test_repositories(
+    chromium = True,
+)

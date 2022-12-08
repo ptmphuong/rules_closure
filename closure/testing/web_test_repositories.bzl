@@ -1,5 +1,3 @@
-"""Bazel rule for loading repository deps for web testing"""
-
 # TODO: Remove @bazel_gazelle and @io_bazel_rules_go when using a newer release of
 # rules_webtesting (>=0.3.6).
 load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
@@ -13,7 +11,13 @@ load("@io_bazel_rules_webtesting//web:java_repositories.bzl", "java_repositories
 load("@io_bazel_rules_webtesting//web:repositories.bzl", "web_test_repositories")
 load("@io_bazel_rules_webtesting//web/versioned:browsers-0.3.3.bzl", "browser_repositories")
 
-def setup_web_test_repositories():
+def setup_web_test_repositories(**kwargs):
+    """
+    Loading dependencies needed for web testing
+
+    Args:
+      **kwargs: Set which browser repositories to be loaded.
+    """
 
     go_rules_dependencies()
 
@@ -24,8 +28,7 @@ def setup_web_test_repositories():
     web_test_repositories()
 
     browser_repositories(
-        chromium = True,
-        firefox = True,
+        **kwargs
     )
 
     go_repositories()
