@@ -124,13 +124,8 @@ public final class WebfilesServer implements Runnable {
 
   /** Shuts down the server. */
   public void shutdown() {
-    synchronized (this) {
-      if (executor instanceof ExecutorService) {
-        ((ExecutorService) executor).shutdownNow();
-        System.exit(0);
-      } else {
-        logger.log(Level.SEVERE, "Cannot shutdown server");
-      }
+    if (executor instanceof ExecutorService) {
+      ((ExecutorService) executor).shutdownNow();
     }
   }
 
