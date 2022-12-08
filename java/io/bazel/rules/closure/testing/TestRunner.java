@@ -19,10 +19,8 @@ package io.bazel.rules.closure.testing;
 import com.google.common.collect.ImmutableList;
 import com.google.common.net.HostAndPort;
 import io.bazel.rules.closure.webfiles.server.WebfilesServer;
-import java.nio.file.FileSystems;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import javax.net.ServerSocketFactory;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The test runner to run test against browsers.
@@ -32,6 +30,8 @@ import javax.net.ServerSocketFactory;
  * Library repeatedly to check if the tests are finished, and logs results.
  */
 class TestRunner {
+
+  private static final Logger logger = Logger.getLogger(TestDriver.class.getName());
 
   public static void main(String args[]) throws Exception {
 
@@ -43,13 +43,25 @@ class TestRunner {
 
     WebfilesServer server = WebfilesServer.create(ImmutableList.of(serverConfig));
     HostAndPort hostAndPort = server.spawn();
-    String address = hostAndPort.toString();
 
-    String htmlURL = "http://" + address + htmlWebpath;
-    TestDriver driver = new TestDriver(htmlURL);
-    driver.run();
+    TestDriver driver = new TestDriver("http://" + hostAndPort + htmlWebpath);
+    boolean allTestsPassed = driver.run();
 
+    driver.quit();
     server.shutdown();
+
+    if (allTestsPassed) {
+      logger.info("All tests passed");
+      // TODO(#556): Remove this when the server can shutdown properly.
+      System.exit(0);
+    } else {
+      logger.log(
+          Level.SEVERE,
+          "Test(s) failed.\n"
+              + "TIPS: Debug your tests interactively on a browser using 'bazel run"
+              + " :<targetname>_debug'");
+      System.exit(1);
+    }
   }
 }
 
