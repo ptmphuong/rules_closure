@@ -23,9 +23,9 @@ import java.time.Duration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.FluentWait;
-import org.openqa.selenium.TimeoutException;
 
 public class TestDriver {
 
@@ -35,32 +35,39 @@ public class TestDriver {
 
   private WebDriver driver;
   private String htmlURL;
+  private boolean testFinishedSuccessfully;
 
   public TestDriver(String htmlURL) {
     this.driver = new WebTest().newWebDriverSession();
     this.htmlURL = htmlURL;
   }
 
-  public void run() {
+  public boolean run() {
     driver.manage().timeouts().setScriptTimeout(TEST_TIMEOUT, SECONDS);
     logger.info("WebDriver is running on: " + this.htmlURL);
     driver.get(this.htmlURL);
 
+    boolean finishedSuccessfully = false;
     try {
       new FluentWait<>((JavascriptExecutor) driver)
           .pollingEvery(Duration.ofMillis(POLL_INTERVAL))
           .withTimeout(Duration.ofSeconds(TEST_TIMEOUT))
           .until(
               executor -> {
-                boolean finishedSuccessfully =
+                testFinishedSuccessfully =
                     (boolean) executor.executeScript("return window.top.G_testRunner.isFinished()");
-                if (!finishedSuccessfully) {
-                  failTest("G_testRunner has not finished successfully");
+                if (!testFinishedSuccessfully) {
+                  logger.log(Level.SEVERE, "G_testRunner has not finished successfully");
                 }
                 return true;
               });
     } catch (TimeoutException e) {
-      failTest(String.format("Test timeout after %s seconds", TEST_TIMEOUT));
+      testFinishedSuccessfully = false;
+      logger.log(Level.SEVERE, String.format("Test timeout after %s seconds", TEST_TIMEOUT));
+    }
+
+    if (!testFinishedSuccessfully) {
+      return false;
     }
 
     String testReport =
@@ -74,18 +81,11 @@ public class TestDriver {
             ((JavascriptExecutor) driver)
                 .executeScript("return window.top.G_testRunner.isSuccess();");
 
-    driver.quit();
-
-    if (!allTestsPassed) {
-      failTest("Test(s) failed.\nTIPS: Debug your tests interactively on a browser using 'bazel run :<targetname>_debug'");
-    } else {
-      logger.info("All tests passed");
-    }
+    return allTestsPassed;
   }
 
-  private static void failTest(String error) {
-    logger.log(Level.SEVERE, error);
-    System.exit(1);
+  public void quit() {
+    driver.quit();
   }
 }
 
