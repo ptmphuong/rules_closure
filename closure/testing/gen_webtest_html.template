@@ -31,3 +31,4 @@ declared with closure_js_test rules.
 <script src="{{TEST_FILE_JS}}"></script>
 </body>
 </html>
+

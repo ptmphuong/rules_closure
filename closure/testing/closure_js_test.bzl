@@ -49,7 +49,6 @@ def closure_js_test(
     else:
         work = [(name + _make_suffix(src), [src]) for src in srcs]
     for shard, sauce in work:
-
         closure_js_library(
             name = "%s_lib" % shard,
             srcs = sauce,
