@@ -26,7 +26,7 @@ def webdriver_test(
     **kwargs):
 
     html = "gen_html_%s" % name
-    gen_test_html(
+    _gen_test_html(
         name = html,
         test_file_js = test_file_js,
     )
@@ -75,7 +75,7 @@ def _gen_test_html_impl(ctx):
 # The test_file_js argument specifies the name of the JS file containing tests,
 # typically created with closure_js_binary.
 # The output is created from gen_test_html.template file.
-gen_test_html = rule(
+_gen_test_html = rule(
     implementation = _gen_test_html_impl,
     attrs = {
         "test_file_js": attr.string(mandatory = True),
