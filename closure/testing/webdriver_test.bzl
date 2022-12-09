@@ -18,13 +18,12 @@ load("//closure:webfiles/web_library.bzl", "web_library")
 load("@io_bazel_rules_webtesting//web:web.bzl", "web_test_suite")
 
 def webdriver_test(
-    name,
-    browsers,
-    test_file_js,
-    tags = [],
-    visibility = None,
-    **kwargs):
-
+        name,
+        browsers,
+        test_file_js,
+        tags = [],
+        visibility = None,
+        **kwargs):
     html = "gen_html_%s" % name
     _gen_test_html(
         name = html,
@@ -86,3 +85,4 @@ _gen_test_html = rule(
     },
     outputs = {"html_file": "%{name}.html"},
 )
+
