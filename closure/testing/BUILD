@@ -60,8 +60,8 @@ bzl_library(
     name = "webdriver_test_bzl",
     srcs = ["webdriver_test.bzl"],
     deps = [
-        "@io_bazel_rules_webtesting//web:web.bzl",
         "//closure:web_library_bzl",
+        "@io_bazel_rules_webtesting//web:web",
     ],
 )
 
@@ -70,6 +70,7 @@ bzl_library(
     srcs = ["closure_js_test.bzl"],
     deps = [
         ":phantomjs_test_bzl",
+        ":webdriver_test_bzl",
         "//closure/compiler:compiler_bzl",
     ],
 )
